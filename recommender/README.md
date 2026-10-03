@@ -110,6 +110,9 @@ python -m recommender.preprocessing.build_content_features --dataset ml-25m
 
 # 7. Execute test suite
 pytest recommender/tests/ -v
+
+# 8. Export serving catalog to SQLite (Phase 2E.2 serving slice)
+python -m recommender.serving.export_catalog
 ```
 
 ---
