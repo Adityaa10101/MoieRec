@@ -26,6 +26,7 @@ No model tier is assumed superior a priori. Complex neural or collaborative mode
 
 ### Model 0: Global & Segmented Popularity Baseline
 - **Purpose:** Non-personalized zero-information baseline for unauthenticated users or fallback retrieval.
+- **Serving Note (Phase 2E.2):** All rows returned by the `/api/home` serving endpoint ("Popular with MovieLens viewers", "Top in Sci-Fi", "Top in Drama", "Top of the 2010s", "Top of the 1990s") are strictly Model 0 popularity baselines (ordered by `train_positive_count` descending with seeded hash tie-break). They are non-personalized, and the API / UI explicitly reflects this with no fabricated personal affinity or match scores.
 - **Formulation:**
   $$\text{Score}_{\text{pop}}(i) = \log(1 + C_{\text{train}}(i)) \cdot \bar{r}_{\text{train}}(i)$$
   where $C_{\text{train}}(i)$ is the rating count of movie $i$ in `splits/train_movie_stats.parquet`, and $\bar{r}_{\text{train}}(i)$ is its mean rating.

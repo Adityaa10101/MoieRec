@@ -112,42 +112,48 @@ MoieRec/
 
 ---
 
-## Local Development Commands
+## Local Development Commands (Phase 2E.2 Serving Slice)
 
-### 1. Environment Configuration
-Copy the environment template:
-```bash
-# Root
-cp .env.example .env
+### 1. Catalog Export (Recommender Environment)
+Generate `data/serving/catalog.sqlite` from processed MovieLens 25M benchmark parquets:
+```powershell
+# Using .venv_recommender:
+.\.venv_recommender\Scripts\python.exe -m recommender.serving.export_catalog
 ```
 
-### 2. Backend (FastAPI)
+### 2. Backend Environment & TMDB Configuration
+Create `backend/.env` (git-ignored) with your TMDB v3 API key:
 ```bash
-# Create virtual environment (one-time)
-python -m venv .venv
-
-# Activate virtual environment
-# Windows PowerShell:
-.\.venv\Scripts\Activate.ps1
-# macOS/Linux:
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r backend/requirements.txt
-
-# Start backend server
-uvicorn app.main:app --app-dir backend --reload --port 8000
+TMDB_API_KEY=your_tmdb_v3_api_key_here
+HOST=127.0.0.1
+PORT=8000
 ```
-- API Docs: `http://localhost:8000/docs`
-- Health check: `http://localhost:8000/api/health`
 
-### 3. Frontend (React + Vite)
+### 3. Pre-Warm TMDB Cache (Backend Environment)
+Warm the SQLite cache (`data/serving/tmdb_cache.sqlite`) with TMDB metadata for the top-popular movies:
+```powershell
+# Run from backend/ directory or with backend in PYTHONPATH:
+cd backend
+..\.venv\Scripts\python.exe -m app.scripts.warm_tmdb_cache --top 3000
+cd ..
+```
+
+### 4. Start Backend Server
+```powershell
+# Using .venv:
+.\.venv\Scripts\uvicorn.exe app.main:app --app-dir backend --host 127.0.0.1 --port 8000
+```
+- API Documentation: `http://127.0.0.1:8000/docs`
+- Health check: `http://127.0.0.1:8000/api/health`
+- Home feed: `http://127.0.0.1:8000/api/home`
+
+### 5. Start Frontend Dev Server
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-- Client runs at: `http://localhost:5173`
+- Client runs at: `http://localhost:5173` (proxies or connects to backend at `http://127.0.0.1:8000`)
 
 ---
 
