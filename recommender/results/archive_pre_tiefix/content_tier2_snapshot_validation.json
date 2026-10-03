@@ -1,0 +1,423 @@
+{
+  "snapshot_features": true,
+  "snapshot_leakage_warning": "CRITICAL TEMPORAL LEAKAGE NOTICE: Tier 2 features (Tags and Tag Genome) were aggregated over the entire MovieLens history up to November 2019. Because user tags and genome scores encapsulate future post-release information, Tier 2 features leak semantic signals across chronological splits. These results are reported in a separate experiment labeled snapshot_features=true and must never be mixed into Tier 1 clean temporal results.",
+  "metadata": {
+    "snapshot_features": true,
+    "dataset": "ml-25m",
+    "timestamp": "2026-10-02T14:07:22.265671+00:00",
+    "git_commit": "d8fcd85cc419eed2ffa0b8d60b5e0adc272206c1",
+    "positive_threshold": 4.0,
+    "train_content_hash": "dd614de431940d2a3ef8558a2339d3648b452ef95cad1f1b436c9addd3855fc6",
+    "validation_content_hash": "17e494dc0ade6fd6fe494abde450d8fe5c1ee8981a7d80958d3af0bed73a2bd2",
+    "packages": {
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "scipy": "1.18.1",
+      "pyarrow": "24.0.0",
+      "pytest": "9.1.1"
+    },
+    "tuning_sample_size": 20000,
+    "tuning_seed": 42,
+    "total_runtime_seconds": 1186.09
+  },
+  "chosen_config": {
+    "snapshot_features": true,
+    "name": "t1_tags2.0_genome1.0",
+    "tier2_block_weights": {
+      "tier1": 1.0,
+      "tags": 2.0,
+      "genome": 1.0
+    },
+    "ndcg": 0.028009,
+    "precision": 0.02034,
+    "recall": 0.023692,
+    "hit_rate": 0.15205,
+    "mrr": 0.063607,
+    "catalog_coverage": 0.243447,
+    "zero_profile_users": 11
+  },
+  "tuning_grid_results": [
+    {
+      "snapshot_features": true,
+      "name": "t1_plus_tags_w0.5",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 0.5,
+        "genome": 0.0
+      },
+      "ndcg": 0.005456,
+      "precision": 0.004055,
+      "recall": 0.005196,
+      "hit_rate": 0.03615,
+      "mrr": 0.012505,
+      "catalog_coverage": 0.369248,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_plus_tags_w1.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 0.0
+      },
+      "ndcg": 0.008598,
+      "precision": 0.00609,
+      "recall": 0.007977,
+      "hit_rate": 0.05105,
+      "mrr": 0.019825,
+      "catalog_coverage": 0.270862,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_plus_tags_w2.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 2.0,
+        "genome": 0.0
+      },
+      "ndcg": 0.019144,
+      "precision": 0.013135,
+      "recall": 0.016297,
+      "hit_rate": 0.10075,
+      "mrr": 0.044689,
+      "catalog_coverage": 0.210068,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_0.5_plus_tags_1.0",
+      "tier2_block_weights": {
+        "tier1": 0.5,
+        "tags": 1.0,
+        "genome": 0.0
+      },
+      "ndcg": 0.019144,
+      "precision": 0.013135,
+      "recall": 0.016297,
+      "hit_rate": 0.10075,
+      "mrr": 0.044689,
+      "catalog_coverage": 0.210068,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_plus_genome_w0.5",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 0.0,
+        "genome": 0.5
+      },
+      "ndcg": 0.008166,
+      "precision": 0.005995,
+      "recall": 0.00573,
+      "hit_rate": 0.0524,
+      "mrr": 0.021408,
+      "catalog_coverage": 0.412531,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_plus_genome_w1.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 0.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.011852,
+      "precision": 0.008805,
+      "recall": 0.008826,
+      "hit_rate": 0.07325,
+      "mrr": 0.030115,
+      "catalog_coverage": 0.394309,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_plus_genome_w2.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 0.0,
+        "genome": 2.0
+      },
+      "ndcg": 0.019141,
+      "precision": 0.01428,
+      "recall": 0.015481,
+      "hit_rate": 0.11445,
+      "mrr": 0.045573,
+      "catalog_coverage": 0.39316,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_0.5_plus_genome_1.0",
+      "tier2_block_weights": {
+        "tier1": 0.5,
+        "tags": 0.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.019141,
+      "precision": 0.01428,
+      "recall": 0.015481,
+      "hit_rate": 0.11445,
+      "mrr": 0.045573,
+      "catalog_coverage": 0.39316,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_tags_genome_all1.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.020728,
+      "precision": 0.01537,
+      "recall": 0.016858,
+      "hit_rate": 0.12045,
+      "mrr": 0.048644,
+      "catalog_coverage": 0.322791,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_tags0.5_genome1.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 0.5,
+        "genome": 1.0
+      },
+      "ndcg": 0.015987,
+      "precision": 0.011835,
+      "recall": 0.01227,
+      "hit_rate": 0.0957,
+      "mrr": 0.039578,
+      "catalog_coverage": 0.415376,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_tags1.0_genome2.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 2.0
+      },
+      "ndcg": 0.025672,
+      "precision": 0.01889,
+      "recall": 0.021395,
+      "hit_rate": 0.1449,
+      "mrr": 0.059364,
+      "catalog_coverage": 0.332859,
+      "zero_profile_users": 11
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_tags2.0_genome1.0",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 2.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.028009,
+      "precision": 0.02034,
+      "recall": 0.023692,
+      "hit_rate": 0.15205,
+      "mrr": 0.063607,
+      "catalog_coverage": 0.243447,
+      "zero_profile_users": 11
+    }
+  ],
+  "full_validation_metrics": {
+    "snapshot_features": true,
+    "precision": {
+      "mean": 0.01953,
+      "ci_lower": 0.019215,
+      "ci_upper": 0.019891
+    },
+    "recall": {
+      "mean": 0.023182,
+      "ci_lower": 0.02268,
+      "ci_upper": 0.023659
+    },
+    "ndcg": {
+      "mean": 0.027077,
+      "ci_lower": 0.026565,
+      "ci_upper": 0.027608
+    },
+    "hit_rate": {
+      "mean": 0.14732,
+      "ci_lower": 0.145177,
+      "ci_upper": 0.149599
+    },
+    "mrr": {
+      "mean": 0.061775,
+      "ci_lower": 0.060624,
+      "ci_upper": 0.063018
+    },
+    "catalog_coverage": 0.392996,
+    "genome_coverage_among_recommendations": 0.626322,
+    "mean_recommended_popularity": {
+      "mean": 7547.07234,
+      "ci_lower": 7502.824575,
+      "ci_upper": 7595.231077
+    },
+    "zero_profile_users": 62,
+    "activity_breakdown": [
+      {
+        "bucket": "Q1 (Low)",
+        "n_users": 23735,
+        "min_train_ratings": 40,
+        "max_train_ratings": 61,
+        "precision": 0.012201390351801138,
+        "recall": 0.02903166912435924,
+        "ndcg": 0.02431836240887124,
+        "hit_rate": 0.10141141773751844,
+        "mrr": 0.043957135835164064
+      },
+      {
+        "bucket": "Q2 (Med-Low)",
+        "n_users": 23650,
+        "min_train_ratings": 62,
+        "max_train_ratings": 102,
+        "precision": 0.015978858350951374,
+        "recall": 0.025649135571968552,
+        "ndcg": 0.024547456691514893,
+        "hit_rate": 0.126384778012685,
+        "mrr": 0.054174284371958786
+      },
+      {
+        "bucket": "Q3 (Med-High)",
+        "n_users": 23425,
+        "min_train_ratings": 103,
+        "max_train_ratings": 201,
+        "precision": 0.021933831376734263,
+        "recall": 0.022834113947598142,
+        "ndcg": 0.027800500018216996,
+        "hit_rate": 0.1633297758804696,
+        "mrr": 0.06894386000575968
+      },
+      {
+        "bucket": "Q4 (High)",
+        "n_users": 23502,
+        "min_train_ratings": 202,
+        "max_train_ratings": 11163,
+        "precision": 0.028108246106714325,
+        "recall": 0.015137004244389773,
+        "ndcg": 0.031687151864557964,
+        "hit_rate": 0.19879159220491874,
+        "mrr": 0.08027099686213804
+      }
+    ],
+    "session_strata_breakdown": [
+      {
+        "strata": "< 1 day (Onboarding Spree)",
+        "n_users": 43448,
+        "pct_of_evaluated": 46.06836881839003,
+        "min_span_days": 0.0,
+        "max_span_days": 0.9998726851851852,
+        "precision": 0.016843122813478183,
+        "recall": 0.02577441644605269,
+        "ndcg": 0.0258278628734249,
+        "hit_rate": 0.1289587552936844,
+        "mrr": 0.055201866927953286
+      },
+      {
+        "strata": "1-30 days (Short-term / Casual)",
+        "n_users": 15540,
+        "pct_of_evaluated": 16.477224531342777,
+        "min_span_days": 1.000173611111111,
+        "max_span_days": 29.99857638888889,
+        "precision": 0.019382239382239385,
+        "recall": 0.02322938169523624,
+        "ndcg": 0.02664514599538391,
+        "hit_rate": 0.1463963963963964,
+        "mrr": 0.060604533104533106
+      },
+      {
+        "strata": ">= 30 days (Multi-session / Longitudinal)",
+        "n_users": 35324,
+        "pct_of_evaluated": 37.454406650267195,
+        "min_span_days": 30.002627314814816,
+        "max_span_days": 8101.3568981481485,
+        "precision": 0.022899445136451136,
+        "recall": 0.019971585285522293,
+        "ndcg": 0.02880328625533998,
+        "hit_rate": 0.1703091382629374,
+        "mrr": 0.07037363193871517
+      }
+    ]
+  },
+  "paired_comparison_vs_tier1": {
+    "ndcg": {
+      "metric": "NDCG@10",
+      "mean_diff": 0.021941,
+      "ci_lower": 0.021424,
+      "ci_upper": 0.022492,
+      "relative_lift": 4.2724,
+      "pct_tier2_better": 14.23,
+      "pct_equal": 83.28,
+      "pct_tier1_better": 2.49,
+      "distinguishable_from_zero": true
+    },
+    "hit_rate": {
+      "metric": "HIT_RATE@10",
+      "mean_diff": 0.113421,
+      "ci_lower": 0.111205,
+      "ci_upper": 0.115797,
+      "relative_lift": 3.3459,
+      "pct_tier2_better": 13.43,
+      "pct_equal": 84.48,
+      "pct_tier1_better": 2.09,
+      "distinguishable_from_zero": true
+    },
+    "recall": {
+      "metric": "RECALL@10",
+      "mean_diff": 0.018542,
+      "ci_lower": 0.018006,
+      "ci_upper": 0.019048,
+      "relative_lift": 3.9969,
+      "pct_tier2_better": 13.84,
+      "pct_equal": 84.02,
+      "pct_tier1_better": 2.14,
+      "distinguishable_from_zero": true
+    }
+  },
+  "paired_comparison_vs_popularity_most_liked": {
+    "ndcg": {
+      "metric": "NDCG@10",
+      "mean_diff": -0.025069,
+      "ci_lower": -0.025845,
+      "ci_upper": -0.024231,
+      "relative_lift": -0.4807,
+      "pct_tier2_better": 10.6,
+      "pct_equal": 67.45,
+      "pct_pop_better": 21.95,
+      "distinguishable_from_zero": true
+    },
+    "hit_rate": {
+      "metric": "HIT_RATE@10",
+      "mean_diff": -0.103667,
+      "ci_lower": -0.106572,
+      "ci_upper": -0.100231,
+      "relative_lift": -0.413,
+      "pct_tier2_better": 7.74,
+      "pct_equal": 74.15,
+      "pct_pop_better": 18.11,
+      "distinguishable_from_zero": true
+    },
+    "recall": {
+      "metric": "RECALL@10",
+      "mean_diff": -0.022033,
+      "ci_lower": -0.022785,
+      "ci_upper": -0.021188,
+      "relative_lift": -0.4873,
+      "pct_tier2_better": 8.77,
+      "pct_equal": 70.49,
+      "pct_pop_better": 20.74,
+      "distinguishable_from_zero": true
+    }
+  }
+}

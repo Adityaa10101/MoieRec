@@ -1,0 +1,1978 @@
+{
+  "metadata": {
+    "dataset": "ml-25m",
+    "timestamp": "2026-10-02T18:45:47.563534+00:00",
+    "git_commit": "d8fcd85cc419eed2ffa0b8d60b5e0adc272206c1",
+    "dirty_working_tree": true,
+    "positive_threshold": 4.0,
+    "tie_break": "random_perm",
+    "train_content_hash": "603b4cac7a747d1ec92fdd5e909195df5edd7c15e10667e56bf396d9d249719e",
+    "validation_content_hash": "6a83709bece6cafeefd18f3d035106841a3f5e0a89e5d1ea86501899ee677e68",
+    "packages": {
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "scipy": "1.18.1",
+      "pyarrow": "24.0.0",
+      "pytest": "9.1.1"
+    },
+    "total_runtime_seconds": 639.13
+  },
+  "catalog_and_split_stats": {
+    "n_candidate_items": 18275,
+    "total_validation_users": 97270,
+    "evaluated_validation_users": 94303,
+    "excluded_zero_pos_users": 2967,
+    "total_validation_positives": 984414,
+    "unreachable_validation_positives": 0,
+    "unreachable_validation_positives_pct": 0.0
+  },
+  "rating_prediction_baselines": [
+    {
+      "method": "global_mean",
+      "rmse": 1.0529710227954403,
+      "mae": 0.8221402255916891,
+      "n_ratings": 2174367,
+      "damping": null
+    },
+    {
+      "method": "movie_mean",
+      "rmse": 0.9525380278944103,
+      "mae": 0.7327634866193461,
+      "n_ratings": 2174367,
+      "damping": null
+    },
+    {
+      "method": "damped_movie_mean",
+      "rmse": 0.9524855130160244,
+      "mae": 0.732606166358707,
+      "n_ratings": 2174367,
+      "damping": 10.0
+    },
+    {
+      "method": "damped_movie_mean",
+      "rmse": 0.953153254342794,
+      "mae": 0.7330370605566058,
+      "n_ratings": 2174367,
+      "damping": 25.0
+    },
+    {
+      "method": "damped_movie_mean",
+      "rmse": 0.9543257382809398,
+      "mae": 0.7338162783857692,
+      "n_ratings": 2174367,
+      "damping": 50.0
+    }
+  ],
+  "popularity_tuning_grid": [
+    {
+      "variant_name": "most_rated",
+      "variant_type": "most_rated",
+      "damping_m": 0.0,
+      "precision": {
+        "mean": 0.039567,
+        "ci_lower": 0.038998,
+        "ci_upper": 0.040085
+      },
+      "recall": {
+        "mean": 0.044867,
+        "ci_lower": 0.044141,
+        "ci_upper": 0.045559
+      },
+      "ndcg": {
+        "mean": 0.051569,
+        "ci_lower": 0.050783,
+        "ci_upper": 0.052267
+      },
+      "hit_rate": {
+        "mean": 0.250013,
+        "ci_lower": 0.24733,
+        "ci_upper": 0.25276
+      },
+      "mrr": {
+        "mean": 0.105037,
+        "ci_lower": 0.103388,
+        "ci_upper": 0.106565
+      },
+      "catalog_coverage": 0.016033,
+      "mean_recommended_popularity": {
+        "mean": 42821.027903,
+        "ci_lower": 42789.136306,
+        "ci_upper": 42853.562818
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.02262401483541956,
+          "recall": 0.05666138837209768,
+          "ndcg": 0.04261707692109056,
+          "hit_rate": 0.17263033674716569,
+          "mrr": 0.0665423022863913
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.029409775071875536,
+          "recall": 0.048256918706563554,
+          "ndcg": 0.04236759984639914,
+          "hit_rate": 0.2062827667850499,
+          "mrr": 0.08255174568277053
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.04037402331241194,
+          "recall": 0.04205915781472601,
+          "ndcg": 0.04804369935965067,
+          "hit_rate": 0.26002305623158706,
+          "mrr": 0.10695543207391549
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.06608943539122666,
+          "recall": 0.03234752366648435,
+          "ndcg": 0.07337736872744359,
+          "hit_rate": 0.36216653193209375,
+          "mrr": 0.16461464899111156
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.030167610627618916,
+          "recall": 0.047499715017114,
+          "ndcg": 0.04376523701645464,
+          "hit_rate": 0.20099461251554082,
+          "mrr": 0.08127766010242872
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.03744289299272891,
+          "recall": 0.04414556878786501,
+          "ndcg": 0.04879123957178726,
+          "hit_rate": 0.2442571263110482,
+          "mrr": 0.10183934865583408
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.05205785778985507,
+          "recall": 0.04194802650812225,
+          "ndcg": 0.062384218659969334,
+          "hit_rate": 0.31281136775362317,
+          "mrr": 0.13565458442963538
+        }
+      ],
+      "eval_runtime_seconds": 37.61
+    },
+    {
+      "variant_name": "most_liked",
+      "variant_type": "most_liked",
+      "damping_m": 0.0,
+      "precision": {
+        "mean": 0.040078,
+        "ci_lower": 0.039524,
+        "ci_upper": 0.040628
+      },
+      "recall": {
+        "mean": 0.04501,
+        "ci_lower": 0.044264,
+        "ci_upper": 0.045719
+      },
+      "ndcg": {
+        "mean": 0.05192,
+        "ci_lower": 0.051107,
+        "ci_upper": 0.052611
+      },
+      "hit_rate": {
+        "mean": 0.250883,
+        "ci_lower": 0.248115,
+        "ci_upper": 0.253694
+      },
+      "mrr": {
+        "mean": 0.10484,
+        "ci_lower": 0.103258,
+        "ci_upper": 0.106467
+      },
+      "catalog_coverage": 0.015157,
+      "mean_recommended_popularity": {
+        "mean": 42145.362669,
+        "ci_lower": 42112.183241,
+        "ci_upper": 42177.828834
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.02295275424621739,
+          "recall": 0.05675762191756628,
+          "ndcg": 0.0434094897001788,
+          "hit_rate": 0.17372613478315843,
+          "mrr": 0.06883762453998894
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.029638085574158632,
+          "recall": 0.048069325843932635,
+          "ndcg": 0.04216673496327196,
+          "hit_rate": 0.20556401150008455,
+          "mrr": 0.08127600538496023
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.04065582169847573,
+          "recall": 0.04235157773560976,
+          "ndcg": 0.047893567658425444,
+          "hit_rate": 0.25929721190384697,
+          "mrr": 0.10450214940736267
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.06729779177126324,
+          "recall": 0.0327210061823301,
+          "ndcg": 0.07433945925393236,
+          "hit_rate": 0.3659958303195337,
+          "mrr": 0.16523463063479232
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.03037251922457061,
+          "recall": 0.04749442764985395,
+          "ndcg": 0.04373621338410068,
+          "hit_rate": 0.20016576875259012,
+          "mrr": 0.08013355055764228
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.0374686313622032,
+          "recall": 0.043873977304375776,
+          "ndcg": 0.048318866129704964,
+          "hit_rate": 0.24136155974519014,
+          "mrr": 0.0983790700073436
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.053158967391304345,
+          "recall": 0.04245537388804207,
+          "ndcg": 0.06356595181708083,
+          "hit_rate": 0.31742527173913043,
+          "mrr": 0.1380569236865942
+        }
+      ],
+      "eval_runtime_seconds": 35.24
+    },
+    {
+      "variant_name": "damped_mean_m0",
+      "variant_type": "damped_mean",
+      "damping_m": 0.0,
+      "precision": {
+        "mean": 0.003987,
+        "ci_lower": 0.003847,
+        "ci_upper": 0.004125
+      },
+      "recall": {
+        "mean": 0.00478,
+        "ci_lower": 0.004583,
+        "ci_upper": 0.004992
+      },
+      "ndcg": {
+        "mean": 0.003691,
+        "ci_lower": 0.003559,
+        "ci_upper": 0.003823
+      },
+      "hit_rate": {
+        "mean": 0.037273,
+        "ci_lower": 0.036054,
+        "ci_upper": 0.038472
+      },
+      "mrr": {
+        "mean": 0.005806,
+        "ci_lower": 0.005601,
+        "ci_upper": 0.006012
+      },
+      "catalog_coverage": 0.000985,
+      "mean_recommended_popularity": {
+        "mean": 4844.808646,
+        "ci_lower": 4821.876786,
+        "ci_upper": 4870.128171
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.002709992835166688,
+          "recall": 0.006869509720691918,
+          "ndcg": 0.0034876113413694542,
+          "hit_rate": 0.026257006785518608,
+          "mrr": 0.0038249740266430117
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.0030610519194994084,
+          "recall": 0.004892524888719714,
+          "ndcg": 0.0029790805227855864,
+          "hit_rate": 0.02904616945712836,
+          "mrr": 0.004275637618483889
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.003928098714828573,
+          "recall": 0.004047316995400878,
+          "ndcg": 0.0032156846961306543,
+          "hit_rate": 0.03744502796635498,
+          "mrr": 0.005498186066906446
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.0062672850274433055,
+          "recall": 0.003286243733951608,
+          "ndcg": 0.005085964681980136,
+          "hit_rate": 0.05650342509466877,
+          "mrr": 0.009650777442123228
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.0029423953584749273,
+          "recall": 0.004820011315473695,
+          "ndcg": 0.002966386634824777,
+          "hit_rate": 0.028134641064603765,
+          "mrr": 0.0040386399068537485
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.0037578019432468954,
+          "recall": 0.004742978251172249,
+          "ndcg": 0.0034806969459685224,
+          "hit_rate": 0.03532591210346824,
+          "mrr": 0.005360577193149099
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.005372509057971014,
+          "recall": 0.004746282188673347,
+          "ndcg": 0.004674088475882495,
+          "hit_rate": 0.049365942028985504,
+          "mrr": 0.00817353832384403
+        }
+      ],
+      "eval_runtime_seconds": 39.22
+    },
+    {
+      "variant_name": "damped_mean_m5",
+      "variant_type": "damped_mean",
+      "damping_m": 5.0,
+      "precision": {
+        "mean": 0.01194,
+        "ci_lower": 0.011675,
+        "ci_upper": 0.012199
+      },
+      "recall": {
+        "mean": 0.013863,
+        "ci_lower": 0.013472,
+        "ci_upper": 0.014248
+      },
+      "ndcg": {
+        "mean": 0.01272,
+        "ci_lower": 0.0124,
+        "ci_upper": 0.012991
+      },
+      "hit_rate": {
+        "mean": 0.097632,
+        "ci_lower": 0.095659,
+        "ci_upper": 0.099541
+      },
+      "mrr": {
+        "mean": 0.022665,
+        "ci_lower": 0.022102,
+        "ci_upper": 0.023177
+      },
+      "catalog_coverage": 0.002244,
+      "mean_recommended_popularity": {
+        "mean": 13754.028182,
+        "ci_lower": 13722.947373,
+        "ci_upper": 13786.176791
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.007645298604964808,
+          "recall": 0.019289055867637232,
+          "ndcg": 0.011332574967609815,
+          "hit_rate": 0.06646436549079109,
+          "mrr": 0.014117882581025833
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.008764586504312532,
+          "recall": 0.013875740125105928,
+          "ndcg": 0.009873462269191401,
+          "hit_rate": 0.07525790630813461,
+          "mrr": 0.01635859513206038
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.012155757653387984,
+          "recall": 0.012340194061669205,
+          "ndcg": 0.01157316591455821,
+          "hit_rate": 0.09935527945006618,
+          "mrr": 0.022069852520089483
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.01925711611283666,
+          "recall": 0.009888737715437834,
+          "ndcg": 0.018129815225949183,
+          "hit_rate": 0.14989575798834193,
+          "mrr": 0.03823289360561198
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.009105769673527652,
+          "recall": 0.014545639899303717,
+          "ndcg": 0.010509965136285306,
+          "hit_rate": 0.0749643136713174,
+          "mrr": 0.01602235758541878
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.010913068657100573,
+          "recall": 0.013214361904075262,
+          "ndcg": 0.011682746613933256,
+          "hit_rate": 0.08866868283894215,
+          "mrr": 0.020447245024170575
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.015876924818840583,
+          "recall": 0.013308293702364488,
+          "ndcg": 0.01589458534678419,
+          "hit_rate": 0.1294440670289855,
+          "mrr": 0.031807305595094315
+        }
+      ],
+      "eval_runtime_seconds": 37.11
+    },
+    {
+      "variant_name": "damped_mean_m10",
+      "variant_type": "damped_mean",
+      "damping_m": 10.0,
+      "precision": {
+        "mean": 0.01399,
+        "ci_lower": 0.0137,
+        "ci_upper": 0.01428
+      },
+      "recall": {
+        "mean": 0.016061,
+        "ci_lower": 0.015663,
+        "ci_upper": 0.01647
+      },
+      "ndcg": {
+        "mean": 0.014482,
+        "ci_lower": 0.01415,
+        "ci_upper": 0.014774
+      },
+      "hit_rate": {
+        "mean": 0.112202,
+        "ci_lower": 0.110081,
+        "ci_upper": 0.114238
+      },
+      "mrr": {
+        "mean": 0.024753,
+        "ci_lower": 0.024177,
+        "ci_upper": 0.025258
+      },
+      "catalog_coverage": 0.00301,
+      "mean_recommended_popularity": {
+        "mean": 16117.760334,
+        "ci_lower": 16083.236956,
+        "ci_upper": 16153.426842
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.008854891052387577,
+          "recall": 0.022216251527795338,
+          "ndcg": 0.01277791891204796,
+          "hit_rate": 0.07641083997134067,
+          "mrr": 0.015382331828785236
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.010244376796888213,
+          "recall": 0.016309208600558168,
+          "ndcg": 0.01125445768169776,
+          "hit_rate": 0.08608151530525959,
+          "mrr": 0.017789008748547053
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.013966098800222022,
+          "recall": 0.014062864500500346,
+          "ndcg": 0.012966204053974487,
+          "hit_rate": 0.11237778062422613,
+          "mrr": 0.02384607017308439
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.02296728077266732,
+          "recall": 0.011589690891417011,
+          "ndcg": 0.02096097483587332,
+          "hit_rate": 0.17444581542781773,
+          "mrr": 0.04212631754541298
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.010682875166919924,
+          "recall": 0.016842699807414912,
+          "ndcg": 0.011974698203136078,
+          "hit_rate": 0.0860846341575724,
+          "mrr": 0.017505322799562337
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.012721189112669711,
+          "recall": 0.015375400763110569,
+          "ndcg": 0.013246176890993621,
+          "hit_rate": 0.10205263496557493,
+          "mrr": 0.022274260711298226
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.01861413043478261,
+          "recall": 0.015402353080073419,
+          "ndcg": 0.018108341683973055,
+          "hit_rate": 0.1487771739130435,
+          "mrr": 0.03475502142282033
+        }
+      ],
+      "eval_runtime_seconds": 34.16
+    },
+    {
+      "variant_name": "damped_mean_m25",
+      "variant_type": "damped_mean",
+      "damping_m": 25.0,
+      "precision": {
+        "mean": 0.015668,
+        "ci_lower": 0.015357,
+        "ci_upper": 0.015967
+      },
+      "recall": {
+        "mean": 0.017414,
+        "ci_lower": 0.016978,
+        "ci_upper": 0.017839
+      },
+      "ndcg": {
+        "mean": 0.015908,
+        "ci_lower": 0.015557,
+        "ci_upper": 0.01621
+      },
+      "hit_rate": {
+        "mean": 0.12199,
+        "ci_lower": 0.119742,
+        "ci_upper": 0.124132
+      },
+      "mrr": {
+        "mean": 0.026788,
+        "ci_lower": 0.02617,
+        "ci_upper": 0.02731
+      },
+      "catalog_coverage": 0.003885,
+      "mean_recommended_popularity": {
+        "mean": 17123.030374,
+        "ci_lower": 17094.196089,
+        "ci_upper": 17152.704302
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.009356429384245796,
+          "recall": 0.023346067469850504,
+          "ndcg": 0.013339917423314,
+          "hit_rate": 0.0799511105491634,
+          "mrr": 0.015853280804602084
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.011144934889227128,
+          "recall": 0.017657141090677366,
+          "ndcg": 0.012043913344353712,
+          "hit_rate": 0.09191611703027228,
+          "mrr": 0.018546973442965325
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.01546048418086333,
+          "recall": 0.015457086554003081,
+          "ndcg": 0.01419327083679492,
+          "hit_rate": 0.12224072413645873,
+          "mrr": 0.025792973067854583
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.02679657916010722,
+          "recall": 0.013129272412766322,
+          "ndcg": 0.024099039449123012,
+          "hit_rate": 0.1944432625622261,
+          "mrr": 0.047112290291884386
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.01171892987060828,
+          "recall": 0.018047930208881357,
+          "ndcg": 0.012854175097312771,
+          "hit_rate": 0.09241607956900125,
+          "mrr": 0.01842658922020712
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.014278360465864488,
+          "recall": 0.016820927794197093,
+          "ndcg": 0.014610520400114029,
+          "hit_rate": 0.11106106428157776,
+          "mrr": 0.02412969584805374
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.021133378623188405,
+          "recall": 0.016894494964057604,
+          "ndcg": 0.020234059127323428,
+          "hit_rate": 0.16315670289855072,
+          "mrr": 0.03823768996578099
+        }
+      ],
+      "eval_runtime_seconds": 31.85
+    },
+    {
+      "variant_name": "damped_mean_m50",
+      "variant_type": "damped_mean",
+      "damping_m": 50.0,
+      "precision": {
+        "mean": 0.016408,
+        "ci_lower": 0.016084,
+        "ci_upper": 0.016721
+      },
+      "recall": {
+        "mean": 0.018004,
+        "ci_lower": 0.017561,
+        "ci_upper": 0.018441
+      },
+      "ndcg": {
+        "mean": 0.017344,
+        "ci_lower": 0.01696,
+        "ci_upper": 0.017685
+      },
+      "hit_rate": {
+        "mean": 0.12621,
+        "ci_lower": 0.123983,
+        "ci_upper": 0.128363
+      },
+      "mrr": {
+        "mean": 0.031175,
+        "ci_lower": 0.030479,
+        "ci_upper": 0.031804
+      },
+      "catalog_coverage": 0.004596,
+      "mean_recommended_popularity": {
+        "mean": 17467.589914,
+        "ci_lower": 17439.280052,
+        "ci_upper": 17495.823715
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.009592447422767313,
+          "recall": 0.02387048510136132,
+          "ndcg": 0.014567468804209007,
+          "hit_rate": 0.08167909975976735,
+          "mrr": 0.019189393772147595
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.011470488753593775,
+          "recall": 0.018200839715933576,
+          "ndcg": 0.013102625301882267,
+          "hit_rate": 0.09445290038897344,
+          "mrr": 0.022118351681390747
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.016002732590410317,
+          "recall": 0.016002080110685813,
+          "ndcg": 0.015377346611616131,
+          "hit_rate": 0.12548567524870843,
+          "mrr": 0.030149241997583228
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.02866017104199464,
+          "recall": 0.013878610793113894,
+          "ndcg": 0.026373946049070073,
+          "hit_rate": 0.20384631749138407,
+          "mrr": 0.053412870629821654
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.012158677533729336,
+          "recall": 0.018642545637875468,
+          "ndcg": 0.01404339661078393,
+          "hit_rate": 0.09520191555002994,
+          "mrr": 0.021997606658816768
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.014812431632456083,
+          "recall": 0.01730459889834516,
+          "ndcg": 0.01587061695491671,
+          "hit_rate": 0.11414966861849302,
+          "mrr": 0.028377573709276946
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.022333559782608696,
+          "recall": 0.01752671733439549,
+          "ndcg": 0.02204934240405322,
+          "hit_rate": 0.1696388134057971,
+          "mrr": 0.04368993927205544
+        }
+      ],
+      "eval_runtime_seconds": 35.6
+    },
+    {
+      "variant_name": "damped_mean_m100",
+      "variant_type": "damped_mean",
+      "damping_m": 100.0,
+      "precision": {
+        "mean": 0.016764,
+        "ci_lower": 0.016437,
+        "ci_upper": 0.017069
+      },
+      "recall": {
+        "mean": 0.0183,
+        "ci_lower": 0.017862,
+        "ci_upper": 0.018737
+      },
+      "ndcg": {
+        "mean": 0.020258,
+        "ci_lower": 0.019844,
+        "ci_upper": 0.020657
+      },
+      "hit_rate": {
+        "mean": 0.12814,
+        "ci_lower": 0.125902,
+        "ci_upper": 0.130282
+      },
+      "mrr": {
+        "mean": 0.043229,
+        "ci_lower": 0.042185,
+        "ci_upper": 0.044229
+      },
+      "catalog_coverage": 0.005581,
+      "mean_recommended_popularity": {
+        "mean": 17637.070076,
+        "ci_lower": 17610.258878,
+        "ci_upper": 17664.210727
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.009697812618535844,
+          "recall": 0.024132994960533206,
+          "ndcg": 0.017666011372584063,
+          "hit_rate": 0.08231129093437856,
+          "mrr": 0.029012524075111002
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.011660747505496364,
+          "recall": 0.018518930568651525,
+          "ndcg": 0.01565812110403744,
+          "hit_rate": 0.09550989345509893,
+          "mrr": 0.03257578808060797
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.01631868835660305,
+          "recall": 0.01627304171465997,
+          "ndcg": 0.018049928911193183,
+          "hit_rate": 0.127278937705478,
+          "mrr": 0.042738557785951155
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.029477088031315154,
+          "recall": 0.014212216139731941,
+          "ndcg": 0.029705341975785733,
+          "hit_rate": 0.20810109347742842,
+          "mrr": 0.06879020510046337
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.012377400193396879,
+          "recall": 0.01892515626979745,
+          "ndcg": 0.016748964228761504,
+          "hit_rate": 0.09637611088087673,
+          "mrr": 0.032300065196528796
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.015114857473779036,
+          "recall": 0.01762280059832684,
+          "ndcg": 0.018717680086751398,
+          "hit_rate": 0.11601570040537931,
+          "mrr": 0.040450043561168963
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.022882699275362323,
+          "recall": 0.01783012799050352,
+          "ndcg": 0.02525060550089766,
+          "hit_rate": 0.17252604166666666,
+          "mrr": 0.05788789323096388
+        }
+      ],
+      "eval_runtime_seconds": 32.33
+    },
+    {
+      "variant_name": "damped_mean_m250",
+      "variant_type": "damped_mean",
+      "damping_m": 250.0,
+      "precision": {
+        "mean": 0.02003,
+        "ci_lower": 0.019676,
+        "ci_upper": 0.020366
+      },
+      "recall": {
+        "mean": 0.022101,
+        "ci_lower": 0.021617,
+        "ci_upper": 0.022573
+      },
+      "ndcg": {
+        "mean": 0.027195,
+        "ci_lower": 0.026656,
+        "ci_upper": 0.027695
+      },
+      "hit_rate": {
+        "mean": 0.148235,
+        "ci_lower": 0.145933,
+        "ci_upper": 0.150347
+      },
+      "mrr": {
+        "mean": 0.063345,
+        "ci_lower": 0.062073,
+        "ci_upper": 0.064608
+      },
+      "catalog_coverage": 0.006347,
+      "mean_recommended_popularity": {
+        "mean": 21808.350656,
+        "ci_lower": 21774.114132,
+        "ci_upper": 21842.813218
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.011914696337505797,
+          "recall": 0.02926091834297676,
+          "ndcg": 0.023641902169818204,
+          "hit_rate": 0.09874826147426982,
+          "mrr": 0.04113336825436965
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.01443429731100964,
+          "recall": 0.02289680753975528,
+          "ndcg": 0.021372550171282166,
+          "hit_rate": 0.1158887197699983,
+          "mrr": 0.047794055470996105
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.019956449340335594,
+          "recall": 0.019958621452954215,
+          "ndcg": 0.025026597599404732,
+          "hit_rate": 0.14986550531574228,
+          "mrr": 0.06501669238636062
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.03392758371271753,
+          "recall": 0.016208860399955054,
+          "ndcg": 0.03880117229766555,
+          "hit_rate": 0.22911968684848744,
+          "mrr": 0.0997532736449045
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.01511028226734816,
+          "recall": 0.02303146629258497,
+          "ndcg": 0.022962058344188338,
+          "hit_rate": 0.11396601740571902,
+          "mrr": 0.0485713043179544
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.018409368766488646,
+          "recall": 0.021772044883161028,
+          "ndcg": 0.02545282828306602,
+          "hit_rate": 0.13737854706904318,
+          "mrr": 0.05964213452792051
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.026791779891304348,
+          "recall": 0.021103056046267676,
+          "ndcg": 0.0331649235126112,
+          "hit_rate": 0.19514266304347827,
+          "mrr": 0.08313827918320106
+        }
+      ],
+      "eval_runtime_seconds": 36.91
+    },
+    {
+      "variant_name": "damped_mean_m500",
+      "variant_type": "damped_mean",
+      "damping_m": 500.0,
+      "precision": {
+        "mean": 0.022971,
+        "ci_lower": 0.02257,
+        "ci_upper": 0.023339
+      },
+      "recall": {
+        "mean": 0.02487,
+        "ci_lower": 0.024357,
+        "ci_upper": 0.025372
+      },
+      "ndcg": {
+        "mean": 0.030705,
+        "ci_lower": 0.030133,
+        "ci_upper": 0.031223
+      },
+      "hit_rate": {
+        "mean": 0.164427,
+        "ci_lower": 0.162136,
+        "ci_upper": 0.166729
+      },
+      "mrr": {
+        "mean": 0.069761,
+        "ci_lower": 0.068416,
+        "ci_upper": 0.071098
+      },
+      "catalog_coverage": 0.007168,
+      "mean_recommended_popularity": {
+        "mean": 24739.077993,
+        "ci_lower": 24705.936246,
+        "ci_upper": 24772.139421
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.013377165254773043,
+          "recall": 0.032589254355596495,
+          "ndcg": 0.026021971718798012,
+          "hit_rate": 0.10877902811143424,
+          "mrr": 0.04412339836540115
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.016269237273803486,
+          "recall": 0.025570678053554768,
+          "ndcg": 0.023663409385738906,
+          "hit_rate": 0.12810755961440892,
+          "mrr": 0.05165706312966587
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.02258229793774818,
+          "recall": 0.022460172008526767,
+          "ndcg": 0.027850451479104907,
+          "hit_rate": 0.16515093292344477,
+          "mrr": 0.07017357574229612
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.03978641024550058,
+          "recall": 0.018773419860819204,
+          "ndcg": 0.045363441486671575,
+          "hit_rate": 0.25643534867889206,
+          "mrr": 0.11345005602121715
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.017078786204356034,
+          "recall": 0.025745166756588802,
+          "ndcg": 0.025529227999226415,
+          "hit_rate": 0.125178431643413,
+          "mrr": 0.052617673521803916
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.020944598159706583,
+          "recall": 0.024391296503272684,
+          "ndcg": 0.02837684680092189,
+          "hit_rate": 0.1521781095167621,
+          "mrr": 0.06476054634796027
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.031105638586956523,
+          "recall": 0.024004573685332195,
+          "ndcg": 0.03809249337820561,
+          "hit_rate": 0.21807065217391305,
+          "mrr": 0.09303728011056475
+        }
+      ],
+      "eval_runtime_seconds": 33.21
+    },
+    {
+      "variant_name": "damped_mean_m1000",
+      "variant_type": "damped_mean",
+      "damping_m": 1000.0,
+      "precision": {
+        "mean": 0.024806,
+        "ci_lower": 0.024383,
+        "ci_upper": 0.02519
+      },
+      "recall": {
+        "mean": 0.026872,
+        "ci_lower": 0.026347,
+        "ci_upper": 0.027395
+      },
+      "ndcg": {
+        "mean": 0.03294,
+        "ci_lower": 0.032357,
+        "ci_upper": 0.033477
+      },
+      "hit_rate": {
+        "mean": 0.174523,
+        "ci_lower": 0.172073,
+        "ci_upper": 0.176919
+      },
+      "mrr": {
+        "mean": 0.073491,
+        "ci_lower": 0.072098,
+        "ci_upper": 0.074864
+      },
+      "catalog_coverage": 0.008646,
+      "mean_recommended_popularity": {
+        "mean": 26652.872417,
+        "ci_lower": 26618.286331,
+        "ci_upper": 26684.724862
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.014384456526320226,
+          "recall": 0.03509308262437608,
+          "ndcg": 0.02798751681321604,
+          "hit_rate": 0.11581742318877228,
+          "mrr": 0.04691803457450189
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.017423473702012516,
+          "recall": 0.027567776521353383,
+          "ndcg": 0.025381600075840047,
+          "hit_rate": 0.13525283274141722,
+          "mrr": 0.05471314885952126
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.024281627599163146,
+          "recall": 0.024276098911133637,
+          "ndcg": 0.029733789455119078,
+          "hit_rate": 0.1760385978395457,
+          "mrr": 0.07371286316783947
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.04327958133004298,
+          "recall": 0.02045775952090192,
+          "ndcg": 0.04874154188876826,
+          "hit_rate": 0.2717950899885121,
+          "mrr": 0.11899468760826887
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.018340470599069854,
+          "recall": 0.027870429658260774,
+          "ndcg": 0.027367748668879952,
+          "hit_rate": 0.13302942395358475,
+          "mrr": 0.0554444948767369
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.02241168521974133,
+          "recall": 0.02615681596488916,
+          "ndcg": 0.03014579852844829,
+          "hit_rate": 0.16009265813010745,
+          "mrr": 0.06754228191072668
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.0338088768115942,
+          "recall": 0.025958122102632458,
+          "ndcg": 0.04102033253074794,
+          "hit_rate": 0.2318840579710145,
+          "mrr": 0.09829625001797215
+        }
+      ],
+      "eval_runtime_seconds": 32.3
+    },
+    {
+      "variant_name": "damped_mean_m2500",
+      "variant_type": "damped_mean",
+      "damping_m": 2500.0,
+      "precision": {
+        "mean": 0.027756,
+        "ci_lower": 0.027302,
+        "ci_upper": 0.028179
+      },
+      "recall": {
+        "mean": 0.030196,
+        "ci_lower": 0.029643,
+        "ci_upper": 0.030772
+      },
+      "ndcg": {
+        "mean": 0.036494,
+        "ci_lower": 0.035863,
+        "ci_upper": 0.037067
+      },
+      "hit_rate": {
+        "mean": 0.19168,
+        "ci_lower": 0.189134,
+        "ci_upper": 0.194236
+      },
+      "mrr": {
+        "mean": 0.079455,
+        "ci_lower": 0.078019,
+        "ci_upper": 0.080852
+      },
+      "catalog_coverage": 0.009795,
+      "mean_recommended_popularity": {
+        "mean": 29685.965139,
+        "ci_lower": 29653.564583,
+        "ci_upper": 29719.397001
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.016095587305601212,
+          "recall": 0.03924412012033709,
+          "ndcg": 0.031154759290917683,
+          "hit_rate": 0.12875626922914823,
+          "mrr": 0.051420757679450306
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.01968966683578556,
+          "recall": 0.03115196010934215,
+          "ndcg": 0.02831531450827427,
+          "hit_rate": 0.14983933705394892,
+          "mrr": 0.05930383752238141
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.027244780325349043,
+          "recall": 0.027402893581579452,
+          "ndcg": 0.03291142647113397,
+          "hit_rate": 0.19499594381110968,
+          "mrr": 0.07954410063414803
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.04815555461004978,
+          "recall": 0.02288390217045796,
+          "ndcg": 0.05368314414667438,
+          "hit_rate": 0.2940050206356635,
+          "mrr": 0.12794491280748352
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.020569139383892803,
+          "recall": 0.03128381468503654,
+          "ndcg": 0.030380210641364067,
+          "hit_rate": 0.14705069761016715,
+          "mrr": 0.06008686962375317
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.02528794800849366,
+          "recall": 0.029772014594122344,
+          "ndcg": 0.03366723542923019,
+          "hit_rate": 0.17746605752525577,
+          "mrr": 0.07325750217295163
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.03767832880434782,
+          "recall": 0.029045709806689083,
+          "ndcg": 0.04525304783464534,
+          "hit_rate": 0.2528023097826087,
+          "mrr": 0.10599236901886358
+        }
+      ],
+      "eval_runtime_seconds": 40.93
+    },
+    {
+      "variant_name": "damped_mean_m5000",
+      "variant_type": "damped_mean",
+      "damping_m": 5000.0,
+      "precision": {
+        "mean": 0.031668,
+        "ci_lower": 0.031193,
+        "ci_upper": 0.032122
+      },
+      "recall": {
+        "mean": 0.034899,
+        "ci_lower": 0.034298,
+        "ci_upper": 0.035512
+      },
+      "ndcg": {
+        "mean": 0.040712,
+        "ci_lower": 0.04007,
+        "ci_upper": 0.041326
+      },
+      "hit_rate": {
+        "mean": 0.210174,
+        "ci_lower": 0.207618,
+        "ci_upper": 0.212687
+      },
+      "mrr": {
+        "mean": 0.084777,
+        "ci_lower": 0.083343,
+        "ci_upper": 0.0861
+      },
+      "catalog_coverage": 0.010178,
+      "mean_recommended_popularity": {
+        "mean": 34179.294804,
+        "ci_lower": 34141.640858,
+        "ci_upper": 34218.702427
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.01875079023896827,
+          "recall": 0.045697487491646045,
+          "ndcg": 0.03497563050548529,
+          "hit_rate": 0.1440131495764319,
+          "mrr": 0.05504528696461937
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.023067816675122612,
+          "recall": 0.03660629435299653,
+          "ndcg": 0.03205222560984911,
+          "hit_rate": 0.16818873668188736,
+          "mrr": 0.06361663767485685
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.031377823320951286,
+          "recall": 0.031469763890940285,
+          "ndcg": 0.036721967766426604,
+          "hit_rate": 0.2132701421800948,
+          "mrr": 0.08408779463281835
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.05365272518401906,
+          "recall": 0.02569841168967927,
+          "ndcg": 0.05919328804040602,
+          "hit_rate": 0.31612985576309405,
+          "mrr": 0.1367738600070643
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.023988119906064375,
+          "recall": 0.03677620328676718,
+          "ndcg": 0.03417296859910998,
+          "hit_rate": 0.1642261822535341,
+          "mrr": 0.06388664136281211
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.02909722669068915,
+          "recall": 0.03411981782056748,
+          "ndcg": 0.037489751327049084,
+          "hit_rate": 0.19625506724149025,
+          "mrr": 0.07773848080295541
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.04224128170289856,
+          "recall": 0.03293494586381111,
+          "ndcg": 0.05016853876504553,
+          "hit_rate": 0.2727864583333333,
+          "mrr": 0.11355724628695077
+        }
+      ],
+      "eval_runtime_seconds": 34.51
+    },
+    {
+      "variant_name": "damped_mean_m10000",
+      "variant_type": "damped_mean",
+      "damping_m": 10000.0,
+      "precision": {
+        "mean": 0.034161,
+        "ci_lower": 0.033656,
+        "ci_upper": 0.034643
+      },
+      "recall": {
+        "mean": 0.037961,
+        "ci_lower": 0.037302,
+        "ci_upper": 0.038612
+      },
+      "ndcg": {
+        "mean": 0.043714,
+        "ci_lower": 0.043057,
+        "ci_upper": 0.044334
+      },
+      "hit_rate": {
+        "mean": 0.222411,
+        "ci_lower": 0.219728,
+        "ci_upper": 0.22502
+      },
+      "mrr": {
+        "mean": 0.089381,
+        "ci_lower": 0.087942,
+        "ci_upper": 0.090769
+      },
+      "catalog_coverage": 0.010889,
+      "mean_recommended_popularity": {
+        "mean": 36396.517313,
+        "ci_lower": 36360.874489,
+        "ci_upper": 36434.199399
+      },
+      "activity_breakdown": [
+        {
+          "bucket": "Q1 (Low)",
+          "n_users": 23727,
+          "min_train_ratings": 40,
+          "max_train_ratings": 61,
+          "precision": 0.02017532768575884,
+          "recall": 0.049170424691982406,
+          "ndcg": 0.03734104074962621,
+          "hit_rate": 0.15265309562945167,
+          "mrr": 0.058078316110304985
+        },
+        {
+          "bucket": "Q2 (Med-Low)",
+          "n_users": 23652,
+          "min_train_ratings": 62,
+          "max_train_ratings": 102,
+          "precision": 0.02515643497378657,
+          "recall": 0.04023167779192639,
+          "ndcg": 0.034662534633466226,
+          "hit_rate": 0.18083037375274819,
+          "mrr": 0.06727128347815815
+        },
+        {
+          "bucket": "Q3 (Med-High)",
+          "n_users": 23421,
+          "min_train_ratings": 103,
+          "max_train_ratings": 201,
+          "precision": 0.03408052602365398,
+          "recall": 0.03459653364705074,
+          "ndcg": 0.039650632339306706,
+          "hit_rate": 0.22770163528457368,
+          "mrr": 0.08881042518483277
+        },
+        {
+          "bucket": "Q4 (High)",
+          "n_users": 23503,
+          "min_train_ratings": 202,
+          "max_train_ratings": 11163,
+          "precision": 0.05742245670765435,
+          "recall": 0.02771175819297197,
+          "ndcg": 0.06330499781618736,
+          "hit_rate": 0.3294047568395524,
+          "mrr": 0.1437991536372594
+        }
+      ],
+      "session_strata_breakdown": [
+        {
+          "strata": "< 1 day (Onboarding Spree)",
+          "n_users": 43434,
+          "pct_of_evaluated": 46.05791968442149,
+          "min_span_days": 0.0,
+          "max_span_days": 0.9998726851851852,
+          "precision": 0.025712575401758996,
+          "recall": 0.03975519236480749,
+          "ndcg": 0.03646909872337475,
+          "hit_rate": 0.17345858083529034,
+          "mrr": 0.06695245879352801
+        },
+        {
+          "strata": "1-30 days (Short-term / Casual)",
+          "n_users": 15541,
+          "pct_of_evaluated": 16.479857480674,
+          "min_span_days": 1.000173611111111,
+          "max_span_days": 29.99857638888889,
+          "precision": 0.031207772987581237,
+          "recall": 0.03702325642500326,
+          "ndcg": 0.04004752741185913,
+          "hit_rate": 0.20719387426806513,
+          "mrr": 0.08176416095468926
+        },
+        {
+          "strata": ">= 30 days (Multi-session / Longitudinal)",
+          "n_users": 35328,
+          "pct_of_evaluated": 37.46222283490451,
+          "min_span_days": 30.002627314814816,
+          "max_span_days": 8101.3568981481485,
+          "precision": 0.04584748641304348,
+          "recall": 0.036167224974079516,
+          "ndcg": 0.05423365345479837,
+          "hit_rate": 0.2892889492753623,
+          "mrr": 0.12030556948398319
+        }
+      ],
+      "eval_runtime_seconds": 37.67
+    }
+  ],
+  "best_variant": {
+    "variant_name": "most_liked",
+    "variant_type": "most_liked",
+    "damping_m": 0.0,
+    "precision": {
+      "mean": 0.040078,
+      "ci_lower": 0.039524,
+      "ci_upper": 0.040628
+    },
+    "recall": {
+      "mean": 0.04501,
+      "ci_lower": 0.044264,
+      "ci_upper": 0.045719
+    },
+    "ndcg": {
+      "mean": 0.05192,
+      "ci_lower": 0.051107,
+      "ci_upper": 0.052611
+    },
+    "hit_rate": {
+      "mean": 0.250883,
+      "ci_lower": 0.248115,
+      "ci_upper": 0.253694
+    },
+    "mrr": {
+      "mean": 0.10484,
+      "ci_lower": 0.103258,
+      "ci_upper": 0.106467
+    },
+    "catalog_coverage": 0.015157,
+    "mean_recommended_popularity": {
+      "mean": 42145.362669,
+      "ci_lower": 42112.183241,
+      "ci_upper": 42177.828834
+    },
+    "activity_breakdown": [
+      {
+        "bucket": "Q1 (Low)",
+        "n_users": 23727,
+        "min_train_ratings": 40,
+        "max_train_ratings": 61,
+        "precision": 0.02295275424621739,
+        "recall": 0.05675762191756628,
+        "ndcg": 0.0434094897001788,
+        "hit_rate": 0.17372613478315843,
+        "mrr": 0.06883762453998894
+      },
+      {
+        "bucket": "Q2 (Med-Low)",
+        "n_users": 23652,
+        "min_train_ratings": 62,
+        "max_train_ratings": 102,
+        "precision": 0.029638085574158632,
+        "recall": 0.048069325843932635,
+        "ndcg": 0.04216673496327196,
+        "hit_rate": 0.20556401150008455,
+        "mrr": 0.08127600538496023
+      },
+      {
+        "bucket": "Q3 (Med-High)",
+        "n_users": 23421,
+        "min_train_ratings": 103,
+        "max_train_ratings": 201,
+        "precision": 0.04065582169847573,
+        "recall": 0.04235157773560976,
+        "ndcg": 0.047893567658425444,
+        "hit_rate": 0.25929721190384697,
+        "mrr": 0.10450214940736267
+      },
+      {
+        "bucket": "Q4 (High)",
+        "n_users": 23503,
+        "min_train_ratings": 202,
+        "max_train_ratings": 11163,
+        "precision": 0.06729779177126324,
+        "recall": 0.0327210061823301,
+        "ndcg": 0.07433945925393236,
+        "hit_rate": 0.3659958303195337,
+        "mrr": 0.16523463063479232
+      }
+    ],
+    "session_strata_breakdown": [
+      {
+        "strata": "< 1 day (Onboarding Spree)",
+        "n_users": 43434,
+        "pct_of_evaluated": 46.05791968442149,
+        "min_span_days": 0.0,
+        "max_span_days": 0.9998726851851852,
+        "precision": 0.03037251922457061,
+        "recall": 0.04749442764985395,
+        "ndcg": 0.04373621338410068,
+        "hit_rate": 0.20016576875259012,
+        "mrr": 0.08013355055764228
+      },
+      {
+        "strata": "1-30 days (Short-term / Casual)",
+        "n_users": 15541,
+        "pct_of_evaluated": 16.479857480674,
+        "min_span_days": 1.000173611111111,
+        "max_span_days": 29.99857638888889,
+        "precision": 0.0374686313622032,
+        "recall": 0.043873977304375776,
+        "ndcg": 0.048318866129704964,
+        "hit_rate": 0.24136155974519014,
+        "mrr": 0.0983790700073436
+      },
+      {
+        "strata": ">= 30 days (Multi-session / Longitudinal)",
+        "n_users": 35328,
+        "pct_of_evaluated": 37.46222283490451,
+        "min_span_days": 30.002627314814816,
+        "max_span_days": 8101.3568981481485,
+        "precision": 0.053158967391304345,
+        "recall": 0.04245537388804207,
+        "ndcg": 0.06356595181708083,
+        "hit_rate": 0.31742527173913043,
+        "mrr": 0.1380569236865942
+      }
+    ],
+    "eval_runtime_seconds": 35.24
+  },
+  "paired_comparison_most_liked_vs_most_rated": {
+    "ndcg": {
+      "metric": "NDCG@10",
+      "mean_diff": 0.000351,
+      "ci_lower": 6e-05,
+      "ci_upper": 0.000656,
+      "relative_lift": 0.0068,
+      "pct_liked_better": 12.2,
+      "pct_equal": 77.84,
+      "pct_rated_better": 9.97,
+      "is_distinguishable_from_zero": true
+    },
+    "hit_rate": {
+      "metric": "HIT_RATE@10",
+      "mean_diff": 0.00087,
+      "ci_lower": -0.000488,
+      "ci_upper": 0.00229,
+      "relative_lift": 0.0035,
+      "pct_liked_better": 2.45,
+      "pct_equal": 95.2,
+      "pct_rated_better": 2.36,
+      "is_distinguishable_from_zero": false
+    },
+    "recall": {
+      "metric": "RECALL@10",
+      "mean_diff": 0.000143,
+      "ci_lower": -0.000209,
+      "ci_upper": 0.000486,
+      "relative_lift": 0.0032,
+      "pct_liked_better": 4.89,
+      "pct_equal": 90.73,
+      "pct_rated_better": 4.38,
+      "is_distinguishable_from_zero": false
+    }
+  },
+  "sample_vs_full_comparison": {
+    "sample_users": 5000,
+    "seed": 42,
+    "differences": {
+      "precision": {
+        "full_mean": 0.040078,
+        "sample_mean": 0.03844,
+        "abs_difference": 0.001638,
+        "sample_ci": [
+          0.036439,
+          0.040821
+        ]
+      },
+      "recall": {
+        "full_mean": 0.04501,
+        "sample_mean": 0.043917,
+        "abs_difference": 0.001093,
+        "sample_ci": [
+          0.040734,
+          0.046844
+        ]
+      },
+      "ndcg": {
+        "full_mean": 0.05192,
+        "sample_mean": 0.049494,
+        "abs_difference": 0.002426,
+        "sample_ci": [
+          0.046362,
+          0.052524
+        ]
+      },
+      "hit_rate": {
+        "full_mean": 0.250883,
+        "sample_mean": 0.2462,
+        "abs_difference": 0.004683,
+        "sample_ci": [
+          0.2344,
+          0.257605
+        ]
+      },
+      "mrr": {
+        "full_mean": 0.10484,
+        "sample_mean": 0.100147,
+        "abs_difference": 0.004693,
+        "sample_ci": [
+          0.093756,
+          0.106861
+        ]
+      },
+      "mean_recommended_popularity": {
+        "full_mean": 42145.362669,
+        "sample_mean": 42187.68354,
+        "abs_difference": 42.320871,
+        "sample_ci": [
+          42055.278448,
+          42326.113301
+        ]
+      }
+    }
+  }
+}

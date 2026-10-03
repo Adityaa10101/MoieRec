@@ -1,0 +1,489 @@
+{
+  "snapshot_features": true,
+  "snapshot_leakage_warning": "CRITICAL TEMPORAL LEAKAGE NOTICE: Tier 2 features (Tags and Tag Genome) were aggregated over the entire MovieLens history up to November 2019. Because user tags and genome scores encapsulate future post-release information, Tier 2 features leak semantic signals across chronological splits. These results are reported in a separate experiment labeled snapshot_features=true and must never be mixed into Tier 1 clean temporal results.",
+  "metadata": {
+    "snapshot_features": true,
+    "dataset": "ml-25m",
+    "timestamp": "2026-10-02T19:08:38.995582+00:00",
+    "git_commit": "d8fcd85cc419eed2ffa0b8d60b5e0adc272206c1",
+    "dirty_working_tree": true,
+    "positive_threshold": 4.0,
+    "tie_break": "random_perm",
+    "train_content_hash": "603b4cac7a747d1ec92fdd5e909195df5edd7c15e10667e56bf396d9d249719e",
+    "validation_content_hash": "6a83709bece6cafeefd18f3d035106841a3f5e0a89e5d1ea86501899ee677e68",
+    "packages": {
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "scipy": "1.18.1",
+      "pyarrow": "24.0.0",
+      "pytest": "9.1.1"
+    },
+    "tuning_sample_size": 20000,
+    "tuning_seed": 42,
+    "total_runtime_seconds": 1119.64
+  },
+  "chosen_config": {
+    "snapshot_features": true,
+    "name": "t1_1.0_tags_8_gen_0.5",
+    "tier2_block_weights": {
+      "tier1": 1.0,
+      "tags": 8.0,
+      "genome": 0.5
+    },
+    "ndcg": 0.065859,
+    "precision": 0.047865,
+    "recall": 0.057556,
+    "hit_rate": 0.3171,
+    "mrr": 0.139766,
+    "catalog_coverage": 0.10829,
+    "zero_profile_users": 1
+  },
+  "tuning_grid_results": [
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_1_gen_0.5",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 0.5
+      },
+      "ndcg": 0.010684,
+      "precision": 0.00856,
+      "recall": 0.013174,
+      "hit_rate": 0.07485,
+      "mrr": 0.019624,
+      "catalog_coverage": 0.08487,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_1_gen_1",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.010083,
+      "precision": 0.007535,
+      "recall": 0.012508,
+      "hit_rate": 0.06595,
+      "mrr": 0.018646,
+      "catalog_coverage": 0.074856,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_1_gen_2",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 2.0
+      },
+      "ndcg": 0.008591,
+      "precision": 0.006535,
+      "recall": 0.010638,
+      "hit_rate": 0.0573,
+      "mrr": 0.015579,
+      "catalog_coverage": 0.086621,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_1_gen_4",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 1.0,
+        "genome": 4.0
+      },
+      "ndcg": 0.004367,
+      "precision": 0.00323,
+      "recall": 0.004441,
+      "hit_rate": 0.0256,
+      "mrr": 0.008795,
+      "catalog_coverage": 0.07119,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_2_gen_0.5",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 2.0,
+        "genome": 0.5
+      },
+      "ndcg": 0.01137,
+      "precision": 0.008145,
+      "recall": 0.014004,
+      "hit_rate": 0.06895,
+      "mrr": 0.020537,
+      "catalog_coverage": 0.048208,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_2_gen_1",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 2.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.002808,
+      "precision": 0.001835,
+      "recall": 0.003988,
+      "hit_rate": 0.0163,
+      "mrr": 0.004373,
+      "catalog_coverage": 0.031135,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_2_gen_2",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 2.0,
+        "genome": 2.0
+      },
+      "ndcg": 0.001961,
+      "precision": 0.001265,
+      "recall": 0.002928,
+      "hit_rate": 0.0113,
+      "mrr": 0.002838,
+      "catalog_coverage": 0.029658,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_2_gen_4",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 2.0,
+        "genome": 4.0
+      },
+      "ndcg": 0.005741,
+      "precision": 0.004365,
+      "recall": 0.007543,
+      "hit_rate": 0.0376,
+      "mrr": 0.009528,
+      "catalog_coverage": 0.063529,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_4_gen_0.5",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 4.0,
+        "genome": 0.5
+      },
+      "ndcg": 0.04444,
+      "precision": 0.030055,
+      "recall": 0.042579,
+      "hit_rate": 0.2145,
+      "mrr": 0.094914,
+      "catalog_coverage": 0.072066,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_4_gen_1",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 4.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.013616,
+      "precision": 0.00801,
+      "recall": 0.015582,
+      "hit_rate": 0.0667,
+      "mrr": 0.026396,
+      "catalog_coverage": 0.041368,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_4_gen_2",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 4.0,
+        "genome": 2.0
+      },
+      "ndcg": 0.00088,
+      "precision": 0.00049,
+      "recall": 0.001074,
+      "hit_rate": 0.00445,
+      "mrr": 0.001469,
+      "catalog_coverage": 0.017893,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_4_gen_4",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 4.0,
+        "genome": 4.0
+      },
+      "ndcg": 0.000542,
+      "precision": 0.00036,
+      "recall": 0.000695,
+      "hit_rate": 0.0034,
+      "mrr": 0.000933,
+      "catalog_coverage": 0.015923,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_8_gen_0.5",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 8.0,
+        "genome": 0.5
+      },
+      "ndcg": 0.065859,
+      "precision": 0.047865,
+      "recall": 0.057556,
+      "hit_rate": 0.3171,
+      "mrr": 0.139766,
+      "catalog_coverage": 0.10829,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_8_gen_1",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 8.0,
+        "genome": 1.0
+      },
+      "ndcg": 0.057451,
+      "precision": 0.040025,
+      "recall": 0.05298,
+      "hit_rate": 0.27405,
+      "mrr": 0.123111,
+      "catalog_coverage": 0.08684,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_8_gen_2",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 8.0,
+        "genome": 2.0
+      },
+      "ndcg": 0.010797,
+      "precision": 0.00588,
+      "recall": 0.012539,
+      "hit_rate": 0.04965,
+      "mrr": 0.020328,
+      "catalog_coverage": 0.039343,
+      "zero_profile_users": 1
+    },
+    {
+      "snapshot_features": true,
+      "name": "t1_1.0_tags_8_gen_4",
+      "tier2_block_weights": {
+        "tier1": 1.0,
+        "tags": 8.0,
+        "genome": 4.0
+      },
+      "ndcg": 0.00052,
+      "precision": 0.000285,
+      "recall": 0.000561,
+      "hit_rate": 0.00265,
+      "mrr": 0.000924,
+      "catalog_coverage": 0.012859,
+      "zero_profile_users": 1
+    }
+  ],
+  "full_validation_metrics": {
+    "snapshot_features": true,
+    "precision": {
+      "mean": 0.048277,
+      "ci_lower": 0.047711,
+      "ci_upper": 0.048809
+    },
+    "recall": {
+      "mean": 0.057411,
+      "ci_lower": 0.056568,
+      "ci_upper": 0.058159
+    },
+    "ndcg": {
+      "mean": 0.066616,
+      "ci_lower": 0.065755,
+      "ci_upper": 0.067354
+    },
+    "hit_rate": {
+      "mean": 0.316777,
+      "ci_lower": 0.31369,
+      "ci_upper": 0.319652
+    },
+    "mrr": {
+      "mean": 0.141857,
+      "ci_lower": 0.139928,
+      "ci_upper": 0.143581
+    },
+    "catalog_coverage": 0.182107,
+    "genome_coverage_among_recommendations": 0.997394,
+    "mean_recommended_popularity": {
+      "mean": 25230.950639,
+      "ci_lower": 25175.948862,
+      "ci_upper": 25286.69204
+    },
+    "zero_profile_users": 7,
+    "activity_breakdown": [
+      {
+        "bucket": "Q1 (Low)",
+        "n_users": 23727,
+        "min_train_ratings": 40,
+        "max_train_ratings": 61,
+        "precision": 0.030619125890335903,
+        "recall": 0.07473804205375832,
+        "ndcg": 0.059890996594448735,
+        "hit_rate": 0.23525940911198212,
+        "mrr": 0.09983487768605988
+      },
+      {
+        "bucket": "Q2 (Med-Low)",
+        "n_users": 23652,
+        "min_train_ratings": 62,
+        "max_train_ratings": 102,
+        "precision": 0.03864789446981228,
+        "recall": 0.06270352437272782,
+        "ndcg": 0.05844576012341655,
+        "hit_rate": 0.27460679857940135,
+        "mrr": 0.11984527970385404
+      },
+      {
+        "bucket": "Q3 (Med-High)",
+        "n_users": 23421,
+        "min_train_ratings": 103,
+        "max_train_ratings": 201,
+        "precision": 0.0502967422398702,
+        "recall": 0.05349369120013208,
+        "ndcg": 0.06353413907505316,
+        "hit_rate": 0.3338456940352675,
+        "mrr": 0.14919359101823557
+      },
+      {
+        "bucket": "Q4 (High)",
+        "n_users": 23503,
+        "min_train_ratings": 202,
+        "max_train_ratings": 11163,
+        "precision": 0.0737820703739948,
+        "recall": 0.038495570142877494,
+        "ndcg": 0.08469803293256845,
+        "hit_rate": 0.4244990001276433,
+        "mrr": 0.19912051078923393
+      }
+    ],
+    "session_strata_breakdown": [
+      {
+        "strata": "< 1 day (Onboarding Spree)",
+        "n_users": 43434,
+        "pct_of_evaluated": 46.05791968442149,
+        "min_span_days": 0.0,
+        "max_span_days": 0.9998726851851852,
+        "precision": 0.0378919740295621,
+        "recall": 0.0602480625842222,
+        "ndcg": 0.05803930344168576,
+        "hit_rate": 0.2610167150158862,
+        "mrr": 0.11445841747851694
+      },
+      {
+        "strata": "1-30 days (Short-term / Casual)",
+        "n_users": 15541,
+        "pct_of_evaluated": 16.479857480674,
+        "min_span_days": 1.000173611111111,
+        "max_span_days": 29.99857638888889,
+        "precision": 0.04618106942925166,
+        "recall": 0.05806423228123736,
+        "ndcg": 0.06458666767733916,
+        "hit_rate": 0.3108551573257834,
+        "mrr": 0.13827267453321118
+      },
+      {
+        "strata": ">= 30 days (Multi-session / Longitudinal)",
+        "n_users": 35328,
+        "pct_of_evaluated": 37.46222283490451,
+        "min_span_days": 30.002627314814816,
+        "max_span_days": 8101.3568981481485,
+        "precision": 0.061967844202898546,
+        "recall": 0.0536350720327731,
+        "ndcg": 0.07805319366697244,
+        "hit_rate": 0.38793591485507245,
+        "mrr": 0.17711935629097653
+      }
+    ]
+  },
+  "paired_comparison_vs_tier1": {
+    "ndcg": {
+      "metric": "NDCG@10",
+      "mean_diff": 0.063796,
+      "ci_lower": 0.062929,
+      "ci_upper": 0.064556,
+      "relative_lift": 22.6271,
+      "pct_tier2_better": 31.35,
+      "pct_equal": 67.3,
+      "pct_tier1_better": 1.34,
+      "distinguishable_from_zero": true
+    },
+    "hit_rate": {
+      "metric": "HIT_RATE@10",
+      "mean_diff": 0.294476,
+      "ci_lower": 0.291295,
+      "ci_upper": 0.297403,
+      "relative_lift": 13.2049,
+      "pct_tier2_better": 30.52,
+      "pct_equal": 68.41,
+      "pct_tier1_better": 1.07,
+      "distinguishable_from_zero": true
+    },
+    "recall": {
+      "metric": "RECALL@10",
+      "mean_diff": 0.054426,
+      "ci_lower": 0.053613,
+      "ci_upper": 0.055194,
+      "relative_lift": 18.2365,
+      "pct_tier2_better": 31.06,
+      "pct_equal": 67.85,
+      "pct_tier1_better": 1.09,
+      "distinguishable_from_zero": true
+    }
+  },
+  "paired_comparison_vs_popularity_most_liked": {
+    "ndcg": {
+      "metric": "NDCG@10",
+      "mean_diff": 0.014696,
+      "ci_lower": 0.013927,
+      "ci_upper": 0.015484,
+      "relative_lift": 0.283,
+      "pct_tier2_better": 22.93,
+      "pct_equal": 62.05,
+      "pct_pop_better": 15.02,
+      "distinguishable_from_zero": true
+    },
+    "hit_rate": {
+      "metric": "HIT_RATE@10",
+      "mean_diff": 0.065894,
+      "ci_lower": 0.062755,
+      "ci_upper": 0.0688,
+      "relative_lift": 0.2626,
+      "pct_tier2_better": 13.91,
+      "pct_equal": 78.77,
+      "pct_pop_better": 7.32,
+      "distinguishable_from_zero": true
+    },
+    "recall": {
+      "metric": "RECALL@10",
+      "mean_diff": 0.012401,
+      "ci_lower": 0.011598,
+      "ci_upper": 0.01319,
+      "relative_lift": 0.2755,
+      "pct_tier2_better": 18.1,
+      "pct_equal": 70.35,
+      "pct_pop_better": 11.56,
+      "distinguishable_from_zero": true
+    }
+  }
+}
