@@ -1,18 +1,35 @@
-import React from 'react';
-import { Header } from '../components/common/Header';
+import React, { useState } from 'react';
+import { Navbar } from '../components/navigation/Navbar';
+import { Footer } from '../components/navigation/Footer';
+import { SearchPalette } from '../components/feedback/SearchPalette';
+import { PopcornCursor } from '../components/common/PopcornCursor';
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col font-sans selection:bg-amber-500/30 selection:text-amber-200">
-      <Header />
-      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-10">{children}</main>
-      <footer className="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
-        MoieRec · College Mini-Project · Phase 1: Foundation
-      </footer>
+    <div className="min-h-screen bg-[#0d0e12] text-[#f8fafc] font-sans relative selection:bg-amber-500/30 selection:text-amber-200">
+      {/* Film grain noise overlay for cinematic texture */}
+      <div className="pointer-events-none fixed inset-0 film-grain z-10 opacity-45" aria-hidden="true" />
+
+      {/* Popcorn custom cursor accessory */}
+      <PopcornCursor />
+
+      {/* Global Navigation */}
+      <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+
+      {/* Main page content - Native Document-Level Vertical Scrolling */}
+      <div className="relative z-10 w-full min-h-screen">{children}</div>
+
+      {/* Global Curatorial Footer */}
+      <Footer />
+
+      {/* Search Palette Command Flyout (Cmd+K) */}
+      <SearchPalette isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
 };
