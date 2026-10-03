@@ -27,6 +27,7 @@ htmlcov/
 
 # Virtual Environments
 .venv/
+.venv*/
 env/
 venv/
 ENV/
@@ -78,3 +79,14 @@ recommender/models/*
 *~
 .DS_Store
 Thumbs.db
+
+# Scratch and temporary verification scripts
+scratch/
+
+# Datasets and matrices
+*.parquet
+*.npz
+*.npy
+
+# Build & Vite caches
+.vite/
