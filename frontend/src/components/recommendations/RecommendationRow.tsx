@@ -1,63 +1,56 @@
 import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight, Layers, Brain, Diamond, TrendingUp, Archive, Sparkles } from 'lucide-react';
-import type { RecommendationRowData } from '../../types/movie';
+import { ChevronLeft, ChevronRight, TrendingUp, Clock, Star } from 'lucide-react';
+import type { ApiMovie } from '../../api/types';
 import { MovieCard } from '../movie/MovieCard';
+import { MovieCardSkeleton } from '../common/MovieCardSkeleton';
 
-interface RecommendationRowProps {
-  rowData: RecommendationRowData;
+interface ApiRecommendationRowData {
+  id: string;
+  title: string;
+  subtitle: string;
+  movies: ApiMovie[];
 }
 
-export const RecommendationRow: React.FC<RecommendationRowProps> = ({ rowData }) => {
+interface RecommendationRowProps {
+  rowData: ApiRecommendationRowData;
+  loading?: boolean;
+}
+
+function getRowIcon(id: string): React.ReactNode {
+  if (id.includes('scifi')) return <Star className="w-4 h-4 text-amber-500" />;
+  if (id.includes('drama')) return <Clock className="w-4 h-4 text-amber-500" />;
+  return <TrendingUp className="w-4 h-4 text-amber-500" />;
+}
+
+export const RecommendationRow: React.FC<RecommendationRowProps> = ({ rowData, loading }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 480;
       scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        left: direction === 'left' ? -480 : 480,
         behavior: 'smooth',
       });
     }
   };
 
-  const getSectionIcon = (iconType: string) => {
-    switch (iconType) {
-      case 'hub':
-        return <Layers className="w-4 h-4 text-amber-500" />;
-      case 'psychology':
-        return <Brain className="w-4 h-4 text-amber-500" />;
-      case 'diamond':
-        return <Diamond className="w-4 h-4 text-amber-500" />;
-      case 'trending':
-        return <TrendingUp className="w-4 h-4 text-amber-500" />;
-      case 'archive':
-        return <Archive className="w-4 h-4 text-amber-500" />;
-      default:
-        return <Sparkles className="w-4 h-4 text-amber-500" />;
-    }
-  };
-
   return (
     <section className="space-y-4 reveal-on-scroll">
-      {/* Section Header with Explainability Context and Controls */}
+      {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          {/* Explainable Anchor Pill / Tag */}
           <div className="flex items-center gap-2 text-amber-500 font-mono text-xs tracking-widest uppercase font-semibold">
-            {getSectionIcon(rowData.iconType)}
-            <span>{rowData.anchorBadge}</span>
+            {getRowIcon(rowData.id)}
+            <span>MovieLens · Model 0 (Popularity)</span>
           </div>
 
-          {/* Row Heading */}
           <h2 className="font-serif text-2xl sm:text-3xl text-white font-bold tracking-tight">
             {rowData.title}
           </h2>
 
-          {/* Subtitle / Telemetry Evidence */}
           <p className="text-sm text-slate-400 max-w-2xl">{rowData.subtitle}</p>
         </div>
 
-        {/* Horizontal Navigation Chevron Controls */}
         <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
           <button
             onClick={() => scroll('left')}
@@ -76,17 +69,23 @@ export const RecommendationRow: React.FC<RecommendationRowProps> = ({ rowData })
         </div>
       </div>
 
-      {/* Horizontal Movie Slider Container */}
+      {/* Movie Slider */}
       <div
         ref={scrollContainerRef}
         className="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth py-4 -my-4 px-1"
         style={{ scrollSnapType: 'x proximity' }}
       >
-        {rowData.movies.map((movie, idx) => (
-          <div key={movie.id} style={{ scrollSnapAlign: 'start' }}>
-            <MovieCard movie={movie} index={idx} />
-          </div>
-        ))}
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} style={{ scrollSnapAlign: 'start' }}>
+                <MovieCardSkeleton />
+              </div>
+            ))
+          : rowData.movies.map((movie, idx) => (
+              <div key={movie.movie_id} style={{ scrollSnapAlign: 'start' }}>
+                <MovieCard movie={movie} index={idx} />
+              </div>
+            ))}
       </div>
     </section>
   );

@@ -25,13 +25,12 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="w-full border-t border-white/10 bg-[#0d0e12] relative z-20">
-      {/* Scroll Progress Easter Egg Bar (Miniature popcorn bucket progress) */}
+      {/* Scroll Progress Easter Egg Bar */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-10 pb-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#1a1b20] border border-white/10">
           <div className="flex items-center gap-3">
             <div className="relative w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0">
               <span className="text-lg">🍿</span>
-              {/* Gold fill indicator inside container */}
               <div
                 className="absolute bottom-0 left-0 right-0 bg-amber-500/20 rounded-b-lg transition-all duration-300"
                 style={{ height: `${scrollProgress}%` }}
@@ -39,13 +38,13 @@ export const Footer: React.FC = () => {
             </div>
             <div>
               <div className="text-xs font-mono font-semibold text-white flex items-center gap-2">
-                <span>Curatorial Feed Traversal</span>
+                <span>Feed Traversal</span>
                 <span className="text-amber-400 font-bold">{scrollProgress}% Complete</span>
               </div>
               <p className="text-[11px] text-slate-400">
                 {scrollProgress >= 95
-                  ? 'Movie night complete. 🍿 Ready for the private screening room.'
-                  : 'Curating dynamic recommendations across aesthetic affinity clusters...'}
+                  ? 'End of the popular feed. 🍿'
+                  : 'Browsing most-liked films on MovieLens...'}
               </p>
             </div>
           </div>
@@ -79,48 +78,62 @@ export const Footer: React.FC = () => {
               </span>
             </Link>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/15 text-amber-400 border border-amber-500/30 font-medium">
-              AI Curatorial Intelligence
+              Popularity-Based Discovery
             </span>
           </div>
           <p className="text-xs text-slate-500">
-            © {CURRENT_YEAR} MoieRec Curatorial Intelligence Inc. All rights reserved.
+            © {CURRENT_YEAR} MoieRec. All rights reserved.
           </p>
         </div>
 
-        {/* Footer Navigation Links */}
-        <nav className="flex flex-wrap justify-center items-center gap-5 text-xs text-slate-400">
-          <a
-            href="#editorial"
-            onClick={(e) => e.preventDefault()}
-            className="hover:text-amber-400 transition-colors"
-          >
-            Editorial Methodology
-          </a>
-          <a
-            href="#explainability"
-            onClick={(e) => e.preventDefault()}
-            className="hover:text-amber-400 transition-colors"
-          >
-            Explainability Engine
-          </a>
-          <Link to="/my-taste" className="hover:text-amber-400 transition-colors">
-            Curator Lounge
-          </Link>
-          <a
-            href="#api"
-            onClick={(e) => e.preventDefault()}
-            className="hover:text-amber-400 transition-colors"
-          >
-            API & Telemetry
-          </a>
-          <a
-            href="#privacy"
-            onClick={(e) => e.preventDefault()}
-            className="hover:text-amber-400 transition-colors"
-          >
-            Privacy & Terms
-          </a>
-        </nav>
+        {/* Footer Navigation + Attribution */}
+        <div className="flex flex-col items-center md:items-end gap-3">
+          <nav className="flex flex-wrap justify-center items-center gap-5 text-xs text-slate-400">
+            <Link to="/my-taste" className="hover:text-amber-400 transition-colors">
+              My Library
+            </Link>
+            <a
+              href="https://movielens.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-amber-400 transition-colors"
+            >
+              MovieLens
+            </a>
+            <a
+              href="https://www.themoviedb.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-amber-400 transition-colors"
+            >
+              TMDB
+            </a>
+          </nav>
+
+          {/* Required TMDB attribution + GroupLens/MovieLens credit */}
+          <p className="text-[10px] text-slate-600 text-center md:text-right max-w-xs leading-relaxed">
+            This product uses the TMDB API but is not endorsed or certified by TMDB.
+            Movie metadata from{' '}
+            <a
+              href="https://www.themoviedb.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-amber-400 transition-colors"
+            >
+              The Movie Database (TMDB)
+            </a>
+            . Ratings &amp; popularity data from{' '}
+            <a
+              href="https://grouplens.org/datasets/movielens/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-amber-400 transition-colors"
+            >
+              GroupLens / MovieLens
+            </a>
+            .
+          </p>
+        </div>
       </div>
     </footer>
   );

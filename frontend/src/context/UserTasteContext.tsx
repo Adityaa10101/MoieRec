@@ -101,7 +101,7 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           nd.delete(movie.id);
           return nd;
         });
-        showToast(`Taste vector updated with "${movie.title}" affinity`, { icon: 'heart' });
+        showToast(`"${movie.title}" added to liked`, { icon: 'heart' });
       }
       return next;
     });
