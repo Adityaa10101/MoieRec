@@ -1,0 +1,1149 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CineSense — Curatorial Intelligence &amp; Explainable Cinema</title>
+<!-- Fonts & Google Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline-variant": "#534434",
+            "primary-fixed": "#ffddb8",
+            "on-primary-container": "#613b00",
+            "on-tertiary-fixed": "#251a00",
+            "tertiary-container": "#dea900",
+            "tertiary": "#fdc425",
+            "surface-tint": "#ffb95f",
+            "on-surface-variant": "#d8c3ad",
+            "tertiary-fixed": "#ffdf9a",
+            "surface-container-highest": "#343439",
+            "surface-dim": "#121317",
+            "surface": "#121317",
+            "on-tertiary": "#3f2e00",
+            "on-tertiary-container": "#574000",
+            "surface-container-lowest": "#0d0e12",
+            "on-secondary-container": "#432100",
+            "secondary-fixed": "#ffdcc3",
+            "primary-container": "#f59e0b",
+            "on-primary": "#472a00",
+            "on-secondary": "#4d2600",
+            "secondary": "#ffb77d",
+            "surface-container-high": "#292a2e",
+            "inverse-surface": "#e3e2e7",
+            "surface-container": "#1f1f24",
+            "secondary-container": "#d97707",
+            "on-error-container": "#ffdad6",
+            "surface-container-low": "#1a1b20",
+            "on-primary-fixed": "#2a1700",
+            "tertiary-fixed-dim": "#f7be1d",
+            "surface-variant": "#343439",
+            "primary": "#ffc174",
+            "on-secondary-fixed": "#2f1500",
+            "error-container": "#93000a",
+            "inverse-on-surface": "#2f3035",
+            "secondary-fixed-dim": "#ffb77d",
+            "surface-bright": "#38393d",
+            "on-secondary-fixed-variant": "#6e3900",
+            "on-primary-fixed-variant": "#653e00",
+            "outline": "#a08e7a",
+            "on-surface": "#e3e2e7",
+            "background": "#121317",
+            "error": "#ffb4ab",
+            "on-error": "#690005",
+            "on-tertiary-fixed-variant": "#5a4300",
+            "inverse-primary": "#855300",
+            "primary-fixed-dim": "#ffb95f",
+            "on-background": "#e3e2e7"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "1.75rem",
+            "margin": "3rem",
+            "margin-mobile": "1.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "gutter": "1.5rem",
+            "space-xl": "3rem",
+            "gutter-mobile": "0.75rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Bodoni Moda", "serif"],
+            "display-hero-mobile": ["Bodoni Moda", "serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "headline-sm": ["Inter", "sans-serif"],
+            "caption": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "display-hero": ["Bodoni Moda", "serif"],
+            "headline-lg-mobile": ["Bodoni Moda", "serif"],
+            "label-tag": ["Space Grotesk", "sans-serif"],
+            "headline-lg": ["Bodoni Moda", "serif"],
+            "label-match": ["Space Grotesk", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+            "display-hero-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "caption": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "label-tag": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "label-match": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Film grain simulation */
+    .film-grain {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0);
+      background-size: 4px 4px;
+    }
+    /* Hide scrollbar for curated carousels */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased font-body-md text-body-md selection:bg-primary selection:text-on-primary-container relative min-h-screen overflow-x-hidden">
+<!-- Dynamic Ambient Lighting System that smoothly reacts to hovered elements -->
+<div class="pointer-events-none fixed -top-40 left-1/2 -translate-x-1/2 w-[1000px] h-[750px] bg-primary-container/10 rounded-full blur-[140px] transition-all duration-700 ease-out z-0" id="ambient-light-glow"></div>
+<!-- Film grain noise overlay -->
+<div class="pointer-events-none fixed inset-0 film-grain z-10 opacity-60"></div>
+<!-- ==================== TOP NAVIGATION ==================== -->
+<header class="fixed top-0 left-0 right-0 z-50 w-full border-b border-outline-variant/30 shadow-2xl bg-surface-dim/80 backdrop-blur-md dark:bg-surface-dim/80">
+<div class="flex justify-between items-center h-20 px-12 max-w-7xl mx-auto w-full">
+<!-- Brand & Global Nav Links -->
+<div class="flex items-center gap-10">
+<!-- Logo -->
+<a class="flex items-center gap-2 group" href="#">
+<span class="w-8 h-8 rounded-lg bg-surface-container-high border border-outline-variant/50 flex items-center justify-center text-primary group-hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">movie_filter</span>
+</span>
+<span class="font-headline-md text-headline-md tracking-tight text-primary dark:text-primary">CineSense</span>
+</a>
+<!-- Desktop Navigation Items -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-primary dark:text-primary font-medium border-b border-primary pb-1 font-body-md text-body-md" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors font-body-md text-body-md" href="#">Explore</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors font-body-md text-body-md flex items-center gap-2" href="#">
+            My Taste
+            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors font-body-md text-body-md flex items-center gap-2" href="#">
+            Search
+            <kbd class="px-1.5 py-0.5 text-[10px] font-label-tag text-on-surface-variant bg-surface-container rounded border border-outline-variant/40">⌘K</kbd>
+</a>
+</nav>
+</div>
+<!-- Right Trailing Profile & Curatorial Status -->
+<div class="flex items-center gap-5">
+<!-- Curated Taste Indicator Pill -->
+<div class="hidden lg:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">radar</span>
+<span class="font-label-tag text-caption tracking-wider text-on-surface uppercase">Cinephile Tier</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-tag text-caption text-primary">Sci-Fi &amp; Neo-Noir 92%</span>
+</div>
+<!-- Trailing action icon: Radar engine -->
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Curator Radar Engine">
+<span class="material-symbols-outlined">radar</span>
+</button>
+<!-- Trailing action icon: Notifications -->
+<button class="relative w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Curator Telemetry Alerts">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary-container"></span>
+</button>
+<!-- Curator Avatar -->
+<div class="relative pl-2 border-l border-outline-variant/30">
+<button class="relative rounded-full p-0.5 border border-primary/80 transition-transform active:scale-95" title="User Curator Profile">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Close up cinematic portrait of a sophisticated cinema curator lit by warm amber projector light in a darkened screening room with rich atmospheric depth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3pZwnHtgh_beyzUuDoTZmnCuPVwUuktxeVul1UUA53VXidazd-EFGzmtyxa4xE2U6s8H6QaI3UESMRTgGXHI53dWMC7YRe8itoaFfBlD_G7IaQyXpzJkZI6FRLVfVAj9eD1CIZGt1HZaj6Esqq34lrY5DrryMdf4BzeQQnFWccYS78VocppcLHlvijQZJTxKgRkBKQqUhVrqcNBN6FBvtYakrIZ-ktSy-n_2SigWk_5_3nkveCPiV">
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full border-2 border-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-[8px] text-surface-dim font-bold">check</span>
+</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== HERO SPOTLIGHT SECTION ==================== -->
+<section class="relative pt-24 pb-16 min-h-[942px] flex items-center justify-center overflow-hidden z-20">
+<!-- Hero Atmospheric Backdrop -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover object-center filter brightness-[0.45] contrast-125 scale-105 transition-transform duration-1000 ease-out" data-alt="Atmospheric widescreen cinematic frame of futuristic desert dunes under neon-drenched hazy skies with silhouetted solitary figure and monolithic architecture bathed in orange ambient lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgLAY387AM5S_6DkFqt3VJiCCsNaxUTlq17_UkodeMUF8TarhH7MEB_RgYAPJVREGdGIv1fGtmht2YGQuLqwVCZ8RpJYzElXQEK0HIX0tdUstseU792g-TZWAscqvmk_f_LH1t1yvrJa5rftEzx7aWN0QPR0iXwsfqN4qsJ7zre7gX4OFmzryh80bNIbcEHyNxjL1HRKbaTo-nE47Y-HGCAyj5aL81GQinQRzzo2FW20GMJevBnxiB">
+<!-- Multi-stop Dark Radial & Linear Gradients for seamless bleed -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-surface-container-lowest/60 to-transparent"></div>
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_25%_40%,rgba(245,158,11,0.12),transparent_70%)]"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-12 w-full pt-12">
+<div class="max-w-3xl space-y-6">
+<!-- Explainability Match Chip (Dual-Segment Style) -->
+<div class="inline-flex items-center rounded-lg overflow-hidden border border-outline-variant/40 shadow-lg backdrop-blur-md">
+<div class="bg-primary-container text-on-primary-container px-3.5 py-1.5 flex items-center gap-1.5 font-label-match text-label-match font-bold">
+<span class="material-symbols-outlined text-sm font-bold" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span>96% MATCH FOR YOU</span>
+</div>
+<div class="bg-surface-container-lowest/90 px-4 py-1.5 text-on-surface-variant font-label-tag text-caption tracking-wider">
+            BECAUSE OF WORLD-BUILDING, PHILOSOPHICAL SCALE &amp; ZIMMER SCORE
+          </div>
+</div>
+<!-- Master Title -->
+<div>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-tag text-body-sm tracking-widest uppercase mb-2">
+<span>Denis Villeneuve</span>
+<span class="text-outline-variant">•</span>
+<span>2017</span>
+<span class="text-outline-variant">•</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest/60 text-caption font-bold text-on-surface">R</span>
+<span class="text-outline-variant">•</span>
+<span>2h 44m</span>
+<span class="text-outline-variant">•</span>
+<span class="px-1.5 py-0.5 rounded border border-outline-variant/50 text-caption text-primary">IMAX Enhanced</span>
+<span class="px-1.5 py-0.5 rounded border border-outline-variant/50 text-caption text-primary">Dolby Atmos</span>
+</div>
+<h1 class="font-display-hero text-display-hero text-on-surface leading-none tracking-tight drop-shadow-md">
+            BLADE RUNNER 2049
+          </h1>
+</div>
+<!-- Genre Pill Tags -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/30 text-on-surface-variant font-label-tag text-caption">Sci-Fi</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/30 text-on-surface-variant font-label-tag text-caption">Neo-Noir</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/30 text-on-surface-variant font-label-tag text-caption">Cyberpunk</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/30 text-on-surface-variant font-label-tag text-caption">Mystery</span>
+</div>
+<!-- Editorial Synopsis -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed text-balance">
+          Thirty years after the events of the first film, a new blade runner, LAPD Officer K, unearths a long-buried secret that has the potential to plunge what’s left of society into chaos.
+        </p>
+<!-- CTAs & Taste Telemetry Feedback -->
+<div class="pt-2 flex flex-wrap items-center gap-4">
+<!-- Primary Amber Button -->
+<a class="px-7 py-3 rounded-lg bg-primary-container hover:bg-tertiary text-on-primary-container font-headline-sm text-headline-sm font-semibold flex items-center gap-2.5 shadow-lg shadow-primary-container/20 transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>View Movie</span>
+</a>
+<!-- Secondary Outline Button -->
+<button class="px-6 py-3 rounded-lg bg-surface-container/60 hover:bg-surface-container border border-outline-variant/40 hover:border-primary/50 text-on-surface font-body-md text-body-md font-medium backdrop-blur-md flex items-center gap-2 transition-all duration-200">
+<span class="material-symbols-outlined text-lg">bookmark</span>
+<span>Add to Watchlist</span>
+</button>
+<!-- Interactive Taste Calibration Actions -->
+<div class="flex items-center gap-1.5 ml-2 pl-4 border-l border-outline-variant/30">
+<button class="w-11 h-11 rounded-lg bg-surface-container-low/70 border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors" title="More films with this cinematography &amp; pacing">
+<span class="material-symbols-outlined text-lg">thumb_up</span>
+</button>
+<button class="w-11 h-11 rounded-lg bg-surface-container-low/70 border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors" title="Less films like this">
+<span class="material-symbols-outlined text-lg">thumb_down</span>
+</button>
+<button class="px-3.5 h-11 rounded-lg bg-surface-container-low/70 border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center gap-1.5 font-label-tag text-caption tracking-wider uppercase transition-colors" title="Inspect Telemetry Breakdown">
+<span class="material-symbols-outlined text-base">tune</span>
+<span>Why This?</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== CURATED ROWS WRAPPER ==================== -->
+<main class="relative z-20 space-y-16 pb-24 max-w-7xl mx-auto px-12">
+<!-- ROW 1: BECAUSE YOU LIKED INTERSTELLAR -->
+<section class="space-y-5">
+<!-- Section Header with explainability context -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-caption tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm">hub</span>
+<span>Explainable Anchor • Christopher Nolan Cluster</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Because you liked Interstellar</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Films sharing cosmic existentialism, temporal relativity, and deep emotional stakes.</p>
+</div>
+<!-- Slider Controls -->
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-interstellar', -400)">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-interstellar', 400)">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Movie Slider -->
+<div class="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth py-4 -my-4" id="row-interstellar">
+<!-- Film Card 1: Arrival -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A giant vertical oblong alien spacecraft hovering motionless over misty green valleys in Montana, captured with high cinematic drama, cold color grading, and mysterious atmospheric lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtUE9W8HL9lqFvgQJtHOCkn0jaTOmAhdAKcHfc9Rsbgkdg9l7PGeNQUkcold3qXI6UY_1ymoI5L4bHJDpmIWtv1bxiVv6fHHn7GUU5YjQWKUlsVxsQCcjiAaPMQagSn85UaDGtma_4pJt9A9v17wUHdQe-aFBZKWOHnjOxs1Jw13bLXkhPOKNTTcvzmeCuCAdX_nIgGrHmfOanHNA0VNWrv1LAegimQyLZ9-FVDIzcs6L-kWPsAK6T">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              97% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2016 • Denis Villeneuve</span>
+<span class="text-primary font-medium">Linguistics</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Arrival</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Linguist Louise Banks leads an elite team when mysterious spacecraft touch down across the globe.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Non-linear Time</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Film Card 2: Contact -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Astronomer looking up at giant radio telescope dishes in the New Mexico desert under a vast starry celestial sky, cinematic composition with deep midnight blues and warm telescope illumination." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV_tBr0IE3HdRryvi4M_6cz2Gw2GkOOSQFKvCIpB7x70OPZ03BV1B3gS013kL6rnAxcZI8DaoCq8VGx83--JiycXT2P-5B7sdipN1BCF9lnoQ705mU4-8oLcSSialicfKel0CpNNDC67O0-LoaVHmn_s7PIhMgclgerxM8qit1B6XGdnb_yzYYZIWruA-kz6tXPLF5CfeGKzU85fb-t1bebKT-DO4xFfA2NlkJ12UPM2qfTWaHyGSh">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              94% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1997 • Robert Zemeckis</span>
+<span class="text-primary font-medium">Signal Theory</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Contact</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Dr. Ellie Arroway discovers the first conclusive extraterrestrial radio transmission from Vega.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Scientific Faith</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Film Card 3: 2001: A Space Odyssey -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Iconic glowing red eye camera of an artificial intelligence computer inside a sleek, futuristic white centrifuge space corridor, symmetrical high contrast lighting with deep shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsjN2fQRncwwTfNsTNukg1rGh3PJ0CQnWv3qWONtKkimVqSbfvN1EcMQViG3qxfOHUKiVR8wDkLx1HwUlv5uzg2WoDgRpQAz7EFJhJpHWVYDGOtbT9bd-i-I-LPZxKu5hpWasL6z-1i2_w0DayEi3gwEe1NgUJhhH4DT21D3krM7aZJKqLZgxMw3eOPXhDNxTmJ7ssZoY02KGegNnKRszxO6e40q8jSOfU68vV5apvgDd3JtW1EJWh">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              95% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1968 • Stanley Kubrick</span>
+<span class="text-primary font-medium">Cosmic Canon</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">2001: A Space Odyssey</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">After uncovering a mysterious artifact on the Moon, humanity embarks on a voyage toward Jupiter.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Human Evolution</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Film Card 4: Solaris -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Ethereal space station window looking out over a churning, viscous blue and purple oceanic alien planet, contemplative moody art cinema aesthetic with soft reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDyfU-LP-aMha8Stf4FKzzSO7mobIlhZGHsSKc2Wwlz6x1yQ_Ja3QVzgsBoJLFFlgvjLvtGdVTE4WaBypp67hZ4Q6OSLATOcAk-Lrt-dAdwf8qRnph2HEGadHh5eTjmXEfHZWFv7vfNXxTqVU4ganZKYXKuY17Rk6AtRzZTvphKB25uxhAnOeumRKGkaymUdWiEELPjX68stnfH8aPEn07KaEiG0xtDe6gxOCrtZ-hDtgEyPamrGna">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              92% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1972 • Andrei Tarkovsky</span>
+<span class="text-primary font-medium">Poetic Memory</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Solaris</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A psychologist is sent to a station orbiting a distant planet whose sentient ocean manifests past regrets.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Grief &amp; Cosmos</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Film Card 5: The Martian -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Astronaut solitary figure walking across endless rust-colored Martian red desert dunes, golden hour sun reflection on the helmet visor, epic survival cinema composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuD_N94O90YgfZUKrtP0RePKHuKg2ulQeoXbKGjJwElIR-odmIC2oKAVNQvK-F1g7Z5qAkm071U6pXyX-x4Rh-VVrjvFf1fD7e3O91SaQg4La5Ezi5SuAI_ajsmHLw3NDucGEDOWmA9jA_GwAP_dOE4WRt-1q9IMSPjJNVabZcEQ-OjGUZpxQ4TnK0uxpPdxPsyrl7JxRPRqDKhQe9kOk0flJ91Ag-zvb32hc6-wFasSuIHtpk6tM6">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              91% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2015 • Ridley Scott</span>
+<span class="text-primary font-medium">Procedural Grit</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">The Martian</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">An astronaut becomes stranded on Mars after his crew assumes him dead and must rely on his ingenuity.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Ingenuity</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Film Card 6: Ad Astra -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Extreme close-up of a space helmet visor reflecting blue rings of Neptune against the absolute void of deep space, cinematic moody lighting with rich amber flares." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPRsd4p_oLaFFHPTzQ1zvKp8lAUk-sf5S5qVYgaj8vwr6zBuingP0w49XEl2SzVMOEU2OaDmdCCrb3mdtStLMkDFA_Gvuxztl_8HACtm8lokf1x-6HxyiNfnAlOiCcw8_CFI9j8XjzpccR0uIpvH-S6sImHc4ybSbq5wF5O2FC1CzYlMiTaJLo-UIXTHBGb6gsLZIom1sGbNyXPLSMTPlwHOZkSFkyq1ViUPmsruiQWC0KF5Mg-v3t">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              89% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2019 • James Gray</span>
+<span class="text-primary font-medium">Paternal Voyage</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Ad Astra</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Astronaut Roy McBride travels to the outer edges of the solar system to locate his missing father.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Psychological Void</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ROW 2: PERSONALIZED FOR YOU (Deep learning based on logged ratings) -->
+<section class="space-y-5">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-caption tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm">psychology</span>
+<span>Neural Taste Weighting</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Personalized For You</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Deep learning recommendations based on your 142 logged ratings and aesthetic affinity vectors.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-personalized', -400)">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-personalized', 400)">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth py-4 -my-4" id="row-personalized">
+<!-- Oppenheimer -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Chiaroscuro cinematic portrait of a gaunt theoretical physicist wearing a fedora in front of glowing plasma flame and particle embers in black and white and warm sepia tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQootNj1hyk0qu4ujkFUW8Ks6Xj547k02lIQ-NwCXbUFPLLOFCQYGXB4JRO3p0_c5Fc6TzXtMaCmlLV1IkwOu7ebStT5rly-SPw0NPt4wn7Na8EyXQKrCLaDx2lwFrRjdPpFdRmhgCG-U2BoDagDtJsY296u_ENAgmsOOm_DefvkCOz62fXITXrKvT69UqxnE9AEsnbhAQ82JBsTTy1ZYM3rKsiG-hS6WPbo-XAuBVyRQrGLUd2PYm">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              98% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2023 • Christopher Nolan</span>
+<span class="text-primary font-medium">Tension</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Oppenheimer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Editing &amp; Score</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Ex Machina -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An elegant female humanoid android with transparent cybernetic torso standing in a minimalist concrete architectural glass house surrounded by misty Scandinavian forest." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmCq2tk8IZFd_JswNbW8xWlhxYeop2OE122zbvpkFYDJdgZofwq2Zp-Z-WXkB3P-Di2HNcYV9BbRIABR5g7SzUZuA1sXJgWQ8_EeMMI2ES75Inol6Bh0yDcDNM6l4UsOpVKkjxXd9siVS8c03QeMwgc_abS8fnk8jRi8-G_IYUHMor6-ifWgJTtK2YeBe7aeTi2wdZRMPSnUf0kymFQoRw7dWn4ZujObVzzsCXU3ebTJeKdZCl-AUS">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              96% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2014 • Alex Garland</span>
+<span class="text-primary font-medium">Turing Test</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Ex Machina</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A programmer is selected to participate in a ground-breaking experiment in synthetic intelligence.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Chamber Sci-Fi</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Children of Men -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Gritty handheld cinematic still of a desperate man guiding a pregnant refugee through bombed urban ruins in a dystopian rainy London, muted tones with raw lens flares." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpR2dKiOnAHH2jOqgx5xG-dc4eJDIbRRWvvSBCUP8qioHJUsjHYzS_TH88Dili94ydti0k11qbLP4nWMOGhhZ3_BBdbH6yqA6L9IK0BnOulO2AAUVfdG1QwuuXlJraFItkQtNu4COFT53V5PkznszsegmciR81kMZpqnqWPDx2PcVn9uF5IndppKWzNitFYf8Z7hdlEJZIFRpiDz83GHeY4S9HGTdLnB_N85Vb-0Lu5nacrvSFyN_J">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              95% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2006 • Alfonso Cuarón</span>
+<span class="text-primary font-medium">Long Takes</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Children of Men</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">In 2027, in a chaotic world in which women have become inexplicably infertile, a former activist agrees to protect a miracle.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Lubezki Vision</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Annihilation -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Expedition crew in hazardous marshland standing before iridescent crystalline trees refracting pastel rainbows and alien biological mutations, eerie surreal dreamscape atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS-zxyG8kWC0hTq_ezUd7_JXg6GWnvGKW0ph4uvq9CQOUsx03gfWh3kHPr_Q7DUnuIS1BXnGDMq2IHuoqlMgSzzh2fP_b-oWJW7Bk3PWCJlNraHljQRxa3DG_U8LNe95552Uue8RWoeeOvZzdGjngQzDLWydldmDmn96g7N6J5H8iwjak0KR8PSxmCj9wt3d-HrbDoEPqmPJ0K1XLixBIKxoRHpkq8ZoaRXBUiD3-e-LJfY7A2tG1y">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              93% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2018 • Alex Garland</span>
+<span class="text-primary font-medium">Cosmic Horror</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Annihilation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A biologist signs up for a dangerous, secret expedition into an environmental disaster zone where the laws of nature do not apply.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Metamorphic Sound</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- The Creator -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Monolithic floating orbital sky fortress scanning tropical terraced Asian rice paddies with blue laser sweeps at dusk, cinematic naturalistic lighting style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKBIhBeszIRPlGrit0Ynhm0GCIQu0m-rzMhCNoLbrQsdEYKJez4HJXAStw2dSOaIIUiCS0YAi-D1mXGhX-4z9U6oJ9UPax5lReRzLYDeOifXWTIAzM3Py7KWA0iDzstw5GjU-tWDbEY61orT6bDUYpTP-UaTyPfsIYXnw0pwuv4RJ3StpzkOXReYhTd0TiGtRE4-l7o7AYwC6R8pzQt2odF94eh8rWEdQwAmbYnllaJMZEYMijC7ka">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              91% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2023 • Gareth Edwards</span>
+<span class="text-primary font-medium">Location Scale</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">The Creator</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Amid a future war between the human race and artificial intelligence, an ex-soldier discovers a weapon disguised as a child.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">FX2 Guerilla</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Everything Everywhere All at Once -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Vibrant surreal multiverse portal with googly eyes, circular everything bagel black hole vortex, dynamic neon pink and warm amber lighting reflecting across characters." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQEKXsA8aeKMo74xmY5s60Rd1tbNpgLKusl0RjrOO-BRTbzi8oG-wwdH_5owiixYKtceqv9A95hDKhNzIIDOHk95mOdGx9N67WcVj59XWKH3TYNuVhayW_6tZuyZze_BfMuD3rV-Dlu4e0trJ8X-RBUl6pcW_royUIi7LJEyzIcTSlbyF093AoW7jPDBV_tXrCaoM2kuRYzhlEK_DBE9vla-Rk9dlvZskiArrTnlI8rTqGNU6c5K1W">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              92% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2022 • Daniels</span>
+<span class="text-primary font-medium">Kinetic Pacing</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Everything Everywhere</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Absurdist Heart</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ROW 3: HIDDEN GEMS & ARTHOUSE DISCOVERIES -->
+<section class="space-y-5">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-caption tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm">diamond</span>
+<span>Curatorial Filter</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Hidden Gems &amp; Arthouse Discoveries</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">High critic score • Low mainstream exposure matching your exact curatorial profile.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-gems', -400)">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-gems', 400)">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth py-4 -my-4" id="row-gems">
+<!-- Aftersun -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Nostalgic 35mm film still of a young father and eleven year old daughter sitting beside a faded Mediterranean resort swimming pool under warm golden late afternoon sun." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYPBUrqiH9UW0RG0KjIVQNXJWQ5PKjFkhO-XCPTj8lR-C5rOYeX7kFoU7gKs_fSA9DM1AuLlgzwgPzHMJtF73mjiPs4YUfmzw9RHKheh5h7CRpwTQKl1S2Vt1b5IYRzjr9_k3oeSi5wjfc9HRY4nCqZ6alVkiVHCZaZEQvqTQxxWBLLLA5am0X7aB5aWrfMLPeROUfu200wJcrkt44HPjom5X5BRqD-4xpO9Jy4hnAzGTpxyTogcBI">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              94% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2022 • Charlotte Wells</span>
+<span class="text-primary font-medium">Memory Tape</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Aftersun</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Sophie reflects on the shared joy and private melancholy of a holiday she took with her father twenty years earlier.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Emotional Depth</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Coherence -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Intimate candlelit dinner party in a modern suburban home where guests look suspiciously at each other, lit by warm candlelight and blue exterior comet glow." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQkSmGoUv3OLun0eNxy492cBt0gywyJNzIxXPkl55Wljz4qHnFtHHC8QFVRL6NClPVo-KV0V7jHNQMFYAF3L0Z5Iu1IM5Lrrjd08z9Z6F54lUI_BEumooCmqwpk3kZTfLLWADi3Wn-Letv160YfifJFuhDhEnQknuJBjnn6sO1qYL35WoHguOfFh6YLv_M069NIBhVOw8BLl9CUWDEuk1U66JT9wuVbjcjkGPi4074A8sVDJ3-kLr1">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              93% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2013 • James Ward Byrkit</span>
+<span class="text-primary font-medium">Micro-Budget</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Coherence</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Strange things begin to happen when a group of eight friends gather for a dinner party on an evening when an astronomical comet passes overhead.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Quantum Puzzle</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- The Vast of Night -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Young 1950s female switchboard operator with vintage headset illuminated by vacuum tubes in dark empty high school radio station room, moody green amber atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFDloT_2axm3SNdeRl0CECMXG2oi8rap43ufZyjIZg9N_VXi_PAa9VUyxCpRSeYxUNtUwg8VmuwR0Ld6n7p92WPGRJuoyCOO7EOFQn6NrLQru2c9DGzWMpggeexd4UGPUSfLClyz5J84c8b1BTYU5PuxyutxVPSwnLNZh1Sj1Vs-64OmfCJO0XxOjOr2aGN-TeAik2qsP480hrcG3Dl6O5xKJIX_78h0DM-68UImqEHFpcBezfvKMw">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              90% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2019 • Andrew Patterson</span>
+<span class="text-primary font-medium">Audio Mystery</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">The Vast of Night</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">In the twilight of the 1950s in New Mexico, a switchboard operator and a radio DJ discover a strange audio frequency.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Steadicam Purity</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Portrait of a Lady on Fire -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Two women in 18th century dresses standing on a dramatic windy coastal cliff overlooking crashing turquoise ocean waves under overcast painterly daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy8Q1ET0clXU5t21UJ97ScDqPX3DwgjRVDz8Dl_IYPkl89-4JAAJn-mxX96hXjgvwrew2J5orIFcB8eIzkQ2vq9WcG6ZfAYLDwAkYiIoD17sdwB_bihXI-Vbm7mYKcYI7tMyu0LTPzalgBY6NoOl6Y0TElKwVcdCSeEM9RSsEVOerxPe5huw-q-X2ukHYkFQ_JYHmw3Eqk8lLZrpYhrxPgEIKQVgxsuA8-sByvypwA10XWRloJwyuH">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              91% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2019 • Céline Sciamma</span>
+<span class="text-primary font-medium">The Gaze</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Portrait of a Lady</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">On an isolated island in Brittany at the end of the eighteenth century, a female painter is obliged to paint a wedding portrait.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Sublime Gaze</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Burning -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Silhouette of a young woman dancing freely against a dusky orange sunset horizon beside a desolate greenhouse in rural Korea, evocative moody art house framing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAylM1h5SY2Is-Fisx13pIm-Hb2B6YACHDGLV9Pc-016kecjpBCpGOL9yVWlIbo2PWs5aYFJKCcGfhgKzFtKHXzsHTrU6CcNEN7vPgrR-Sq_c61LU37H8RhJ7gIi5RCS0BjYleM6GSqKTgZS5i4692o7inRttqtl_mh9rh5Vi7_Fdv-_W4gzqNn1BqzW36rCOIBY7xFQ79lL2CT1VIGS62g4kZ4YxSCvNOgjl1X3cucvLfFrueThkmf">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              89% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2018 • Lee Chang-dong</span>
+<span class="text-primary font-medium">Murakami Tone</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Burning</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Jong-su bumps into a girl who once lived in the same neighborhood, who asks him to look after her cat while on a trip to Africa.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Class Ambiguity</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Drive My Car -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Classic vintage red Saab 900 driving down a pristine coastal Japanese highway bridge during overcast daylight, clean graphic cinematic perspective." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCR4nTWrOXoCIvZnABaAtR9OlJm5ddL1kto01ADLLSCYlJFWNQnQmlt1u4sAUMU70Hoc5DLROXyiCZl7quyMpKf7-zPDV27TRxhn88glrHBsTMmlBYdZgmnle3Db1JcxbHbBcL-3Dl8t8YfPp_8ag6PiMskj3kLR-92_qxHdhbHiVPsIvSgG_mA_Gf_f71NVXJNKzMJhXWVsJKE72m6CChROVRuhur0czHn9XtrukanPmGt2-t0L7zR">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              92% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2021 • Ryusuke Hamaguchi</span>
+<span class="text-primary font-medium">Dialogue Pace</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Drive My Car</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">An aging theater director directs a production of Uncle Vanya while grappling with the sudden death of his wife.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Catharsis</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ROW 4: TRENDING IN YOUR TASTE CLUSTER -->
+<section class="space-y-5">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-caption tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>Cluster Convergence</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Trending in Your Taste Cluster</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Disproportionately favored right now by peers with &gt;88% taste affinity overlap.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-trending', -400)">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-trending', 400)">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth py-4 -my-4" id="row-trending">
+<!-- Challengers -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="High contrast sunny tennis court scene with sweat droplets, kinetic motion, intense rivalry eye-contact between athletic players in stylish contemporary sportswear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCrlU9KnKvPtRS5-ag_0vZU0L4Ay1lZypkCp74IK_jSdlZmdzPtnzDNZQwuZVGKwMhJlpO17gNqk7zKohg_6gVdjgbNiXbsIaf0c_8_1rL7gzecj1cHlkgchD5SM4x1IP5VJBNW7uqfVDUPuQ4OYB9aGuKrD9HWz0e7MxHMjbzD-vYbWJUEat-c9Y-03AWCYpFU-ncymykV-4Ixw-2JNRdmQDxJtVswsW5v-nkhVLWQvNHE17yCfX7">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              95% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2024 • Luca Guadagnino</span>
+<span class="text-primary font-medium">Kinetic Electro</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Challengers</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Tashi, a tennis prodigy-turned-coach, takes her champion husband on a redemption tournament against her former lover.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Reznor Score</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Poor Things -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Surreal Victorian steampunk landscape with pastel-colored skies, bizarre architectural curves, and a striking woman in eccentric vintage couture dress." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJvsRDpjSfswXojfpn6KG5fZOTUr21Q1hFd7_D5T-IeZ1jJqFkhDJJaYrw-N793Akic2MU1EkwMxnpOd2v9xYsmEu29n71QnBv5wyGv5zXL7afJjdV_0_RIowyUPAQo049XgB2I8b3C3cUaNzQPKAQuDYBxwKdbvxp9B-6XcYwkXsodlkWOY29NVJWgb2oGQL8COO_6TnQBzfG3gbKR_KtSVDC4EHt3YGBqkzwxSbsbiBY2uvvDLtI">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              93% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2023 • Yorgos Lanthimos</span>
+<span class="text-primary font-medium">Fish-Eye Lenses</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Poor Things</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">The incredible tale about the fantastical evolution of Bella Baxter, a young woman brought back to life by an eccentric scientist.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Absurdist Tale</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Civil War -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="War journalists crouched behind an armored military vehicle amidst billowing smoke on an American highway, intense photojournalistic visual grain and high dynamic contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCC6qJB3rCf-mNK0rgsdd4EvZy_6LtCKNjAYBZYDg2KZS7qSIcSFfA3l0u0lxlQgAdvQLR2BHCfyB_i2fAiwgM8AiKTwJQO6UyGfjkKq9L3LmoLFPWBQUIOAXxWV23TQFEOSOXj-Qe50z4U2xbFVE_rKoG9oPb79eE64Zm0wMNQTuALWTjhDE8HcTtA8J5sYnKAtdPwcQmsSjEjE0AOsyyZj6kiBelX11J4AZ9iUDMAPkS3rTfNlrL">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              91% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2024 • Alex Garland</span>
+<span class="text-primary font-medium">Visceral Audio</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Civil War</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A team of military-embedded journalists embarks on a high-risk journey across a dystopian future America.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Photojournalism</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Past Lives -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Two childhood friends standing quietly at night beside the East River overlooking Manhattan skyline reflections, soft romantic 35mm grain and poetic silence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkLYb3JRe1Ln3fxCScox2cBJMUAohG3fVzCJAy0VyEwjL1DpTBeLUutSPKgXMgpN4nmh2FwT7efK-anQXhmgfl97W-QE2sDjC-Su2abKublJyKzRR10cHN2DGuPnol0h_v3CRhSHbgzY-LNmIfuHFYbRD98viS3mu0f6GI1tZAUbbEwwMhOvBopwq3k7rGaKb2fplabpTk_QOUR_ABuk-utuUIWUEqWPAX8Ap4EfX-TvRzJ_coH2ng">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              94% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2023 • Celine Song</span>
+<span class="text-primary font-medium">In-Yun</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Past Lives</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Nora and Hae Sung, two deeply connected childhood friends, are reunited in New York for one fateful week.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Subtle Melancholy</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Anatomy of a Fall -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A remote wooden alpine chalet nestled in deep French Alps snow, cold winter light with dramatic forensic markers and isolation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABBJuJ937BEPyZdBR_u8xufvRZURXvc5ldZLiHPvQ6hsmdTkwVhckU2uXuRSsS_66evtaBjmfP-d3kSFDxFHYqT8s4tLaiCXao4AFt65gjFdxDPsBA-CULLSdgA0UgufCK3o1jrbgcn981nro-v5ZNcbXeqOdyc64U9f2FyW_C99qhZubLonqOdv14Pkjv5oNHZ6qrkfogMTRSFeXCtYcd1LCNvRslesihBG0LlXdF-UGCdn-OPI3p">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              92% MATCH
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>2023 • Justine Triet</span>
+<span class="text-primary font-medium">Courtroom Dissection</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Anatomy of a Fall</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A woman is suspected of murder after her husband's death in the snow, and her blind son is the sole witness.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Palme d'Or</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ROW 5: RECENTLY ADDED TO CINESENSE (Restorations & 4K Ingestions) -->
+<section class="space-y-5">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-caption tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm">videocam</span>
+<span>Archival Vault Ingest</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Recently Added to CineSense</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Newly cataloged 4K Criterion transfers, restored film negatives, and remastered soundscapes.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-recent', -400)">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-surface-container border border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" onclick="scrollRow('row-recent', 400)">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-5 overflow-x-auto no-scrollbar scroll-smooth py-4 -my-4" id="row-recent">
+<!-- Stalker (4K Restoration) -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Three men walking through overgrown wet railroad tracks inside the surreal lush green Zone, rich organic textures with sepia transitions and profound atmospheric depth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCskHPA--xfOemtz0-s3AHA_0T76Bg9Ix_6_8k547SA50SmqAT4i_uoZstm_JELyEOppLX5fd-NB5llejRc2f9rGHiM82yVvVgDUTY-ROJjbc082w40QQbwmlPIzM4WcCOUCKSKfD5YE6y8Jp6qrSYv7D7g9yDzkAC3TfPAtB4lyvpVS9pk5WtEugY8llOO1fKYBhvrhelzY6mQVzzBkMr9nWrNb-jHrG2d7LZRxhgrKYHL-7OL_458">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              4K MASTER
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1979 • Mosfilm Scan</span>
+<span class="text-primary font-medium">96% Affinity</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Stalker</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A figure known as the Stalker guides two men into a mysterious forbidden area known simply as The Zone.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Existential Lens</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cure (1997) -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Dark clinical interrogation room in Tokyo with water dripping and shadowy lighting, psychological tension in a Japanese neo-noir masterpiece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhw_LfBInK0SxqvTUeElkoWk9FQGU1RY5OFK38FT-s2FRv5og1ZJ_Pjcv_QffIqfDnWan_B0qKyZNqDFEqUESy9zLlqVt8yxw--4H6x3i2IO1hks_MHkUkqJP98j0GUATHL6o7TkohyJT2OKVEp-ZBZKooVTupa2nLdt2LR9PgaTqPT71g8DTJRkYl_HDgl-uiB9wlVoL9GWTI3asyFtauH_Hfku1hCnJGTZM61sZtYB7QmpouZXJF">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              NEW RESTORATION
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1997 • Kiyoshi Kurosawa</span>
+<span class="text-primary font-medium">92% Affinity</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Cure</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A wave of gruesome murders is committed by different people who have no recollection of their crimes.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Psychological Dread</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Persona (Criterion 4K) -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="High contrast monochromatic close-up of two women's faces merging seamlessly together in dramatic lighting, Swedish psychological cinema masterpiece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4r4iLrp91sqc8FzW6NpQVVAuJLIc8S9Fn7W5bJkMOE9H9XUO5cXpNIEH42dZG8UHnu92OkpfEPsgj_Xvn14fUracXGw1-KEFEbLoqFGLLkaBB6hhHBn6doC0uDkGfgNEy0gevzq345CvPbtjfBLR6F7a5egZYxdYBHtO1GEkl8anDampFFkXF610BxJmeuDYH1AmYU1N_fsYu44vluH_IC8tDlUyIEQLBv3ldQaeWmpfNpoRCuZI-">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              4K HDR
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1966 • Ingmar Bergman</span>
+<span class="text-primary font-medium">95% Affinity</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Persona</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">A nurse is put in charge of a mute actress and finds that their personalities begin to merge in disturbing ways.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Duality</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Ran (4K Digital Master) -->
+<div class="group relative flex-shrink-0 w-60 rounded-xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/60 transition-all duration-300 hover:shadow-2xl hover:shadow-primary-container/10 hover:-translate-y-1.5 cursor-pointer">
+<div class="aspect-[2/3] w-full overflow-hidden rounded-t-xl relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Epic samurai warlord walking slowly away from a burning medieval Japanese castle fortress enveloped in billowing black smoke and vibrant scarlet banners." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpbzNnUZXYoSfSQOqO3wroLzQKGICMOs7Iqt1dUNnkSES5wkzUiwHtWoBm3n2QjC-3QZggWfOmEH42LjkGlZ9Y3eO1vREFCOz7d84fXdVZt5ZsxZkk_RcjFOAWNwyhNZOEYZqLI_fgdl-qh05iXK-LbbAf6I6WEOIGyN2k5hgap-XnrXxW7zyf4IEYA2B3siLlnFGoU2thgytq_Y69x2SwALhDuKQQLcpXOPyLx3FAH0FgJ90wvhXE">
+<div class="absolute top-2.5 left-2.5 bg-primary-container text-on-primary-container font-label-match text-caption font-bold px-2 py-0.5 rounded shadow">
+              4K MASTER
+            </div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-90"></div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center justify-between text-caption font-label-tag text-on-surface-variant">
+<span>1985 • Akira Kurosawa</span>
+<span class="text-primary font-medium">94% Affinity</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Ran</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">In medieval Japan, an elderly warlord retires and hands over power to his three sons, triggering catastrophic war.</p>
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+<span class="font-label-tag text-[10px] text-outline tracking-wider uppercase">Tragic Scale</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">bookmark</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">thumb_up</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- ==================== BESPOKE EXPLAINABILITY RADAR FLYOUT DOCK ==================== -->
+<aside class="fixed bottom-6 right-8 z-40 hidden xl:flex items-center gap-4 bg-surface-container-low/90 backdrop-blur-xl border border-outline-variant/40 p-4 rounded-2xl shadow-2xl">
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 border border-primary/40 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">graphic_eq</span>
+</div>
+<div class="space-y-0.5 pr-2">
+<div class="font-label-tag text-[10px] text-primary tracking-widest uppercase">Taste Vector Active</div>
+<div class="font-headline-sm text-sm font-semibold text-on-surface">Cosmic Existentialism</div>
+<div class="font-caption text-caption text-on-surface-variant">Matched against 8,420 curated film nodes</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-caption font-label-tag text-on-surface transition-colors">
+      Inspect Weights
+    </button>
+</aside>
+<!-- ==================== FOOTER (Component Footer) ==================== -->
+<footer class="w-full border-t border-outline-variant/20 bg-surface-container-lowest dark:bg-surface-container-lowest">
+<div class="flex flex-col md:flex-row justify-between items-center py-12 px-12 max-w-7xl mx-auto w-full gap-6">
+<!-- Brand Logo & Copyright statement -->
+<div class="flex flex-col gap-2 items-center md:items-start">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-primary dark:text-primary">CineSense</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-label-tag bg-primary-container/15 text-primary border border-primary/30">AI Curatorial Intelligence</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-on-surface-variant">
+          © 2025 CineSense Curatorial Intelligence Inc. All rights reserved.
+        </p>
+</div>
+<!-- Footer Navigation Links -->
+<nav class="flex flex-wrap justify-center items-center gap-6 text-body-sm font-body-sm text-on-surface-variant dark:text-on-surface-variant">
+<a class="hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Editorial Methodology</a>
+<a class="hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Explainability Engine</a>
+<a class="hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Curator Lounge</a>
+<a class="hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">API &amp; Telemetry</a>
+<a class="hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Privacy &amp; Terms</a>
+</nav>
+</div>
+</footer>
+<!-- ==================== INTERACTION SCRIPTS ==================== -->
+<script>
+    // Smooth horizontal row scrolling
+    function scrollRow(rowId, delta) {
+      const container = document.getElementById(rowId);
+      if (container) {
+        container.scrollBy({ left: delta, behavior: 'smooth' });
+      }
+    }
+
+    // Dynamic Ambient Light shift on card hover
+    const lightGlow = document.getElementById('ambient-light-glow');
+    const cards = document.querySelectorAll('.group');
+
+    cards.forEach((card, idx) => {
+      card.addEventListener('mouseenter', (e) => {
+        const rect = card.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        if (lightGlow) {
+          lightGlow.style.left = `${centerX}px`;
+          lightGlow.style.opacity = '0.85';
+          lightGlow.style.transform = 'translate(-50%, -10%) scale(1.15)';
+        }
+      });
+
+      card.addEventListener('mouseleave', () => {
+        if (lightGlow) {
+          lightGlow.style.left = '50%';
+          lightGlow.style.opacity = '0.5';
+          lightGlow.style.transform = 'translate(-50%, 0) scale(1)';
+        }
+      });
+    });
+  </script>
+</body></html>

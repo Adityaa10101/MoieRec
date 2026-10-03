@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CineSense — Explore / Discover</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Bodoni Moda, Inter, Space Grotesk -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#1a1b20",
+            "on-secondary-fixed-variant": "#6e3900",
+            "surface-tint": "#ffb95f",
+            "outline": "#a08e7a",
+            "surface-dim": "#121317",
+            "surface-bright": "#38393d",
+            "on-primary-fixed-variant": "#653e00",
+            "primary-container": "#f59e0b",
+            "primary-fixed-dim": "#ffb95f",
+            "on-surface": "#e3e2e7",
+            "outline-variant": "#534434",
+            "inverse-surface": "#e3e2e7",
+            "surface-container-lowest": "#0d0e12",
+            "secondary-fixed-dim": "#ffb77d",
+            "on-tertiary-container": "#574000",
+            "on-tertiary-fixed-variant": "#5a4300",
+            "surface-container": "#1f1f24",
+            "secondary-fixed": "#ffdcc3",
+            "secondary-container": "#d97707",
+            "primary-fixed": "#ffddb8",
+            "on-primary-fixed": "#2a1700",
+            "error-container": "#93000a",
+            "on-primary": "#472a00",
+            "tertiary-container": "#dea900",
+            "on-tertiary-fixed": "#251a00",
+            "on-primary-container": "#613b00",
+            "surface": "#121317",
+            "on-error": "#690005",
+            "on-tertiary": "#3f2e00",
+            "on-surface-variant": "#d8c3ad",
+            "secondary": "#ffb77d",
+            "inverse-primary": "#855300",
+            "surface-variant": "#343439",
+            "on-secondary": "#4d2600",
+            "tertiary": "#fdc425",
+            "inverse-on-surface": "#2f3035",
+            "surface-container-high": "#292a2e",
+            "error": "#ffb4ab",
+            "background": "#121317",
+            "tertiary-fixed-dim": "#f7be1d",
+            "on-secondary-fixed": "#2f1500",
+            "tertiary-fixed": "#ffdf9a",
+            "on-background": "#e3e2e7",
+            "surface-container-highest": "#343439",
+            "on-error-container": "#ffdad6",
+            "primary": "#ffc174",
+            "on-secondary-container": "#432100"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "3rem",
+            "margin": "3rem",
+            "space-xs": "0.25rem",
+            "margin-mobile": "1.25rem",
+            "space-sm": "0.5rem",
+            "gutter": "1.5rem",
+            "gutter-mobile": "0.75rem",
+            "space-md": "1rem",
+            "space-lg": "1.75rem"
+          },
+          "fontFamily": {
+            "headline-lg-mobile": ["Bodoni Moda"],
+            "caption": ["Inter"],
+            "headline-lg": ["Bodoni Moda"],
+            "display-hero-mobile": ["Bodoni Moda"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "display-hero": ["Bodoni Moda"],
+            "label-tag": ["Space Grotesk"],
+            "body-md": ["Inter"],
+            "headline-sm": ["Inter"],
+            "label-match": ["Space Grotesk"],
+            "headline-md": ["Bodoni Moda"]
+          },
+          "fontSize": {
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "caption": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "display-hero-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-tag": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-match": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-range::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 9999px;
+      background: #f59e0b;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+      border: 2px solid #0d0e12;
+    }
+    .custom-range::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 9999px;
+      background: #f59e0b;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+      border: 2px solid #0d0e12;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface min-h-screen selection:bg-primary-container selection:text-surface-container-lowest font-body-md antialiased overflow-x-hidden">
+<!-- BACKGROUND AMBIENT PROJECTOR AURA -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-b from-primary-container/10 via-outline-variant/5 to-transparent blur-[140px] opacity-70"></div>
+<div class="absolute top-[45rem] -right-32 w-[600px] h-[600px] bg-primary-container/5 blur-[160px] opacity-40"></div>
+<div class="absolute top-[90rem] -left-40 w-[650px] h-[650px] bg-outline-variant/10 blur-[180px] opacity-40"></div>
+</div>
+<!-- 1. TOP NAVIGATION (Shared Component: TopNavBar) -->
+<header class="fixed top-0 left-0 right-0 z-50 w-full bg-surface-dim/80 backdrop-blur-md dark:bg-surface-dim/80 border-b border-outline-variant/30 shadow-2xl">
+<div class="flex justify-between items-center h-20 px-12 max-w-7xl mx-auto w-full">
+<!-- Brand Logo Anchor -->
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md tracking-tight text-primary dark:text-primary flex items-center gap-2 group" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container shadow-[0_0_10px_rgba(245,158,11,0.8)] group-hover:scale-125 transition-transform duration-200"></span>
+          CineSense
+        </a>
+<!-- Desktop Navigation Links -->
+<nav class="hidden md:flex items-center gap-8 text-body-md font-body-md">
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors" href="#">Home</a>
+<a class="text-primary dark:text-primary font-medium border-b border-primary pb-1" href="#">Explore</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors" href="#">My Taste</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors" href="#">Search</a>
+</nav>
+</div>
+<!-- Right Accessories & Profile -->
+<div class="flex items-center gap-4">
+<!-- Taste Profile Pill -->
+<div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/40 text-label-tag font-label-tag text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span>Taste Profile • Sci-Fi &amp; Drama</span>
+</div>
+<!-- Trailing Action: radar -->
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container/50 transition-all duration-200" title="Discovery Radar">
+<span class="material-symbols-outlined text-[20px]" data-icon="radar">radar</span>
+</button>
+<!-- Trailing Action: notifications -->
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container/50 transition-all duration-200 relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</button>
+<!-- Profile Avatar -->
+<div class="relative pl-2 flex items-center">
+<div class="w-9 h-9 rounded-full ring-2 ring-primary-container/40 p-0.5 shadow-[0_0_12px_rgba(245,158,11,0.25)] hover:ring-primary-container transition-all">
+<img class="w-full h-full rounded-full object-cover" data-alt="A portrait of a sophisticated film curator in a dimly lit, atmospheric private screening lounge with soft amber architectural backlighting and cinematic rim light, reflecting deep intellectual appreciation for cinema." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1RlmuSi5up8NyHiGSGLKZ0FTzz6jF6XIQTk7zJ-qI7zrZ9N_uGmxbGLLtRQ5JTl7fPJZxbElt7-a2aw1ptgomBMD8iu996yErRHjjA9b7leI4HVe7VAMRnLSJBfAk70S_VS9QzEY_gxb_Uw0xku_QpWw8GY2vkiflwntKdkcy92XrfD-YfREmbYNkkS5rt20a1jCJ7tm2RkCFq-HMAl4bgdiiqbutAsyBIUN2eTODqBFkDz-9XgCK"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="relative z-10 pt-32 pb-24 max-w-7xl mx-auto px-6 md:px-12">
+<!-- 2. EXPLORE HERO -->
+<section class="mb-16 border-b border-outline-variant/20 pb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-primary-container/10 border border-primary-container/20 text-primary-container font-label-tag text-label-tag uppercase mb-4">
+<span class="material-symbols-outlined text-[14px]" data-icon="auto_awesome">auto_awesome</span>
+            Interactive Recommendation Engine
+          </div>
+<h1 class="font-display-hero text-display-hero text-on-surface tracking-tight font-medium">
+            EXPLORE
+          </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-2 font-light">
+            Find something that fits your mood, your taste, or your curiosity.
+          </p>
+</div>
+<div class="text-left md:text-right max-w-sm">
+<p class="text-caption font-caption text-outline">
+            CineSense dynamically adapts recommendation vectors to your active curatorial choices in real time.
+          </p>
+<div class="mt-2 flex items-center md:justify-end gap-2 text-label-tag font-label-tag text-primary">
+<span class="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_6px_rgba(245,158,11,0.8)]"></span>
+<span>Vector Matrix Sync: Active</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. WHAT ARE YOU IN THE MOOD FOR? (MOOD DISCOVERY) -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-6">
+<div>
+<span class="text-label-tag font-label-tag text-primary tracking-widest block mb-1">PSYCHOLOGICAL FREQUENCY</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            WHAT ARE YOU IN THE MOOD FOR?
+          </h2>
+</div>
+<span class="text-caption font-caption text-outline hidden sm:block">Select one or more dimensional attitudes</span>
+</div>
+<!-- 10 Curated Mood Cards Grid (2x5 on desktop) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- 1. MAKE ME THINK (Active) -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container/70 border-2 border-primary-container shadow-[0_10px_30px_-10px_rgba(245,158,11,0.3)] transition-all duration-200 group overflow-hidden">
+<div class="absolute top-2 right-2 text-primary-container">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="text-2xl mb-3 block">🧠</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight">MAKE ME THINK</h3>
+<p class="font-caption text-caption text-on-surface-variant/80 mt-1">Cerebral puzzles, deep themes, existential motifs</p>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-container"></div>
+</button>
+<!-- 2. HIGH ENERGY -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">🔥</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">HIGH ENERGY</h3>
+<p class="font-caption text-caption text-outline mt-1">Kinetic pacing, relentless tension, adrenaline fuel</p>
+</button>
+<!-- 3. SOMETHING RELAXING -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">😌</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">SOMETHING RELAXING</h3>
+<p class="font-caption text-caption text-outline mt-1">Gentle rhythms, warm palettes, soothing vistas</p>
+</button>
+<!-- 4. MAKE ME LAUGH -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">😂</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">MAKE ME LAUGH</h3>
+<p class="font-caption text-caption text-outline mt-1">Dry satire, sharp banter, eccentric wit</p>
+</button>
+<!-- 5. SOMETHING EMOTIONAL -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">❤️</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">SOMETHING EMOTIONAL</h3>
+<p class="font-caption text-caption text-outline mt-1">Intimate stakes, profound pathos, raw humanity</p>
+</button>
+<!-- 6. KEEP ME ON EDGE -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">😱</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">KEEP ME ON EDGE</h3>
+<p class="font-caption text-caption text-outline mt-1">Paranoia, claustrophobia, impending revelation</p>
+</button>
+<!-- 7. ESCAPE REALITY (Active) -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container/70 border-2 border-primary-container shadow-[0_10px_30px_-10px_rgba(245,158,11,0.3)] transition-all duration-200 group overflow-hidden">
+<div class="absolute top-2 right-2 text-primary-container">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="text-2xl mb-3 block">🚀</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight">ESCAPE REALITY</h3>
+<p class="font-caption text-caption text-on-surface-variant/80 mt-1">Expansive worldbuilding, speculative futures, cosmos</p>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-container"></div>
+</button>
+<!-- 8. SOMETHING CINEMATIC -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">🎬</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">SOMETHING CINEMATIC</h3>
+<p class="font-caption text-caption text-outline mt-1">Breathtaking 65mm scope, bravura long takes</p>
+</button>
+<!-- 9. LATE-NIGHT MOVIE -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">🌙</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">LATE-NIGHT MOVIE</h3>
+<p class="font-caption text-caption text-outline mt-1">Hypnotic atmosphere, neon-drenched mood pieces</p>
+</button>
+<!-- 10. FEEL-GOOD -->
+<button class="relative p-5 rounded-lg text-left bg-surface-container-low/60 border border-white/5 hover:border-primary-container/40 hover:bg-surface-container transition-all duration-200 group">
+<span class="text-2xl mb-3 block">✨</span>
+<h3 class="font-headline-sm text-body-md text-on-surface font-semibold tracking-tight group-hover:text-primary transition-colors">FEEL-GOOD</h3>
+<p class="font-caption text-caption text-outline mt-1">Tender triumphs, restorative charm, optimism</p>
+</button>
+</div>
+</section>
+<!-- 4. GENRE SELECTION -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-4">
+<div>
+<span class="text-label-tag font-label-tag text-primary tracking-widest block mb-1">CATEGORICAL DOMAIN</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">GENRE</h2>
+</div>
+<span class="text-caption font-caption text-outline">Multi-select enabled</span>
+</div>
+<div class="flex flex-wrap gap-2.5">
+<!-- Selected Genres -->
+<button class="px-4 py-2 rounded-full bg-primary-container text-surface-container-lowest font-body-md text-body-sm font-semibold flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+<span>Sci-Fi</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-primary-container text-surface-container-lowest font-body-md text-body-sm font-semibold flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+<span>Thriller</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-primary-container text-surface-container-lowest font-body-md text-body-sm font-semibold flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+<span>Mystery</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-primary-container text-surface-container-lowest font-body-md text-body-sm font-semibold flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+<span>Cyberpunk</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+</button>
+<!-- Unselected Genres -->
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Drama</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Action</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Comedy</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Horror</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Romance</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Animation</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Adventure</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Fantasy</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Crime</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Documentary</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">War</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low border border-white/10 text-on-surface-variant font-body-md text-body-sm hover:border-primary-container/40 hover:text-on-surface transition-all">Musical</button>
+</div>
+</section>
+<!-- 5. WHEN DO YOU WANT TO WATCH? (YEAR / ERA) -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-4">
+<div>
+<span class="text-label-tag font-label-tag text-primary tracking-widest block mb-1">TEMPORAL WINDOW</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">WHEN DO YOU WANT TO WATCH?</h2>
+</div>
+<span class="text-body-sm font-label-tag text-primary">Range: 2010 — 2019</span>
+</div>
+<!-- Segmented Decades Selector -->
+<div class="bg-surface-container-low/70 p-1.5 rounded-lg border border-white/10 flex flex-wrap gap-1 mb-8">
+<button class="flex-1 py-2.5 px-4 rounded text-body-sm font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all text-center">Any Era</button>
+<button class="flex-1 py-2.5 px-4 rounded text-body-sm font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all text-center">1980s</button>
+<button class="flex-1 py-2.5 px-4 rounded text-body-sm font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all text-center">1990s</button>
+<button class="flex-1 py-2.5 px-4 rounded text-body-sm font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all text-center">2000s</button>
+<button class="flex-1 py-2.5 px-4 rounded text-body-sm font-body-md bg-primary-container text-surface-container-lowest font-semibold shadow-[0_0_12px_rgba(245,158,11,0.4)] text-center">2010s</button>
+<button class="flex-1 py-2.5 px-4 rounded text-body-sm font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all text-center">2020s</button>
+</div>
+<!-- Fine-grained Range Track Visual -->
+<div class="bg-surface-container-low/40 border border-white/5 p-6 rounded-lg">
+<div class="flex justify-between text-caption font-label-tag text-outline mb-3">
+<span>1970</span>
+<span>1985</span>
+<span>2000</span>
+<span class="text-primary font-bold">2010 (Start)</span>
+<span class="text-primary font-bold">2019 (End)</span>
+<span>2025</span>
+</div>
+<div class="relative w-full h-2 bg-surface-container-high rounded-full">
+<!-- Active segment highlight -->
+<div class="absolute left-[70%] right-[10%] h-full bg-primary-container rounded-full shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div>
+<!-- Left Handle -->
+<div class="absolute left-[70%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary-container border-2 border-surface-container-lowest shadow-[0_0_10px_rgba(245,158,11,0.8)] cursor-pointer"></div>
+<!-- Right Handle -->
+<div class="absolute left-[90%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary-container border-2 border-surface-container-lowest shadow-[0_0_10px_rgba(245,158,11,0.8)] cursor-pointer"></div>
+</div>
+</div>
+</section>
+<!-- 6. LANGUAGE & RUNTIME CONTROLS -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+<!-- Language Controls -->
+<div class="bg-surface-container-low/50 border border-white/5 p-6 rounded-lg">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">LANGUAGE</h3>
+<span class="text-caption font-caption text-outline">Audio or Primary Tongue</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3.5 py-1.5 rounded-full bg-primary-container text-surface-container-lowest font-body-sm font-semibold">Any</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">English</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">Korean</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">Japanese</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">French</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">Spanish</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">German</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">Hindi</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-body-sm hover:border-primary-container/30">Other</button>
+</div>
+</div>
+<!-- Runtime Controls -->
+<div class="bg-surface-container-low/50 border border-white/5 p-6 rounded-lg">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">HOW MUCH TIME DO YOU HAVE? (RUNTIME)</h3>
+<span class="text-caption font-caption text-primary">Standard Feature</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+<button class="p-2.5 rounded bg-surface-container border border-white/10 text-caption font-body-md text-on-surface-variant hover:text-on-surface text-center">Under 90 min</button>
+<button class="p-2.5 rounded bg-primary-container text-surface-container-lowest font-body-md font-semibold text-caption text-center shadow-[0_0_12px_rgba(245,158,11,0.3)]">90–120 min</button>
+<button class="p-2.5 rounded bg-surface-container border border-white/10 text-caption font-body-md text-on-surface-variant hover:text-on-surface text-center">2–2.5 hours</button>
+<button class="p-2.5 rounded bg-surface-container border border-white/10 text-caption font-body-md text-on-surface-variant hover:text-on-surface text-center">2.5+ hours</button>
+<button class="p-2.5 rounded bg-surface-container border border-white/10 text-caption font-body-md text-on-surface-variant hover:text-on-surface text-center col-span-2 sm:col-span-1">Any Time</button>
+</div>
+</div>
+</section>
+<!-- 7. DISCOVERY CONTROLS (SIGNATURE FEATURE) -->
+<section class="mb-16">
+<div class="bg-gradient-to-b from-surface-container/60 via-surface-container-low to-surface-container-lowest border border-primary-container/20 rounded-xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
+<!-- Background watermark effect -->
+<div class="absolute -right-12 -bottom-12 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[240px]" data-icon="tune">tune</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-center justify-between border-b border-outline-variant/30 pb-6 mb-8 gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-label-tag uppercase mb-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="tune">tune</span>
+              Algorithmic Vector Calibration
+            </div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">CURATORIAL DISCOVERY CONTROLS</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Influence algorithmic exploratory balance</p>
+</div>
+<div class="px-4 py-2 rounded bg-surface-container-high/80 border border-outline-variant/40 text-caption font-label-tag text-on-surface flex items-center gap-2 self-start md:self-auto">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+            Mode: Adventurous Hidden Gem Bias
+          </div>
+</div>
+<!-- 3 Curatorial Discovery Sliders -->
+<div class="space-y-8">
+<!-- Slider 1: Familiar vs Adventurous -->
+<div class="bg-surface-container-lowest/60 p-5 rounded-lg border border-white/5">
+<div class="flex justify-between items-center mb-3">
+<div>
+<span class="text-body-md font-semibold text-on-surface">FAMILIAR</span>
+<span class="text-caption text-outline ml-2">“Closer to what you already love”</span>
+</div>
+<div class="text-right">
+<span class="text-caption text-outline mr-2">“Explore something different”</span>
+<span class="text-body-md font-semibold text-primary">ADVENTUROUS</span>
+</div>
+</div>
+<div class="relative flex items-center">
+<input class="w-full h-2 bg-surface-container-high rounded-full appearance-none custom-range cursor-pointer" max="100" min="0" type="range" value="65"/>
+</div>
+<div class="flex justify-between items-center mt-2 text-label-tag font-label-tag text-outline">
+<span>0% Familiar</span>
+<span class="text-primary font-medium">Vector Value: 65% Adventurous</span>
+<span>100% Adventurous</span>
+</div>
+</div>
+<!-- Slider 2: Popular vs Hidden Gems -->
+<div class="bg-surface-container-lowest/60 p-5 rounded-lg border border-white/5">
+<div class="flex justify-between items-center mb-3">
+<div>
+<span class="text-body-md font-semibold text-on-surface">POPULAR</span>
+<span class="text-caption text-outline ml-2">“Well-known favorites”</span>
+</div>
+<div class="text-right">
+<span class="text-caption text-outline mr-2">“Less obvious discoveries”</span>
+<span class="text-body-md font-semibold text-primary">HIDDEN GEMS</span>
+</div>
+</div>
+<div class="relative flex items-center">
+<input class="w-full h-2 bg-surface-container-high rounded-full appearance-none custom-range cursor-pointer" max="100" min="0" type="range" value="78"/>
+</div>
+<div class="flex justify-between items-center mt-2 text-label-tag font-label-tag text-outline">
+<span>0% Mainstream</span>
+<span class="text-primary font-medium">Vector Value: 78% Hidden Gems</span>
+<span>100% Obscure</span>
+</div>
+</div>
+<!-- Slider 3: Recent vs Classic -->
+<div class="bg-surface-container-lowest/60 p-5 rounded-lg border border-white/5">
+<div class="flex justify-between items-center mb-3">
+<div>
+<span class="text-body-md font-semibold text-on-surface">RECENT</span>
+<span class="text-caption text-outline ml-2">“Newer movies”</span>
+</div>
+<div class="text-right">
+<span class="text-caption text-outline mr-2">“Older favorites”</span>
+<span class="text-body-md font-semibold text-primary">CLASSIC</span>
+</div>
+</div>
+<div class="relative flex items-center">
+<input class="w-full h-2 bg-surface-container-high rounded-full appearance-none custom-range cursor-pointer" max="100" min="0" type="range" value="45"/>
+</div>
+<div class="flex justify-between items-center mt-2 text-label-tag font-label-tag text-outline">
+<span>Contemporary Only</span>
+<span class="text-primary font-medium">Vector Value: 45% Balanced Mid-Decade</span>
+<span>Archive Only</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. PERSONALIZATION TOGGLE & RECOMMENDATION GENERATOR -->
+<section class="mb-20">
+<div class="p-6 md:p-8 rounded-xl bg-surface-container-low border border-primary-container/30 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row items-center justify-between gap-8">
+<!-- Master Switch Container -->
+<div class="flex items-start gap-4 max-w-xl">
+<!-- Toggle switch button -->
+<button class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out bg-primary-container shadow-[0_0_12px_rgba(245,158,11,0.5)] mt-0.5">
+<span class="translate-x-5 inline-block h-6 w-6 transform rounded-full bg-surface-container-lowest shadow ring-0 transition duration-200 ease-in-out flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="check">check</span>
+</span>
+</button>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-headline-sm text-body-lg font-semibold text-on-surface">USE MY TASTE</h4>
+<span class="px-2 py-0.5 rounded text-[10px] font-label-tag bg-primary-container/20 text-primary border border-primary-container/30">MASTER SWITCH: ON</span>
+</div>
+<p class="font-body-md text-body-sm text-on-surface-variant mt-1">
+              Active: Blending choices with your existing CineSense taste profile (Sci-Fi, Cerebral, Villeneuve/Nolan affinity).
+            </p>
+<p class="font-caption text-caption text-outline mt-0.5">
+              Switch off to explore independently of your history.
+            </p>
+</div>
+</div>
+<!-- Action CTAs -->
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+<!-- Discreet Reset -->
+<button class="w-full sm:w-auto px-5 py-3 rounded text-body-sm font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all text-center">
+            Reset Discovery
+          </button>
+<!-- Grand Amber CTA -->
+<button class="w-full sm:w-auto px-8 py-3.5 rounded bg-primary-container hover:bg-surface-tint text-surface-container-lowest font-body-md font-semibold flex items-center justify-center gap-3 shadow-[0_10px_25px_-5px_rgba(245,158,11,0.5)] active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="auto_awesome">auto_awesome</span>
+<div class="text-left">
+<div class="leading-none text-body-md font-bold">FIND MY MOVIES</div>
+<div class="text-[10px] opacity-80 font-normal">Generate Curated Slate (42 matches found)</div>
+</div>
+</button>
+</div>
+</div>
+</section>
+<!-- 9. YOUR DISCOVERIES (LIVE PREVIEW RESULTS) -->
+<section class="space-y-16">
+<!-- Section Header -->
+<div class="border-b border-outline-variant/30 pb-6">
+<div class="flex items-center gap-2 text-primary font-label-tag text-label-tag uppercase mb-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="sparkles">auto_awesome</span>
+          Algorithmic Slate Synthesis
+        </div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">YOUR DISCOVERIES</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+          Synthesized based on: <span class="text-primary font-medium">Make Me Think</span> + <span class="text-primary font-medium">Escape Reality</span> • <span class="text-on-surface">Sci-Fi &amp; Thriller</span> • <span class="text-on-surface">2010s</span> • <span class="text-primary font-medium">Hidden Gem Bias</span>
+</p>
+</div>
+<!-- ROW A: BEST MATCHES -->
+<div>
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-6 bg-primary-container rounded-sm"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface">BEST MATCHES</h3>
+<span class="text-caption font-label-tag text-outline px-2 py-0.5 rounded bg-surface-container border border-white/5">TOP CORRELATION</span>
+</div>
+<a class="text-body-sm font-label-tag text-primary hover:underline flex items-center gap-1" href="#">
+            View all 14 matches <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card A1: Ex Machina -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cinematic film still from a sleek modern psychological sci-fi masterpiece, featuring an artificial intelligence woman with intricate translucent cybernetic mechanics, illuminated by soft atmospheric ambient amber and glass reflections in an ultra-minimalist concrete laboratory." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMt5UlLP_0TK24r_IT8bEJ8XgBOlRQODCbOmJO_N_2uMAFtgI9Sz4cDtoLbBr5B8GdkFwfaj85fTDiSXi6SyskeR5z0UVFZHTZESH8JO6lD-gCr6qohnI3GiN-4TaGNIC8zFj_vN6U9kV1QKRMIPuH80uDt3s1ZJXbFenPjsr2l3_qhMvMMh9bUpwhqik0OViiS34rOs1WLtqsQk6Fp-vIi1tGtG3FXccQBdIPIZboQTJqP7ddibx6"/>
+<!-- Match badge top left -->
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-primary-container text-surface-container-lowest font-label-tag text-[11px] font-bold px-2 py-0.5">98% MATCH</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                7.7
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2014</span>
+<span>•</span>
+<span>1h 48m</span>
+<span>•</span>
+<span>Alex Garland</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Ex Machina</h4>
+<!-- Rationale Badge -->
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="psychology">psychology</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Matches your mood &amp; cerebral sci-fi affinity</p>
+</div>
+</div>
+</div>
+<!-- Card A2: Arrival -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A grand cinematic wide frame of a massive monolithic alien spacecraft hovering silently over a foggy green mountainous valley at dawn, rendered with moody atmospheric cinematography, muted natural tones, and soft amber horizon light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNi9VyA_AAIcuyuJ1IdUdAotrGDtzJlLKslOOQxjxQEZ8OlcpIOsXOQS3Kmhyg_Ul_7RuTNqgscALKJ1T3ue95_DXhsxCmlXU5AoKk3_s0e26dXybQ4C3l1gKcYv5S8XN6h8R122KjoLFzxhdZykmtYogUjhIcZqL_Gb33FZ3YPeKwtopF0tQ7MZiPTBdrNRTSWZ95vmikJY_t2_COBmGD61Xq77tpcwtWtAdJGhfWsdJrMdrb60BF"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-primary-container text-surface-container-lowest font-label-tag text-[11px] font-bold px-2 py-0.5">97% MATCH</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                7.9
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2016</span>
+<span>•</span>
+<span>1h 56m</span>
+<span>•</span>
+<span>Denis Villeneuve</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Arrival</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="insights">insights</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Because you loved Interstellar &amp; temporal narratives</p>
+</div>
+</div>
+</div>
+<!-- Card A3: Annihilation -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An eerie, iridescent shimmering boundary wall inside an overgrown subtropical wilderness, featuring scientists in hazmat suits walking cautiously into prism-refracted luminous mist and bizarre mutated botanical forms under cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDftJTGtX3XZuMtkqOO3fjjCIfIxAEBE8wg7Pl-k113kf0xAGWCUfApbSVIAahJGgqN8JV2pDNsj8bL_BN47nM1bxvJPaB_VNhp63CMnWJpqEaBI6xD0eY1klVFWllv8KAKihACcmwnjTB91rrdsUMe8K611_r7rSFn4L3hO4qT-e9MW61wPexUxCKEeOMop-uqcH8JVvlauFpAj1zW7ALWKWyeRbMHYGNEAaLDewF3ZkPKupr7sfVk"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-primary-container text-surface-container-lowest font-label-tag text-[11px] font-bold px-2 py-0.5">95% MATCH</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                6.8
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2018</span>
+<span>•</span>
+<span>1h 55m</span>
+<span>•</span>
+<span>Alex Garland</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Annihilation</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="hourglass_empty">hourglass_empty</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Matches deliberate pacing &amp; existential mystery</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW B: HIDDEN GEMS -->
+<div>
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-6 bg-secondary-fixed rounded-sm"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface">HIDDEN GEMS</h3>
+<span class="text-caption font-label-tag text-secondary-fixed px-2 py-0.5 rounded bg-surface-container border border-secondary-fixed/20">UNDERSEEN BRILLIANCE</span>
+</div>
+<a class="text-body-sm font-label-tag text-primary hover:underline flex items-center gap-1" href="#">
+            View all 19 hidden gems <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card B1: Coherence -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A claustrophobic, intense dinner party illuminated solely by glowing blue chem-light sticks and shadowy warm table lamps, showing a group of bewildered intellectuals gazing out into the pitch-black void of a suburban blackout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXEAqw2GaiFmeNfurTEb7suw_g6KGoW32CxCUia0lhmfMfxhLps6uo9abXBqEVBcuU2oXoNOtVjB3kHbN4uyyT4DtGIHZQmv8cfpLo3hOmRlLqIfy_lzlYt7SW8MULagHkUUy56hOSngwcuSPVp9iyIa0THU1rfLilQ26qJdgAovlM7oPltkRBKT7JK_NwgFqM_85k4MhxU743BpbS8Jdg0hTKHtSdv_HyIXliq1t1nS9VFNwctDO4"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-secondary-container text-surface-container-lowest font-label-tag text-[11px] font-bold px-2 py-0.5">94% MATCH</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                7.2
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2013</span>
+<span>•</span>
+<span>1h 29m</span>
+<span>•</span>
+<span>James Ward Byrkit</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Coherence</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="diamond">diamond</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Hidden gem for you • High cerebral score</p>
+</div>
+</div>
+</div>
+<!-- Card B2: Primer -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Two exhausted young male engineers in loose short-sleeve white shirts and dark ties hunched over a crude electromagnetic time machine device in a messy suburban garage filled with circuit boards and fluorescent work lights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkH1lR0dQe8sve8bHOP568v0sKb-bUIt1kxGL1Z7SknDZEst30AelrKwj5mcBZE8kIZnC689mLL3_jCPWtIUAM9nOZE5busH2uOAV8dqSoQrhqkbK80SbY5YNKL3_U572Y0C1mL4D2CmFqYDO7y_pgEzwEnekH60lc7pZhy1zn-FYvrxN1rBopvH49qwfIz2z6vQNm_553ZVXnBCBeKVnrnYbC9sZwBOGCXzYQ6CdLTTM6NpgMxLJl"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-secondary-container text-surface-container-lowest font-label-tag text-[11px] font-bold px-2 py-0.5">92% MATCH</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                6.9
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2004</span>
+<span>•</span>
+<span>1h 17m</span>
+<span>•</span>
+<span>Shane Carruth</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Primer</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="history_edu">history_edu</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Low-budget cult mind-bender &amp; strict causality</p>
+</div>
+</div>
+</div>
+<!-- Card B3: Aniara -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A gigantic luxury passenger spaceship drifting helplessly across an incomprehensibly vast field of deep black cosmic stars, interior windows showing tiny specks of warm golden light against eternal existential cold space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt5rctDnx81Xfk4jt30aUrZxK35wUmpdV5XHVGFvxth_-tV3GdOdEYMFkXUWw9Yi9fm--r4X3Ig67d9MeDaxE5HmyBAuAjNrAIZpOqBiMGHniJeCbGHIc33jUs8F0WmUbaeuMnDoYCoPaYd8kC9AQaBx8OVzFxouQXtrdtkdUg1DG33Is4DsTBqG4wgI4W8Pf54DZ14R1ybUxLdqXYjfLeWRGhpehTCsG2uX1jzIV6EyByT3vdmH6k"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-secondary-container text-surface-container-lowest font-label-tag text-[11px] font-bold px-2 py-0.5">90% MATCH</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                6.5
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2018</span>
+<span>•</span>
+<span>1h 46m</span>
+<span>•</span>
+<span>Pella Kågerman, Hugo Lilja</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Aniara</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="rocket_launch">rocket_launch</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Swedish existential space drama &amp; poetic horror</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW C: OUTSIDE YOUR USUAL TASTE -->
+<div>
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-6 bg-outline rounded-sm"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface">OUTSIDE YOUR USUAL TASTE</h3>
+<!-- Special violet/gold curatorial tag -->
+<span class="text-caption font-label-tag text-primary px-2.5 py-0.5 rounded-full bg-gradient-to-r from-outline-variant/30 to-primary-container/20 border border-primary-container/40">
+              CURATORIAL PROVOCATION
+            </span>
+</div>
+<a class="text-body-sm font-label-tag text-primary hover:underline flex items-center gap-1" href="#">
+            Expand perimeter <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card C1: The Lighthouse -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="High contrast 35mm black-and-white cinematic composition of two weathered 19th-century lighthouse keepers with crazed expressions bathed in the blazing circular beam of a fresnel lens against roaring ocean waves." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbhogqBAt741N9CvuxGsxiX05TOc0Tfc6seF9vS5Op-rwJObMdD0SMelIhwbZm098As_8T5plSLkcE4gUE0Xrk4lvzPDlaf7W1Ut9f0NLwg6y90VthaFRk7TUSgk-Z9Jk5QpQ6Dn89uf7B9oGDJN1VH9Iot2C6okjTo2-68sozf-kz8_XDB2z3KY6xD-axosassjlNaLmhS95e_NQsAx_iG-lpfvtdjrX0Y3Q4AlPWyeaSnYnFqucZ"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-surface-bright text-on-surface font-label-tag text-[11px] font-bold px-2 py-0.5 border-r border-white/10">89%</span>
+<span class="bg-surface-container-highest text-primary font-label-tag text-[10px] px-2 py-0.5">CURIOSITY</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                7.4
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2019</span>
+<span>•</span>
+<span>1h 49m</span>
+<span>•</span>
+<span>Robert Eggers</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">The Lighthouse</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="explore">explore</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Bold psychological thriller &amp; hypnotic mythos</p>
+</div>
+</div>
+</div>
+<!-- Card C2: Decision to Leave -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An elegant neo-noir framing of a detective and an enigmatic suspect gazing past each other in a dimly lit interrogation room with deep turquoise wall panels and shimmering warm overhead illumination." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfoTqzWHI1sInVNLRuPr8uKm-isw6WXcV1dFSN9uQcqqbFoJ-C6XtKD1OJyap7PK6rQIHB6BCOuRXeJBUs3tD5KNxqgGHQiaMWiS3Bmlst44IR-P0Q3DoirYpYv9yz-xnsLfBGnVlUmbbdGkQLy2AgjlqOPe6XNI3KYbXXCDNcNwHwo5D5aVard9swoHo0uEOBCdlAkKnA5xecmY2DCpoR7BjeFWcZ4KWpoYYSJqWfOkj8i0DGLWnK"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-surface-bright text-on-surface font-label-tag text-[11px] font-bold px-2 py-0.5 border-r border-white/10">88%</span>
+<span class="bg-surface-container-highest text-primary font-label-tag text-[10px] px-2 py-0.5">CURIOSITY</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                7.3
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>2022</span>
+<span>•</span>
+<span>2h 18m</span>
+<span>•</span>
+<span>Park Chan-wook</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Decision to Leave</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="explore">explore</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Neo-noir romantic mystery &amp; masterful editing</p>
+</div>
+</div>
+</div>
+<!-- Card C3: Cure -->
+<div class="group bg-surface-container-low rounded-lg overflow-hidden border border-white/10 hover:border-primary-container/50 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.2)]">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A grim, moody Tokyo police interrogation cell shot in atmospheric 1990s 35mm film stock, showing a detective confronting an amnesiac stranger under sickly green tungsten light and heavy deep shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2EpuGcuO11_axM-skIN4sz2IKCqr20-yhI6gwfA0DFgfampEFN8C_RWHCKSWAZfuBO4PInDbomCJ7Z1vgjvbtsaILmoxPbA1rZYiTwrlm-2VcIXxIj_gp1JoPYP3qXrrj2EpL_eoAZ326Ti4zdx5UTk3HLOFEoR8aLECj4EBFynjbtqs6ioRAmLkpfnJazN7r79sXwEeq7OtzzAQOsgbtIbfByMhzaP-HRzPFH2AjTNbCFNa2pJZ6"/>
+<div class="absolute top-3 left-3 flex rounded overflow-hidden shadow-lg border border-white/10">
+<span class="bg-surface-bright text-on-surface font-label-tag text-[11px] font-bold px-2 py-0.5 border-r border-white/10">87%</span>
+<span class="bg-surface-container-highest text-primary font-label-tag text-[10px] px-2 py-0.5">CURIOSITY</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-[11px] font-label-tag text-on-surface flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                7.5
+              </div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 text-caption text-outline font-label-tag mb-1">
+<span>1997</span>
+<span>•</span>
+<span>1h 51m</span>
+<span>•</span>
+<span>Kiyoshi Kurosawa</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">Cure</h4>
+<div class="mt-3 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary mt-0.5" data-icon="explore">explore</span>
+<p class="text-caption font-body-sm text-on-surface-variant">Japanese psychological masterpiece &amp; hypnotic dread</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- 10. FOOTER (Shared Component: Footer) -->
+<footer class="w-full bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20">
+<div class="flex flex-col md:flex-row justify-between items-center py-12 px-12 max-w-7xl mx-auto w-full gap-6">
+<div class="flex flex-col items-center md:items-start gap-2">
+<a class="font-headline-md text-headline-md text-primary dark:text-primary tracking-tight" href="#">CineSense</a>
+<p class="text-body-sm font-body-sm text-outline">
+          © 2025 CineSense Curatorial Intelligence Inc. All rights reserved.
+        </p>
+</div>
+<!-- Footer Navigation Links -->
+<div class="flex flex-wrap justify-center items-center gap-6 text-label-tag font-label-tag">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Editorial Methodology</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Explainability Engine</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Curator Lounge</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">API &amp; Telemetry</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary dark:hover:text-primary transition-colors duration-150" href="#">Privacy &amp; Terms</a>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MoieRec — Movie Detail: Blade Runner 2049</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#6e3900",
+            "surface-container-low": "#1a1b20",
+            "on-error": "#690005",
+            "tertiary-fixed": "#ffdf9a",
+            "on-primary": "#472a00",
+            "error": "#ffb4ab",
+            "on-tertiary-container": "#574000",
+            "tertiary-container": "#dea900",
+            "surface-container-lowest": "#0d0e12",
+            "surface": "#121317",
+            "on-surface-variant": "#d8c3ad",
+            "primary-fixed-dim": "#ffb95f",
+            "secondary-fixed": "#ffdcc3",
+            "outline": "#a08e7a",
+            "outline-variant": "#534434",
+            "tertiary-fixed-dim": "#f7be1d",
+            "on-tertiary": "#3f2e00",
+            "on-tertiary-fixed-variant": "#5a4300",
+            "surface-tint": "#ffb95f",
+            "primary-fixed": "#ffddb8",
+            "surface-variant": "#343439",
+            "tertiary": "#fdc425",
+            "primary": "#ffc174",
+            "secondary-fixed-dim": "#ffb77d",
+            "error-container": "#93000a",
+            "on-background": "#e3e2e7",
+            "on-secondary-fixed": "#2f1500",
+            "surface-dim": "#121317",
+            "on-primary-fixed-variant": "#653e00",
+            "on-error-container": "#ffdad6",
+            "surface-container": "#1f1f24",
+            "on-primary-fixed": "#2a1700",
+            "secondary": "#ffb77d",
+            "on-tertiary-fixed": "#251a00",
+            "inverse-surface": "#e3e2e7",
+            "on-secondary": "#4d2600",
+            "inverse-on-surface": "#2f3035",
+            "background": "#121317",
+            "surface-bright": "#38393d",
+            "surface-container-highest": "#343439",
+            "primary-container": "#f59e0b",
+            "inverse-primary": "#855300",
+            "on-surface": "#e3e2e7",
+            "on-primary-container": "#613b00",
+            "secondary-container": "#d97707",
+            "surface-container-high": "#292a2e",
+            "on-secondary-container": "#432100"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "3rem",
+            "space-xs": "0.25rem",
+            "gutter-mobile": "0.75rem",
+            "margin-mobile": "1.25rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.75rem",
+            "margin": "3rem",
+            "space-md": "1rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Inter"],
+            "label-tag": ["Space Grotesk"],
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "display-hero": ["Bodoni Moda"],
+            "label-match": ["Space Grotesk"],
+            "headline-md": ["Bodoni Moda"],
+            "caption": ["Inter"],
+            "headline-lg": ["Bodoni Moda"],
+            "display-hero-mobile": ["Bodoni Moda"],
+            "headline-lg-mobile": ["Bodoni Moda"]
+          },
+          "fontSize": {
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-tag": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-match": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+            "caption": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "display-hero-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "0em", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0d0e12;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 193, 116, 0.2);
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 193, 116, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface min-h-screen selection:bg-primary selection:text-on-primary font-body-md antialiased overflow-x-hidden">
+<!-- 1. TOP NAVIGATION (Shared Component TopNavBar adaptation) -->
+<header class="fixed top-0 left-0 right-0 z-50 w-full bg-surface-dim/80 backdrop-blur-md dark:bg-surface-dim/80 border-b border-outline-variant/30 shadow-2xl transition-all duration-200">
+<div class="flex justify-between items-center h-20 px-12 max-w-7xl mx-auto w-full">
+<!-- Brand & Left Nav -->
+<div class="flex items-center space-x-10">
+<a class="flex items-center gap-1.5 group" href="#">
+<span class="font-headline-md text-headline-md tracking-tight text-primary dark:text-primary">MoieRec</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container shadow-[0_0_8px_#f59e0b]"></span>
+</a>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors text-body-md font-body-md" href="#">Home</a>
+<a class="text-primary dark:text-primary font-medium border-b border-primary pb-1 text-body-md font-body-md" href="#">Explore</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors text-body-md font-body-md" href="#">My Taste</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-normal hover:text-on-surface transition-colors text-body-md font-body-md" href="#">Search</a>
+</nav>
+</div>
+<!-- Center Taste Profile Pill -->
+<div class="hidden lg:flex items-center bg-surface-container-low/70 border border-outline-variant/40 px-3.5 py-1.5 rounded-full backdrop-blur-md shadow-inner">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse mr-2"></span>
+<span class="text-label-tag font-label-tag text-on-surface-variant uppercase tracking-wider">Taste Profile • <span class="text-on-surface font-medium">Sci-Fi &amp; Drama</span></span>
+</div>
+<!-- Right Actions & Curator Profile -->
+<div class="flex items-center space-x-5">
+<button aria-label="Curator Radar" class="text-on-surface-variant hover:text-primary transition-colors duration-150 p-2 rounded-lg hover:bg-surface-container/50 flex items-center justify-center" title="Curator Radar">
+<span class="material-symbols-outlined text-[20px]">radar</span>
+</button>
+<button aria-label="Notifications" class="text-on-surface-variant hover:text-primary transition-colors duration-150 p-2 rounded-lg hover:bg-surface-container/50 relative flex items-center justify-center" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary-container rounded-full ring-2 ring-surface"></span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant/30 hidden sm:block"></div>
+<!-- User Avatar -->
+<a class="flex items-center gap-3 group pl-1" href="#">
+<div class="relative w-9 h-9 rounded-full ring-1 ring-primary/40 group-hover:ring-primary transition-all duration-200 overflow-hidden bg-surface-container">
+<img alt="User curator profile portrait with taste match badge" class="w-full h-full object-cover" data-alt="Intimate editorial portrait photograph of an auteur film curator with subtle chiaroscuro amber lighting against a deeply saturated cinematic charcoal background. The subject maintains an observant, thoughtful expression with warm specular highlights dancing across the cheekbones, matching the dark prestige screening room aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeaO0h89KCVk6vz6a7Phs8pftL6Fx15vj7Q3gi70zIgt6jRwo_zU1MBVrmVFKl10KIF-S35dFqV4W-yu89BRVF6hQa_DvQ1FQxrUeo3PCOfbombr1_v_CnqhS-YbwWeW9Grcyk-ZVkLkf_FoOV9pbNVgE5DaKqWbnEdHm7ZcU7cCi1DfhQNkN5AdpjrVwoLNDkf_HS52w6f_ESWt3ilw4jBCvBpHIIRzLhRiSTVen2TQKQUNpZ-GtY"/>
+</div>
+</a>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="w-full pt-20">
+<!-- 2. CINEMATIC MOVIE HERO (Blade Runner 2049) -->
+<section class="relative w-full min-h-[92vh] flex items-end overflow-hidden border-b border-outline-variant/30 bg-surface-container-lowest">
+<!-- Full-bleed Backdrop Image -->
+<div class="absolute inset-0 z-0">
+<img alt="Blade Runner 2049 cinematic backdrop" class="w-full h-full object-cover object-center filter brightness-[0.78] contrast-[1.12]" data-alt="Wide panoramic cinematic shot of a dystopian futuristic wasteland bathed in dense, apocalyptic orange dust and glowing volumetric amber smog. A solitary, angular police spinner vehicle rests silently on brutalist concrete ruins, framed by monolithic rusted steel megastructures towering into the smoggy atmospheric haze with intense atmospheric depth and Roger Deakins style chiaroscuro lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDk9qWKDyWhvfZ4qmIvQUYgceP-FGGTlmEiFIGODHUUsPhitunpUBgpxSGFRKrDtTLnd8O2iBQIQKj6aj8i_LOH3R5RhWRs9lAqDAMaipGh7CCok37UD1JGqX33tZ1-i3lmEZUbKxa6IXAdWBIfCDUk0v3TCBBxpPGWO0KtGkzPZUSiTWl_fAtoE7Tk5HPWBo_Y1seBmFpBunRgpk8mZdH5fJ3Azmqxkmf7bpZpu0GJAPkR_YKb2eAA"/>
+<!-- Gradient Overlays for Readability -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-surface-container-lowest/70 to-transparent w-full md:w-3/4"></div>
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.08),transparent_60%)]"></div>
+</div>
+<!-- Hero Information Container -->
+<div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pb-16 pt-32 w-full">
+<div class="max-w-3xl space-y-6">
+<!-- Recommendation Explainability Chip -->
+<div class="inline-flex items-center rounded-lg border border-outline-variant/50 overflow-hidden backdrop-blur-md bg-surface-container-lowest/60 shadow-lg">
+<span class="bg-primary-container text-on-primary-container font-label-match text-label-match px-3 py-1 font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+              96% MATCH FOR YOU
+            </span>
+<span class="px-3.5 py-1 text-label-tag font-label-tag text-on-surface-variant tracking-wider bg-surface-container-low/50">
+              RECOMMENDED VIA ATMOSPHERIC SCI-FI &amp; WORLD-BUILDING
+            </span>
+</div>
+<!-- Title -->
+<h1 class="font-display-hero text-display-hero md:text-[68px] md:leading-[74px] text-on-surface tracking-tight font-bold drop-shadow-md">
+            BLADE RUNNER 2049
+          </h1>
+<!-- Metadata Stream & Badges -->
+<div class="flex flex-wrap items-center gap-3 text-body-md font-body-md text-on-surface-variant">
+<span class="text-on-surface font-medium">2017</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="px-1.5 py-0.5 border border-outline-variant/60 rounded text-caption font-caption text-on-surface">R</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>2h 44m</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-primary font-medium tracking-wide">IMAX Enhanced</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-on-surface font-medium">Dolby Atmos</span>
+</div>
+<!-- Genre Tags -->
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-3 py-1 bg-surface-container-high/60 border border-outline-variant/30 rounded text-label-tag font-label-tag text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer">SCI-FI</span>
+<span class="px-3 py-1 bg-surface-container-high/60 border border-outline-variant/30 rounded text-label-tag font-label-tag text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer">NEO-NOIR</span>
+<span class="px-3 py-1 bg-surface-container-high/60 border border-outline-variant/30 rounded text-label-tag font-label-tag text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer">CYBERPUNK</span>
+<span class="px-3 py-1 bg-surface-container-high/60 border border-outline-variant/30 rounded text-label-tag font-label-tag text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer">MYSTERY</span>
+</div>
+<!-- Synopsis -->
+<p class="text-body-lg font-body-lg text-on-surface/90 leading-relaxed font-light line-clamp-3 md:line-clamp-none max-w-2xl text-shadow">
+            Thirty years after the events of the first film, a new blade runner, LAPD Officer K, unearths a long-buried secret that has the potential to plunge what's left of society into chaos. His discovery leads him on a quest to find Rick Deckard, a former LAPD blade runner who has been missing for thirty years.
+          </p>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-4 pt-3">
+<button class="bg-primary-container text-on-primary-container font-headline-sm text-headline-sm px-7 py-3 rounded-lg font-semibold hover:bg-primary-container/90 transition-all duration-200 flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(245,158,11,0.3)] active:scale-95">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              Watch Trailer / View
+            </button>
+<button class="bg-surface-container-high/40 hover:bg-surface-container-high/70 text-on-surface border border-outline-variant/60 font-body-md text-body-md px-6 py-3 rounded-lg backdrop-blur-md transition-all duration-200 flex items-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+              Add to Watchlist
+            </button>
+<!-- Quick Curator Toggles -->
+<div class="flex items-center gap-2 pl-2">
+<button aria-label="Rate Film" class="w-11 h-11 rounded-lg border border-outline-variant/40 bg-surface-container-low/60 hover:border-primary/60 hover:text-primary transition-all flex items-center justify-center group" title="Rate Film">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-primary transition-colors">star</span>
+</button>
+<button aria-label="Like Film" class="w-11 h-11 rounded-lg border border-outline-variant/40 bg-surface-container-low/60 hover:border-error/60 hover:text-error transition-all flex items-center justify-center group" title="Like Film">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-error transition-colors">favorite</span>
+</button>
+<button aria-label="Share Title" class="w-11 h-11 rounded-lg border border-outline-variant/40 bg-surface-container-low/60 hover:border-on-surface hover:text-on-surface transition-all flex items-center justify-center group" title="Share Title">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-on-surface transition-colors">share</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. MOVIE INFORMATION / EDITORIAL CREDITS BAR -->
+<section class="w-full bg-surface-container-low border-b border-outline-variant/20 py-6">
+<div class="max-w-7xl mx-auto px-6 md:px-12">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-body-sm font-body-sm">
+<div>
+<span class="text-label-tag font-label-tag text-outline uppercase tracking-wider block mb-1">Director</span>
+<span class="text-on-surface font-medium">Denis Villeneuve</span>
+</div>
+<div>
+<span class="text-label-tag font-label-tag text-outline uppercase tracking-wider block mb-1">Screenplay</span>
+<span class="text-on-surface font-medium">Hampton Fancher, Michael Green</span>
+</div>
+<div>
+<span class="text-label-tag font-label-tag text-outline uppercase tracking-wider block mb-1">Cinematography</span>
+<span class="text-primary font-medium">Roger Deakins (ASC, BSC)</span>
+</div>
+<div>
+<span class="text-label-tag font-label-tag text-outline uppercase tracking-wider block mb-1">Original Score</span>
+<span class="text-on-surface font-medium">Hans Zimmer, Benjamin Wallfisch</span>
+</div>
+<div>
+<span class="text-label-tag font-label-tag text-outline uppercase tracking-wider block mb-1">Production Design</span>
+<span class="text-on-surface font-medium">Dennis Gassner</span>
+</div>
+<div>
+<span class="text-label-tag font-label-tag text-outline uppercase tracking-wider block mb-1">Key Cast</span>
+<span class="text-on-surface font-medium">Ryan Gosling, Harrison Ford, Ana de Armas</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 4 & 5. EXPLAINABILITY BENTO GRID (Signature Explainability & Taste Equalizer) -->
+<section class="max-w-7xl mx-auto px-6 md:px-12 py-16 space-y-12">
+<!-- Dual Column Telemetry & Affinity Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- 4. SIGNATURE EXPLAINABILITY MODULE (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container rounded-lg p-8 border border-outline-variant/30 relative overflow-hidden backdrop-blur-xl shadow-xl">
+<div class="absolute -top-24 -right-24 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/30 gap-4">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-label-tag tracking-wider uppercase mb-1">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+                Curatorial Telemetry
+              </div>
+<h2 class="font-headline-md text-headline-md text-on-surface">WHY MOIEREC RECOMMENDS THIS</h2>
+</div>
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded bg-primary-container/10 border border-primary/30 text-primary">
+<span class="font-label-match text-label-match font-bold">96% TASTE MATCH</span>
+</div>
+</div>
+<!-- Natural Language Signals -->
+<div class="py-6 space-y-3.5 border-b border-outline-variant/20">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<p class="text-body-md font-body-md text-on-surface/90">
+                You rated <strong class="text-on-surface font-semibold">Interstellar</strong> highly <span class="text-primary font-medium">(5★)</span>, matching deep existential sci-fi narratives.
+              </p>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<p class="text-body-md font-body-md text-on-surface/90">
+                Users with shared taste curves and catalog preferences also ranked this title in their top percentile.
+              </p>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<p class="text-body-md font-body-md text-on-surface/90">
+                Strong tonal overlap with your affinity for deliberate <strong class="text-on-surface font-semibold">Neo-Noir</strong> visuals and atmospheric mystery arcs.
+              </p>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<p class="text-body-md font-body-md text-on-surface/90">
+                Aligns directly with your appetite for monumental world-building and slow-burn philosophical inquiry.
+              </p>
+</div>
+</div>
+<!-- Similarity Factors Telemetry Metrics -->
+<div class="pt-6">
+<h3 class="text-label-tag font-label-tag text-outline uppercase tracking-wider mb-4">Underlying Similarity Factors</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+<!-- Factor 1 -->
+<div>
+<div class="flex justify-between items-center text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant font-medium">Genre Similarity</span>
+<span class="text-primary font-mono font-medium">94%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 94%;"></div>
+</div>
+</div>
+<!-- Factor 2 -->
+<div>
+<div class="flex justify-between items-center text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant font-medium">Taste Similarity</span>
+<span class="text-primary font-mono font-medium">92%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Factor 3 -->
+<div>
+<div class="flex justify-between items-center text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant font-medium">Movie Similarity</span>
+<span class="text-primary font-mono font-medium">96%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 96%;"></div>
+</div>
+</div>
+<!-- Factor 4 -->
+<div>
+<div class="flex justify-between items-center text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant font-medium">Collaborative Signal</span>
+<span class="text-primary font-mono font-medium">89%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 89%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. HOW IT MATCHES YOUR TASTE (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container rounded-lg p-8 border border-outline-variant/30 backdrop-blur-xl shadow-xl flex flex-col justify-between h-full">
+<div>
+<div class="flex items-center gap-2 text-primary font-label-tag text-label-tag tracking-wider uppercase mb-1">
+<span class="material-symbols-outlined text-[16px]">equalizer</span>
+              Affinity Calibration
+            </div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">HOW IT MATCHES YOUR TASTE</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant mb-6">
+              A multi-axis comparative evaluation between this film's structural characteristics and your curated profile preferences.
+            </p>
+<!-- Affinity Equalizer Stack -->
+<div class="space-y-4">
+<!-- Sci-Fi -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium text-label-tag font-label-tag tracking-wider">SCI-FI</span>
+<span class="text-primary font-mono font-semibold">98%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-primary h-full rounded-full" style="width: 98%;"></div>
+</div>
+</div>
+<!-- Atmospheric Immersion -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium text-label-tag font-label-tag tracking-wider">ATMOSPHERIC IMMERSION</span>
+<span class="text-primary font-mono font-semibold">95%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-primary h-full rounded-full" style="width: 95%;"></div>
+</div>
+</div>
+<!-- Monumental World-Building -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium text-label-tag font-label-tag tracking-wider">MONUMENTAL WORLD-BUILDING</span>
+<span class="text-primary font-mono font-semibold">92%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-primary h-full rounded-full" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Philosophical Weight -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium text-label-tag font-label-tag tracking-wider">PHILOSOPHICAL WEIGHT</span>
+<span class="text-primary font-mono font-semibold">90%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-primary h-full rounded-full" style="width: 90%;"></div>
+</div>
+</div>
+<!-- Noir & Mystery -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium text-label-tag font-label-tag tracking-wider">NOIR &amp; MYSTERY</span>
+<span class="text-primary font-mono font-semibold">86%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-primary h-full rounded-full" style="width: 86%;"></div>
+</div>
+</div>
+<!-- Deliberate Pacing -->
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium text-label-tag font-label-tag tracking-wider">DELIBERATE PACING</span>
+<span class="text-primary font-mono font-semibold">78%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-primary-container to-primary h-full rounded-full" style="width: 78%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-caption font-caption text-outline">
+<span>Calibrated from 148 personal title evaluations</span>
+<button class="text-primary hover:underline flex items-center gap-1 font-label-tag text-label-tag uppercase">Adjust Vector <span class="material-symbols-outlined text-[14px]">arrow_forward</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. SIMILAR MOVIES CAROUSEL -->
+<section class="max-w-7xl mx-auto px-6 md:px-12 py-10">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
+<div>
+<span class="text-label-tag font-label-tag text-primary uppercase tracking-wider block mb-1">Direct Lineage</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">SIMILAR MOVIES</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">Films sharing tonal scale, visual direction, and speculative depth</p>
+</div>
+<div class="flex items-center space-x-2">
+<button aria-label="Previous" class="p-2 rounded border border-outline-variant/40 bg-surface-container hover:bg-surface-container-high transition-colors" title="Previous">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button aria-label="Next" class="p-2 rounded border border-outline-variant/40 bg-surface-container hover:bg-surface-container-high transition-colors" title="Next">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Carousel Cards Grid (5-column layout on desktop) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<!-- Card 1: Interstellar -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Interstellar vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Cinematic vertical movie poster design for Interstellar featuring an astronaut walking across a surreal alien ocean planet with monumental towering tidal waves in the far distance under deep atmospheric dark navy and charcoal space light, with refined gold typography and minimalist editorial aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgO0W5HNeqJFD57RdxxPa6iaAd2elkWNAQgpY6EsIXCGOEzo0WIlgwSiFn1MAI1kCviu23n3J4dtn_mMG87RuQ923JNBRBwNZkTm4M8alKeX2LzDlki7xsxtrBL5n26PlbPK72ic25Zt9XnDvaXnUUHYofEaHhaAgSmZjbf_hTnsXuewHfb-GPqTBGqO5M735_Oxw1VWuvZ39lOuAaqVY0apkYM3dotQUV0EzGpaRRw3XytAUNyDlZ"/>
+<span class="absolute top-2.5 right-2.5 bg-primary-container text-on-primary-container text-label-tag font-label-tag font-bold px-2 py-0.5 rounded shadow">97% MATCH</span>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+<span class="text-caption font-caption text-primary flex items-center gap-1 font-semibold">Inspect Affinity <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Interstellar</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2014 • Christopher Nolan</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Adventure</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Arrival -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Arrival vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Cinematic movie poster for Arrival showing a massive curved alien obelisk craft hovering silently over rolling misty green meadow valleys with dense low clouds, bathed in cool moody atmospheric charcoal lighting with subtle warm amber horizon glow and minimalist prestige composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCro9cEfCB4Cj3N4AmwfAHqvJgsrBu1F4M1tmpoepKMnpEXC-3SfOFQUMEizybAZZg4WXuBvFRsoq17Q_zdiq03S2fjlN57Qj-SP8riC2PasV_jWEiuUMXbS7N1w4TC2V-fXgfH82ZVEb6as_esRM9nsy6N2ZqbR8HRVh5tMLedAx0b_wLY5yDp70cZhEMZf9J9yaILgQO4i3yQyVZTlymuFH1mZOFM51knbeRiDhHwsvF_5DMJG3vz"/>
+<span class="absolute top-2.5 right-2.5 bg-primary-container text-on-primary-container text-label-tag font-label-tag font-bold px-2 py-0.5 rounded shadow">96% MATCH</span>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+<span class="text-caption font-caption text-primary flex items-center gap-1 font-semibold">Inspect Affinity <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Arrival</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2016 • Denis Villeneuve</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Drama</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Dune: Part Two -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Dune Part Two vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Striking cinematic movie poster for Dune Part Two capturing cloaked desert warriors standing atop immense wind-carved orange and ochre sand dunes under an eclipse sun with massive sandworm silhouette emerging from dust storms, executed with prestige film festival composition and stark contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADrzvmHmMTLag4q4UM9M24SncHbOJ2OFOz56hceQVSaKt1Swi79KuRYORm5swhRGBYp-Tx0z6GqxUe_bCI0dqrH3RJcrI_q1KzgHuZYNhS8PSKNjm3c9ffWo7ux9BKaEW7vqFQQf--4Z2zXbhTEZCFefN5YXSarxz5S_wuidrCmACD9wbwjT_MbzQMEIYcnyaKsDpo9fBm-QH0Xk3S2DH7iA1TZ-sXi4xsS2ybcpUP7NZZmInEmUFc"/>
+<span class="absolute top-2.5 right-2.5 bg-primary-container text-on-primary-container text-label-tag font-label-tag font-bold px-2 py-0.5 rounded shadow">95% MATCH</span>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+<span class="text-caption font-caption text-primary flex items-center gap-1 font-semibold">Inspect Affinity <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Dune: Part Two</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2024 • Denis Villeneuve</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Epic</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Ex Machina -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Ex Machina vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Editorial movie poster for Ex Machina depicting an elegant translucent humanoid android figure standing within a secluded brutalist concrete and glass architecture forest retreat, illuminated by geometric linear amber strip lights with deep charcoal shadows and refined art house atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjoJAHF0i-YXJu4udRkZcP7VwSKouzA7EBHLqsyPPms8pnIHLnPv7X0d0XqIwhoxKEdwwUDqjFnFahwcoxgw16RFVqBmfiHO-rddMGLQ97RLVqfxvP9bujx3Yl6TGtXmnOXNgO9PE1OpeJBRwIkJC_ZBaVb56ywaPvonvlrow0NBdYgVNA2KXOdwbZHXom6fB5f-24uAgzsprxkXteqJAgg6I0bjRn-KzYHE0ahy4RhzdPPz4NtZLt"/>
+<span class="absolute top-2.5 right-2.5 bg-primary-container text-on-primary-container text-label-tag font-label-tag font-bold px-2 py-0.5 rounded shadow">93% MATCH</span>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+<span class="text-caption font-caption text-primary flex items-center gap-1 font-semibold">Inspect Affinity <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Ex Machina</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2014 • Alex Garland</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Thriller</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+<!-- Card 5: The Creator -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="The Creator vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Minimalist film poster for The Creator highlighting a colossal orbital weapon structure casting a blue laser scan line down onto dense tropical river valleys at dawn, contrasted against warm golden rim highlights and dark cinematic matte finishes with prestigious editorial formatting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-1-WNHf5g083hIktUYb901PiaE_vqKf2KW7qr4lYilBKFlQy1-OBZclofoHtuTY6Sotlzp5hv1LJ_V6YWYiW4PHgmRTRGdFOKUodKhn38cxiBaTrj74MAPMn--w_38V84UJ8WJdXqfLyIlMICcWlHdmvge9ft7i-rs6NhC-dVHQH_86AO9dg_e_DKjksJXv1jjfqGDv3Dk9EFTPaAg8QJu0Ei-BLONTJjPDot76QA7Q0Qru8eeABd"/>
+<span class="absolute top-2.5 right-2.5 bg-primary-container text-on-primary-container text-label-tag font-label-tag font-bold px-2 py-0.5 rounded shadow">91% MATCH</span>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+<span class="text-caption font-caption text-primary flex items-center gap-1 font-semibold">Inspect Affinity <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">The Creator</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2023 • Gareth Edwards</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Action</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. YOU MIGHT ALSO LIKE (Collaborative Discovery) -->
+<section class="max-w-7xl mx-auto px-6 md:px-12 py-10">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
+<div>
+<span class="text-label-tag font-label-tag text-secondary uppercase tracking-wider block mb-1">Collaborative Discovery</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">YOU MIGHT ALSO LIKE</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">Cross-genre alignments surfaced from shared audience profiles</p>
+</div>
+<div class="flex items-center space-x-2">
+<button aria-label="Previous" class="p-2 rounded border border-outline-variant/40 bg-surface-container hover:bg-surface-container-high transition-colors" title="Previous">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button aria-label="Next" class="p-2 rounded border border-outline-variant/40 bg-surface-container hover:bg-surface-container-high transition-colors" title="Next">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Second Row Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<!-- Card 1: Children of Men -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Children of Men vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Moody cinematic movie poster for Children of Men showing a desolate rain-slicked London street in urban decay with a solitary figure holding a newborn wrapped in wool under muted overcast skies, stylized with raw grainy film texture and subtle bronze lettering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYJOZR1P191awlW8Q_iW07eShZrJD-tgx9zFO_QRmJ0BqqmGcAeDRE_NOVAzbnph-l0eRdbK3hKiWo-l8KpSM2XePaUCA73s7wnGXAk3XOAHxsvicS7Yn7WcUTsFM83trsnxzM73HM2lyco2iFgMsGllRTV7oxHykuzRn_sjIJGzNjRxxly_XzDrEb1vhY71NZuyIn8GmppKg1YFc82kDQinxsn1SG4q8QLm4QtHlvc3ZP90CnJoOj"/>
+<span class="absolute top-2.5 right-2.5 bg-surface-container-highest/80 border border-outline-variant/40 text-on-surface text-label-tag font-label-tag font-medium px-2 py-0.5 rounded backdrop-blur">94% MATCH</span>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Children of Men</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2006 • Alfonso Cuarón</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Dystopian</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Drama</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Solaris -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Solaris vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Art-house cinema poster for Andrei Tarkovsky's Solaris exhibiting a swirling oceanic sentient planet surface reflecting deep metallic violet and warm amber swirls, juxtaposed with an austere vintage space station corridor in deep shadow and poetic stillness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApb-umFrip3FOakbCFRknxN6R6MvKSbhP08qqi_wP6q6sZ1iXJibRhrlfWhfSU6E5UUmmsuLLAayJotpZDJULcNUoQfYhJb2hpd4G6o-zu1XcOtPnKj9H79wIJiwzDaoickCQKfw0tWEI6SOvmP6QG1ca2LmGSiHHEgMqGicrhiLdtNphHXaZLoftijHfhNRKGiYLeZY6iC8Iu64xpSalYNCOZGiFtiglhlkE2ylFjYTVsaSFdHg0z"/>
+<span class="absolute top-2.5 right-2.5 bg-surface-container-highest/80 border border-outline-variant/40 text-on-surface text-label-tag font-label-tag font-medium px-2 py-0.5 rounded backdrop-blur">92% MATCH</span>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Solaris</h3>
+<p class="text-caption font-caption text-outline mt-0.5">1972 • Andrei Tarkovsky</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Art House</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Mystery</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Annihilation -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Annihilation vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Surreal prestige film poster for Annihilation displaying crystalline refractive rainbow light distorting an eerie moss-covered coastal lighthouse surrounded by iridescent mutated flowers and heavy dark charcoal mist in a mysterious cinematic twilight setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnt_4k0Z4ZI5ILk-ma_BmcrFeL26xZn8cp47kxhdlNJXfvOBzHtYH6-3rk8kM1RVLWrT5oOPXvkehhoa6i3rI0BI6JVsuq9M_nkekab8eoJUuihcOl0ox3xVc3x2hypsvG_d-jgRkWZ2czfRR0spr7Li4l8jVkaHz84A9eqOfRE1K7eB4BSnUf0XXawUCtrK7Du5SwTikxWh_acI9HDFZelGu6_TJI7m64YZoA4dpnhEmq3ycAApiN"/>
+<span class="absolute top-2.5 right-2.5 bg-surface-container-highest/80 border border-outline-variant/40 text-on-surface text-label-tag font-label-tag font-medium px-2 py-0.5 rounded backdrop-blur">91% MATCH</span>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Annihilation</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2018 • Alex Garland</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Cosmic Horror</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Coherence -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Coherence vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Intense psychological mystery movie poster for Coherence displaying a glowing blue comet trail streaking through pitch black suburban skies above an isolated house window with eerie mirrored reflections of dinner guests in deep chiaroscuro lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALVPsUwPU8gRX3uDXShJdKPjhdju1ib7nJeJ3pgoLM1bYEMSRlwGNB5EvKSbhnrSpmPAJfo07fEJhubOmL82KR4UZ7-5hhFzTwoym60ugCzDzPMMsFItiDZiU--w7Kft3eLN8Qbjms7itfjtmFM5-jIg0EWMPQRtstgy4fW3rk8Dar-kfRYs6PnRQSQChJYbJSqdSGH-r58l8yUz6x0uHr1WH9fyVNwmfIRxywkV2ksYGJtb2k71IU"/>
+<span class="absolute top-2.5 right-2.5 bg-surface-container-highest/80 border border-outline-variant/40 text-on-surface text-label-tag font-label-tag font-medium px-2 py-0.5 rounded backdrop-blur">89% MATCH</span>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Coherence</h3>
+<p class="text-caption font-caption text-outline mt-0.5">2013 • James Ward Byrkit</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Puzzle Box</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+<!-- Card 5: Dark City -->
+<div class="group relative flex flex-col bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] cursor-pointer">
+<div class="relative aspect-[2/3] w-full overflow-hidden bg-surface-container-low">
+<img alt="Dark City vertical poster" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Atmospheric neo-noir film poster for Dark City showcasing shifting spiral gothic clockwork skyscrapers under an eternal midnight sky, featuring trench-coated shadowy figures with pale faces and dramatic warm streetlamp rim lighting against deep carbon blacks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWfVCg4kALKnIM-3R5xLfOLL10UBhKFyBR8WwTJY8MD_4PTGES43Odjw7MlwpzmRnaDNJzcRCrND_P2zRIlsXhMz4IX5xkleI0mFgpzCMzeReA_jGExnBkAtrsyY0jsSxA27RMSfy9Agcz5wABtZ_duHHrJc3YYHlzhfSPgGJHuUvGtNtbeLhBerwHL3zjm50101koQy8QaETgRCVzFCGm1W95_jdouZOS4LC_QuWsIoO0cL_auBup"/>
+<span class="absolute top-2.5 right-2.5 bg-surface-container-highest/80 border border-outline-variant/40 text-on-surface text-label-tag font-label-tag font-medium px-2 py-0.5 rounded backdrop-blur">88% MATCH</span>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-1">Dark City</h3>
+<p class="text-caption font-caption text-outline mt-0.5">1998 • Alex Proyas</p>
+</div>
+<div class="flex flex-wrap gap-1 mt-3">
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Neo-Noir</span>
+<span class="text-label-tag font-label-tag text-on-surface-variant bg-surface-container-highest px-1.5 py-0.5 rounded">Sci-Fi</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. USER FEEDBACK / TASTE TUNING MODULE -->
+<section class="max-w-4xl mx-auto px-6 py-16">
+<div class="bg-surface-container rounded-lg border border-outline-variant/30 p-8 text-center shadow-xl relative overflow-hidden backdrop-blur-md">
+<div class="max-w-md mx-auto space-y-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 text-primary flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Did you find this recommendation accurate?</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Your feedback immediately refines the precision of your personalized curatorial vector.</p>
+<div class="flex justify-center items-center gap-4 pt-2">
+<button class="px-5 py-2.5 rounded bg-primary-container text-on-primary-container font-headline-sm text-headline-sm text-sm font-medium hover:bg-primary-container/90 transition-all flex items-center gap-2 active:scale-95 shadow-md">
+<span class="material-symbols-outlined text-[18px]">thumb_up</span>
+              Yes, spot on
+            </button>
+<button class="px-5 py-2.5 rounded bg-surface-container-high border border-outline-variant/50 text-on-surface font-body-md text-body-md hover:bg-surface-container-highest transition-all flex items-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-[18px]">thumb_down</span>
+              Not really
+            </button>
+</div>
+<div class="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 pt-4 text-caption font-caption text-outline">
+<button class="hover:text-on-surface transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility_off</span>
+              Already watched
+            </button>
+<span>•</span>
+<button class="hover:text-on-surface transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">block</span>
+              Not interested in this style
+            </button>
+<span>•</span>
+<button class="text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+              Tune taste weights
+            </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- 9. FOOTER (Shared Component Footer adapted with Brand Content) -->
+<footer class="w-full bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20 flat no shadows mt-12">
+<div class="flex flex-col md:flex-row justify-between items-center py-12 px-12 max-w-7xl mx-auto w-full gap-6">
+<!-- Brand & Copyright -->
+<div class="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+<a class="font-headline-md text-headline-md text-primary dark:text-primary tracking-tight" href="#">MoieRec</a>
+<span class="hidden sm:inline-block text-outline-variant">•</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">© 2025 MoieRec Inc. All rights reserved.</span>
+</div>
+<!-- Links -->
+<div class="flex flex-wrap justify-center items-center gap-6 text-body-sm font-body-sm">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors duration-150" href="#">Editorial Methodology</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors duration-150" href="#">Recommendation Principles</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors duration-150" href="#">Curator Lounge</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface transition-colors duration-150" href="#">Privacy &amp; Terms</a>
+</div>
+</div>
+</footer>
+</body></html>
