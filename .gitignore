@@ -61,6 +61,9 @@ data/processed/*
 data/external/*
 !data/external/.gitkeep
 
+# Generated serving databases (catalog + TMDB cache) — never commit
+data/serving/
+
 # ML Model artifacts & checkpoints
 recommender/models/*
 !recommender/models/.gitkeep
