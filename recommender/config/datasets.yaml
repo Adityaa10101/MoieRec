@@ -1,0 +1,73 @@
+# MoieRec Dataset Configuration (Dataset-Agnostic Recommender Pipeline)
+# Single source of truth for dataset definitions, URLs, raw paths, processed paths,
+# schema availability flags, and filtering/split parameters.
+
+datasets:
+  ml-25m:
+    name: "ml-25m"
+    description: "Official GroupLens MovieLens 25M benchmark dataset (Nov 2019 release)"
+    url: "https://files.grouplens.org/datasets/movielens/ml-25m.zip"
+    md5_url: "https://files.grouplens.org/datasets/movielens/ml-25m.zip.md5"
+    expected_md5: "6b51fb2759a8657d3bfcbfc42b592ada"
+    expected_size_bytes: 261978986
+    raw_dir: "data/raw/ml-25m"
+    archive_name: "ml-25m.zip"
+    extracted_folder: "ml-25m"
+    processed_dir: "data/processed/ml-25m"
+    files:
+      ratings: "ratings.csv"
+      movies: "movies.csv"
+      tags: "tags.csv"
+      links: "links.csv"
+      genome_scores: "genome-scores.csv"
+      genome_tags: "genome-tags.csv"
+    has_tags: true
+    has_links: true
+    has_genome: true
+
+    # Activity filter thresholds (Provisional benchmark baseline: 50/20)
+    # Changing thresholds only requires modifying this config and rerunning build_benchmark.py
+    positive_threshold: 4.0
+    min_user_ratings: 50
+    min_movie_ratings: 20
+    benchmark_max_users: null
+
+    # Split parameters
+    split_ratios: [0.8, 0.1, 0.1]
+    min_ratings_for_split: 5
+    cold_start_user_fraction: 0.05
+    seed: 42
+
+  ml-latest-small:
+    name: "ml-latest-small"
+    description: "Official GroupLens MovieLens Latest-Small dataset (100k ratings for rapid dev / smoke tests)"
+    url: "https://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
+    md5_url: "https://files.grouplens.org/datasets/movielens/ml-latest-small.zip.md5"
+    expected_md5: "31a303aabbc519bd33d025e44d6c2570"
+    expected_size_bytes: 978202
+    raw_dir: "data/raw/ml-latest-small"
+    archive_name: "ml-latest-small.zip"
+    extracted_folder: "ml-latest-small"
+    processed_dir: "data/processed/ml-latest-small"
+    files:
+      ratings: "ratings.csv"
+      movies: "movies.csv"
+      tags: "tags.csv"
+      links: "links.csv"
+      genome_scores: null
+      genome_tags: null
+    has_tags: true
+    has_links: true
+    has_genome: false
+
+    # Activity filter thresholds for development subset
+    positive_threshold: 4.0
+    min_user_ratings: 20
+    min_movie_ratings: 5
+    benchmark_max_users: null
+
+    # Split parameters
+    split_ratios: [0.8, 0.1, 0.1]
+    min_ratings_for_split: 5
+    cold_start_user_fraction: 0.05
+    seed: 42
