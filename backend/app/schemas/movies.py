@@ -35,6 +35,14 @@ class SharedFeatureExplanation(BaseModel):
 class ComponentsExplanation(BaseModel):
     content: float
     popularity: float
+    cf: Optional[float] = None
+
+
+class CfPickExplanation(BaseModel):
+    movie_id: int
+    title: str
+    similarity: float
+    cooccurrence: int
 
 
 class ExplanationOut(BaseModel):
@@ -44,6 +52,8 @@ class ExplanationOut(BaseModel):
     match_percent: int
     similarity_threshold: Optional[float] = None
     alpha: Optional[float] = None
+    weights: Optional[Dict[str, float]] = None
+    cf_pick: Optional[CfPickExplanation] = None
     reason_labels: Optional[dict[str, str]] = None
 
 
@@ -101,6 +111,7 @@ class PersonalizedHomeResponse(BaseModel):
     k: int
     config_version: str
     alpha_used: Optional[float] = None
+    weights_used: Optional[Dict[str, float]] = None
     ignored_ids: List[int] = Field(default_factory=list)
     message: Optional[str] = None
     rows: List[RecommendationRow] = Field(default_factory=list)

@@ -67,9 +67,17 @@ async def get_personalized_home(request: PersonalizedHomeRequest):
             rows=[],
         )
 
-    # 1. Row 'Picked for You' (Hybrid Content + Popularity)
+    # 1. Row 'Picked for You' (Hybrid Model)
     TARGET_COUNT = 20
-    alpha_used = scorer.get_alpha(len(valid_liked))
+    k_liked = len(valid_liked)
+    if scorer.is_v2:
+        w_c, w_f, w_p = scorer.get_weights(k_liked)
+        weights_used = {"w_c": round(w_c, 2), "w_f": round(w_f, 2), "w_p": round(w_p, 2)}
+        alpha_used = w_c
+    else:
+        alpha_used = scorer.get_alpha(k_liked)
+        weights_used = None
+
     # Request a generous candidate pool from scorer to ensure backfill has 20 items with TMDB posters
     scored_candidates, _ = scorer.score(
         liked_movie_ids=valid_liked,
@@ -92,7 +100,7 @@ async def get_personalized_home(request: PersonalizedHomeRequest):
             m_dict["match_percent"] = cand["match_percent"]
             m_dict["reason_codes"] = cand["reason_codes"]
             m_dict["explanation"] = cand["explanation"]
-            m_dict["source"] = cand.get("source", "hybrid_v1.1")
+            m_dict["source"] = cand.get("source", "hybrid_v2" if scorer.is_v2 else "hybrid_v1.1")
             picked_movies.append(MovieOut(**m_dict))
             if len(picked_movies) == TARGET_COUNT:
                 break
@@ -154,6 +162,7 @@ async def get_personalized_home(request: PersonalizedHomeRequest):
         k=len(valid_liked),
         config_version=scorer.version,
         alpha_used=alpha_used,
+        weights_used=weights_used,
         ignored_ids=ignored_ids,
         rows=rows,
     )

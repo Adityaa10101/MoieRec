@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     # Data paths (relative to project root by default)
     CATALOG_DB_PATH: str = "data/serving/catalog.sqlite"
     TMDB_CACHE_DB_PATH: str = "data/serving/tmdb_cache.sqlite"
-    MODEL_ARTIFACTS_DIR: str = "data/serving/model_v1"
+    MODEL_ARTIFACTS_DIR: str = "data/serving/model_v2"
 
     @property
     def model_artifacts_path(self) -> Path:
