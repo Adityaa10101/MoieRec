@@ -1,0 +1,23 @@
+version: hybrid_v1
+alpha: 0.1
+block_weights:
+  w_t1: 1.0
+  w_tags: 4.0
+  w_genome: 1.0
+normalization: percentile
+tie_break_seed: 42
+similarity_threshold: 0.1278
+snapshot_features: true
+snapshot_leakage_warning: Tag TF-IDF and Genome features were aggregated over entire
+  history (up to Nov 2019). They leak semantic signals across chronological splits.
+  Labeled as 'Snapshot Features' per protocol.
+tuned_on: cold_dev
+tuning_protocol: Cold-Start Protocol v2
+selection_objective: mean NDCG@10 over K in {3,5,10}, variant (i) all_candidates
+reject_criterion: variant (ii) long_tail NDCG >= popularity baseline for all K
+grid_edge_notes:
+- w_genome=1.0 is at grid edge (0.25-1.0)
+provenance:
+  git_commit: 9538ba101e70fbda44dcd6d466712c48db892baf
+  git_dirty: true
+  runtime_seconds: 1178.5

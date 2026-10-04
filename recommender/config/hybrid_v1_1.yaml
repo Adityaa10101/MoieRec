@@ -1,0 +1,53 @@
+version: hybrid_v1.1
+alpha_by_bucket:
+  K_3_4: 0.3
+  K_5_7: 0.6
+  K_8_14: 0.7
+  K_15_plus: 0.8
+alpha_by_k:
+  3: 0.3
+  5: 0.6
+  10: 0.7
+  20: 0.8
+block_weights:
+  w_t1: 1.0
+  w_tags: 4.0
+  w_genome: 1.0
+normalization: percentile
+tie_break_seed: 42
+similarity_threshold: 0.1278
+snapshot_features: true
+snapshot_leakage_warning: Tag TF-IDF and Genome features were aggregated over entire
+  history (up to Nov 2019). They leak semantic signals across chronological splits.
+  Labeled as 'Snapshot Features' per protocol.
+tuned_on: cold_dev
+tuning_protocol: Cold-Start Protocol v2 (K in {3,5,10,20}, W=20)
+selection_objective: mean(NDCG_all/NDCG_pop_all, NDCG_lt/NDCG_pop_lt) subject to NDCG_all
+  >= NDCG_pop_all
+serving_buckets:
+  K_3_4:
+    min_k: 3
+    max_k: 4
+    tuned_k: 3
+    alpha: 0.3
+  K_5_7:
+    min_k: 5
+    max_k: 7
+    tuned_k: 5
+    alpha: 0.6
+  K_8_14:
+    min_k: 8
+    max_k: 14
+    tuned_k: 10
+    alpha: 0.7
+  K_15_plus:
+    min_k: 15
+    max_k: 50
+    tuned_k: 20
+    alpha: 0.8
+provenance:
+  git_commit: 9538ba101e70fbda44dcd6d466712c48db892baf
+  git_dirty: true
+  runtime_seconds: 164.1
+notes: Tuned strictly on cold_dev interactions; bootstrap CIs are optimistic. The
+  final evaluation on cold_final is reserved for the final benchmark phase.

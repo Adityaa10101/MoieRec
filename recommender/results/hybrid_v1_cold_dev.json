@@ -1,0 +1,625 @@
+{
+  "metadata": {
+    "config_version": "hybrid_v1",
+    "chosen_config": {
+      "alpha": 0.1,
+      "w_t1": 1.0,
+      "w_tags": 4.0,
+      "w_genome": 1.0
+    },
+    "similarity_threshold": 0.1278,
+    "selection_objective": "mean NDCG@10 all K on variant (i)",
+    "selection_objective_value": 0.1995,
+    "grid_edge_notes": [
+      "w_genome=1.0 is at grid edge (0.25-1.0)"
+    ],
+    "provenance": {
+      "git_commit": "9538ba101e70fbda44dcd6d466712c48db892baf",
+      "git_dirty": true,
+      "runtime_seconds": 1178.5
+    },
+    "notes": "First K positives of MovieLens users approximate real onboarding picks."
+  },
+  "top_5_configs": [
+    {
+      "alpha": 0.1,
+      "w_t1": 1.0,
+      "w_tags": 4,
+      "w_genome": 1.0,
+      "objective": 0.19945967462146627,
+      "rejected": false,
+      "ndcgs": {
+        "3": {
+          "all": 0.2067788151598598,
+          "lt": 0.05280792558645471
+        },
+        "5": {
+          "all": 0.20509794136353343,
+          "lt": 0.056215208958182966
+        },
+        "10": {
+          "all": 0.18650226734100558,
+          "lt": 0.061362887750775925
+        }
+      }
+    },
+    {
+      "alpha": 0.2,
+      "w_t1": 1.0,
+      "w_tags": 4,
+      "w_genome": 1.0,
+      "objective": 0.19854938230497887,
+      "rejected": false,
+      "ndcgs": {
+        "3": {
+          "all": 0.20141722787749117,
+          "lt": 0.05598935155743778
+        },
+        "5": {
+          "all": 0.2044338893388054,
+          "lt": 0.06066416063023982
+        },
+        "10": {
+          "all": 0.18979702969864007,
+          "lt": 0.06787530618357349
+        }
+      }
+    },
+    {
+      "alpha": 0.1,
+      "w_t1": 1.0,
+      "w_tags": 4,
+      "w_genome": 0.5,
+      "objective": 0.19717839028373177,
+      "rejected": false,
+      "ndcgs": {
+        "3": {
+          "all": 0.2054541674782174,
+          "lt": 0.051960509869523344
+        },
+        "5": {
+          "all": 0.20265433517170067,
+          "lt": 0.05660001661346375
+        },
+        "10": {
+          "all": 0.18342666820127726,
+          "lt": 0.06105991196375047
+        }
+      }
+    },
+    {
+      "alpha": 0.3,
+      "w_t1": 1.0,
+      "w_tags": 16,
+      "w_genome": 1.0,
+      "objective": 0.19713247525589975,
+      "rejected": false,
+      "ndcgs": {
+        "3": {
+          "all": 0.20259556105741602,
+          "lt": 0.052501489551929514
+        },
+        "5": {
+          "all": 0.20302233400953354,
+          "lt": 0.05695597979650095
+        },
+        "10": {
+          "all": 0.1857795307007497,
+          "lt": 0.06319098147338284
+        }
+      }
+    },
+    {
+      "alpha": 0.3,
+      "w_t1": 1.0,
+      "w_tags": 16,
+      "w_genome": 0.25,
+      "objective": 0.19710346741397802,
+      "rejected": false,
+      "ndcgs": {
+        "3": {
+          "all": 0.20264985493566456,
+          "lt": 0.05231976763290606
+        },
+        "5": {
+          "all": 0.2031048829000566,
+          "lt": 0.0569775432114183
+        },
+        "10": {
+          "all": 0.18555566440621296,
+          "lt": 0.06290638468368516
+        }
+      }
+    }
+  ],
+  "alpha_curves": {
+    "K3_all_candidates": [
+      {
+        "alpha": 0.0,
+        "ndcg": 0.1956
+      },
+      {
+        "alpha": 0.1,
+        "ndcg": 0.2068
+      },
+      {
+        "alpha": 0.2,
+        "ndcg": 0.2014
+      },
+      {
+        "alpha": 0.3,
+        "ndcg": 0.1974
+      },
+      {
+        "alpha": 0.4,
+        "ndcg": 0.1917
+      },
+      {
+        "alpha": 0.5,
+        "ndcg": 0.1884
+      },
+      {
+        "alpha": 0.6,
+        "ndcg": 0.1825
+      },
+      {
+        "alpha": 0.7,
+        "ndcg": 0.177
+      },
+      {
+        "alpha": 0.8,
+        "ndcg": 0.1703
+      },
+      {
+        "alpha": 0.9,
+        "ndcg": 0.1573
+      },
+      {
+        "alpha": 1.0,
+        "ndcg": 0.0908
+      }
+    ],
+    "K3_long_tail": [
+      {
+        "alpha": 0.0,
+        "ndcg": 0.0409
+      },
+      {
+        "alpha": 0.1,
+        "ndcg": 0.0528
+      },
+      {
+        "alpha": 0.2,
+        "ndcg": 0.056
+      },
+      {
+        "alpha": 0.3,
+        "ndcg": 0.0569
+      },
+      {
+        "alpha": 0.4,
+        "ndcg": 0.0576
+      },
+      {
+        "alpha": 0.5,
+        "ndcg": 0.0582
+      },
+      {
+        "alpha": 0.6,
+        "ndcg": 0.0582
+      },
+      {
+        "alpha": 0.7,
+        "ndcg": 0.058
+      },
+      {
+        "alpha": 0.8,
+        "ndcg": 0.0574
+      },
+      {
+        "alpha": 0.9,
+        "ndcg": 0.0551
+      },
+      {
+        "alpha": 1.0,
+        "ndcg": 0.0248
+      }
+    ],
+    "K5_all_candidates": [
+      {
+        "alpha": 0.0,
+        "ndcg": 0.1849
+      },
+      {
+        "alpha": 0.1,
+        "ndcg": 0.2051
+      },
+      {
+        "alpha": 0.2,
+        "ndcg": 0.2044
+      },
+      {
+        "alpha": 0.3,
+        "ndcg": 0.2012
+      },
+      {
+        "alpha": 0.4,
+        "ndcg": 0.1973
+      },
+      {
+        "alpha": 0.5,
+        "ndcg": 0.195
+      },
+      {
+        "alpha": 0.6,
+        "ndcg": 0.1904
+      },
+      {
+        "alpha": 0.7,
+        "ndcg": 0.1861
+      },
+      {
+        "alpha": 0.8,
+        "ndcg": 0.1802
+      },
+      {
+        "alpha": 0.9,
+        "ndcg": 0.1712
+      },
+      {
+        "alpha": 1.0,
+        "ndcg": 0.0874
+      }
+    ],
+    "K5_long_tail": [
+      {
+        "alpha": 0.0,
+        "ndcg": 0.0411
+      },
+      {
+        "alpha": 0.1,
+        "ndcg": 0.0562
+      },
+      {
+        "alpha": 0.2,
+        "ndcg": 0.0607
+      },
+      {
+        "alpha": 0.3,
+        "ndcg": 0.0633
+      },
+      {
+        "alpha": 0.4,
+        "ndcg": 0.0645
+      },
+      {
+        "alpha": 0.5,
+        "ndcg": 0.0656
+      },
+      {
+        "alpha": 0.6,
+        "ndcg": 0.0669
+      },
+      {
+        "alpha": 0.7,
+        "ndcg": 0.0664
+      },
+      {
+        "alpha": 0.8,
+        "ndcg": 0.0665
+      },
+      {
+        "alpha": 0.9,
+        "ndcg": 0.0641
+      },
+      {
+        "alpha": 1.0,
+        "ndcg": 0.0232
+      }
+    ],
+    "K10_all_candidates": [
+      {
+        "alpha": 0.0,
+        "ndcg": 0.1635
+      },
+      {
+        "alpha": 0.1,
+        "ndcg": 0.1865
+      },
+      {
+        "alpha": 0.2,
+        "ndcg": 0.1898
+      },
+      {
+        "alpha": 0.3,
+        "ndcg": 0.1917
+      },
+      {
+        "alpha": 0.4,
+        "ndcg": 0.1913
+      },
+      {
+        "alpha": 0.5,
+        "ndcg": 0.191
+      },
+      {
+        "alpha": 0.6,
+        "ndcg": 0.1916
+      },
+      {
+        "alpha": 0.7,
+        "ndcg": 0.1902
+      },
+      {
+        "alpha": 0.8,
+        "ndcg": 0.1876
+      },
+      {
+        "alpha": 0.9,
+        "ndcg": 0.1828
+      },
+      {
+        "alpha": 1.0,
+        "ndcg": 0.0629
+      }
+    ],
+    "K10_long_tail": [
+      {
+        "alpha": 0.0,
+        "ndcg": 0.0397
+      },
+      {
+        "alpha": 0.1,
+        "ndcg": 0.0614
+      },
+      {
+        "alpha": 0.2,
+        "ndcg": 0.0679
+      },
+      {
+        "alpha": 0.3,
+        "ndcg": 0.0718
+      },
+      {
+        "alpha": 0.4,
+        "ndcg": 0.0742
+      },
+      {
+        "alpha": 0.5,
+        "ndcg": 0.0762
+      },
+      {
+        "alpha": 0.6,
+        "ndcg": 0.0772
+      },
+      {
+        "alpha": 0.7,
+        "ndcg": 0.0789
+      },
+      {
+        "alpha": 0.8,
+        "ndcg": 0.0785
+      },
+      {
+        "alpha": 0.9,
+        "ndcg": 0.0778
+      },
+      {
+        "alpha": 1.0,
+        "ndcg": 0.0186
+      }
+    ]
+  },
+  "cold_dev_evaluation": [
+    {
+      "k_onboarding": 3,
+      "variant": "all_candidates",
+      "n_users": 2456,
+      "n_excluded": 103,
+      "popularity": {
+        "ndcg_mean": 0.1956,
+        "ci_lower": 0.1885,
+        "ci_upper": 0.2025
+      },
+      "content_only": {
+        "ndcg_mean": 0.0908,
+        "ci_lower": 0.0851,
+        "ci_upper": 0.0966
+      },
+      "hybrid": {
+        "ndcg_mean": 0.2068,
+        "ci_lower": 0.1995,
+        "ci_upper": 0.2138
+      },
+      "hybrid_vs_popularity": {
+        "mean_diff": 0.0111,
+        "ci_lower": 0.0058,
+        "ci_upper": 0.0165,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than popularity"
+      },
+      "hybrid_vs_content": {
+        "mean_diff": 0.1159,
+        "ci_lower": 0.1088,
+        "ci_upper": 0.1232,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than content"
+      }
+    },
+    {
+      "k_onboarding": 3,
+      "variant": "long_tail",
+      "n_users": 2434,
+      "n_excluded": 125,
+      "popularity": {
+        "ndcg_mean": 0.0409,
+        "ci_lower": 0.0372,
+        "ci_upper": 0.0447
+      },
+      "content_only": {
+        "ndcg_mean": 0.0248,
+        "ci_lower": 0.0217,
+        "ci_upper": 0.028
+      },
+      "hybrid": {
+        "ndcg_mean": 0.0528,
+        "ci_lower": 0.0486,
+        "ci_upper": 0.0572
+      },
+      "hybrid_vs_popularity": {
+        "mean_diff": 0.0119,
+        "ci_lower": 0.0084,
+        "ci_upper": 0.015,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than popularity"
+      },
+      "hybrid_vs_content": {
+        "mean_diff": 0.028,
+        "ci_lower": 0.0237,
+        "ci_upper": 0.0321,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than content"
+      }
+    },
+    {
+      "k_onboarding": 5,
+      "variant": "all_candidates",
+      "n_users": 2420,
+      "n_excluded": 139,
+      "popularity": {
+        "ndcg_mean": 0.1849,
+        "ci_lower": 0.1774,
+        "ci_upper": 0.1923
+      },
+      "content_only": {
+        "ndcg_mean": 0.0874,
+        "ci_lower": 0.0818,
+        "ci_upper": 0.0933
+      },
+      "hybrid": {
+        "ndcg_mean": 0.2051,
+        "ci_lower": 0.1979,
+        "ci_upper": 0.2129
+      },
+      "hybrid_vs_popularity": {
+        "mean_diff": 0.0202,
+        "ci_lower": 0.0153,
+        "ci_upper": 0.025,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than popularity"
+      },
+      "hybrid_vs_content": {
+        "mean_diff": 0.1177,
+        "ci_lower": 0.1092,
+        "ci_upper": 0.1253,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than content"
+      }
+    },
+    {
+      "k_onboarding": 5,
+      "variant": "long_tail",
+      "n_users": 2393,
+      "n_excluded": 166,
+      "popularity": {
+        "ndcg_mean": 0.0411,
+        "ci_lower": 0.0374,
+        "ci_upper": 0.0448
+      },
+      "content_only": {
+        "ndcg_mean": 0.0232,
+        "ci_lower": 0.0201,
+        "ci_upper": 0.0264
+      },
+      "hybrid": {
+        "ndcg_mean": 0.0562,
+        "ci_lower": 0.0521,
+        "ci_upper": 0.0602
+      },
+      "hybrid_vs_popularity": {
+        "mean_diff": 0.0151,
+        "ci_lower": 0.012,
+        "ci_upper": 0.0181,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than popularity"
+      },
+      "hybrid_vs_content": {
+        "mean_diff": 0.033,
+        "ci_lower": 0.0285,
+        "ci_upper": 0.0373,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than content"
+      }
+    },
+    {
+      "k_onboarding": 10,
+      "variant": "all_candidates",
+      "n_users": 2317,
+      "n_excluded": 242,
+      "popularity": {
+        "ndcg_mean": 0.1635,
+        "ci_lower": 0.1563,
+        "ci_upper": 0.1713
+      },
+      "content_only": {
+        "ndcg_mean": 0.0629,
+        "ci_lower": 0.0577,
+        "ci_upper": 0.0682
+      },
+      "hybrid": {
+        "ndcg_mean": 0.1865,
+        "ci_lower": 0.1789,
+        "ci_upper": 0.1944
+      },
+      "hybrid_vs_popularity": {
+        "mean_diff": 0.023,
+        "ci_lower": 0.0188,
+        "ci_upper": 0.0267,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than popularity"
+      },
+      "hybrid_vs_content": {
+        "mean_diff": 0.1236,
+        "ci_lower": 0.1154,
+        "ci_upper": 0.132,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than content"
+      }
+    },
+    {
+      "k_onboarding": 10,
+      "variant": "long_tail",
+      "n_users": 2280,
+      "n_excluded": 279,
+      "popularity": {
+        "ndcg_mean": 0.0397,
+        "ci_lower": 0.0362,
+        "ci_upper": 0.0437
+      },
+      "content_only": {
+        "ndcg_mean": 0.0186,
+        "ci_lower": 0.0158,
+        "ci_upper": 0.0213
+      },
+      "hybrid": {
+        "ndcg_mean": 0.0614,
+        "ci_lower": 0.0567,
+        "ci_upper": 0.0658
+      },
+      "hybrid_vs_popularity": {
+        "mean_diff": 0.0216,
+        "ci_lower": 0.0184,
+        "ci_upper": 0.0246,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than popularity"
+      },
+      "hybrid_vs_content": {
+        "mean_diff": 0.0428,
+        "ci_lower": 0.0379,
+        "ci_upper": 0.0476,
+        "hybrid_better": true,
+        "honest_claim": "hybrid better than content"
+      }
+    }
+  ]
+}
