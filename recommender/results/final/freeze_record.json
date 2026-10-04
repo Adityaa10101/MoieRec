@@ -1,0 +1,501 @@
+{
+  "metadata": {
+    "title": "MoieRec Phase 2H Final Evaluation Freeze Record",
+    "git_commit": "97f4433460d8eb9a0c179f463b3ace81cf7a676a",
+    "dirty_working_tree": false,
+    "status": "FROZEN",
+    "tie_break_seed": 42,
+    "tie_break_method": "random_perm"
+  },
+  "config_hashes": {
+    "hybrid_v1.yaml": {
+      "sha256": "6bad961bcb1e8a795fe32e612e31fe35e09b8c27e749973ad57c4c53db046987",
+      "version": "hybrid_v1",
+      "alpha": 0.1,
+      "block_weights": {
+        "w_t1": 1.0,
+        "w_tags": 4.0,
+        "w_genome": 1.0
+      }
+    },
+    "hybrid_v1_1.yaml": {
+      "sha256": "2bcfa6cd27d942cb856d9d056226981c7310ebe60c3c916b6563da28ee5b1b0e",
+      "version": "hybrid_v1.1",
+      "alpha_by_bucket": {
+        "K_3_4": 0.3,
+        "K_5_7": 0.6,
+        "K_8_14": 0.7,
+        "K_15_plus": 0.8
+      },
+      "alpha_by_k": {
+        "3": 0.3,
+        "5": 0.6,
+        "10": 0.7,
+        "20": 0.8
+      },
+      "block_weights": {
+        "w_t1": 1.0,
+        "w_tags": 4.0,
+        "w_genome": 1.0
+      }
+    },
+    "hybrid_v2.yaml": {
+      "sha256": "4d137450139e60bcd5a71c61248080f4ed1e47b23b7f3c8a8466d481378cc9b4",
+      "version": "hybrid_v2",
+      "adopted_as_served_default": true,
+      "bucket_schedule": {
+        "K_3_4": {
+          "w_c": 0.0,
+          "w_f": 1.0,
+          "w_p": 0.0
+        },
+        "K_5_7": {
+          "w_c": 0.0,
+          "w_f": 1.0,
+          "w_p": 0.0
+        },
+        "K_8_14": {
+          "w_c": 0.0,
+          "w_f": 1.0,
+          "w_p": 0.0
+        },
+        "K_15_plus": {
+          "w_c": 0.1,
+          "w_f": 0.9,
+          "w_p": 0.0
+        }
+      },
+      "tuned_weights_per_k": {
+        "3": {
+          "w_c": 0.0,
+          "w_f": 1.0,
+          "w_p": 0.0
+        },
+        "5": {
+          "w_c": 0.0,
+          "w_f": 1.0,
+          "w_p": 0.0
+        },
+        "10": {
+          "w_c": 0.0,
+          "w_f": 1.0,
+          "w_p": 0.0
+        },
+        "20": {
+          "w_c": 0.1,
+          "w_f": 0.9,
+          "w_p": 0.0
+        }
+      },
+      "content_block_weights": {
+        "w_t1": 1.0,
+        "w_tags": 4.0,
+        "w_genome": 1.0
+      },
+      "collaborative_config": {
+        "a": 0.5,
+        "shrinkage": 0.0,
+        "k": 200,
+        "ndcg": 0.083266,
+        "precision": 0.0614,
+        "recall": 0.0736,
+        "hit_rate": 0.3594,
+        "mrr": 0.1616,
+        "catalog_coverage": 0.0478,
+        "mean_recommended_popularity": 32293.8,
+        "cf_min_support": 185
+      },
+      "zero_cf_percentile": "average_rank_of_tied_zeros"
+    }
+  },
+  "collaborative_filtering_config": {
+    "similarity_variant": "cosine (a=0.5, formula: n_ij / (n_i^0.5 * n_j^0.5) * [n_ij / (n_ij + lambda)])",
+    "a": 0.5,
+    "shrinkage": 0.0,
+    "top_k_neighbors": 200,
+    "positive_threshold": 4.0,
+    "zero_diagonal": true,
+    "picks_excluded": true
+  },
+  "content_block_weights": {
+    "tier1_baseline": {
+      "w_t1": 1.0,
+      "description": "Clean genre one-hot + release year (temporal clean)"
+    },
+    "tier2_snapshot_hybrid": {
+      "w_t1": 1.0,
+      "w_tags": 4.0,
+      "w_genome": 1.0,
+      "description": "Tier 1 + Tag TF-IDF + Tag Genome (snapshot-labeled, leakage across splits)"
+    },
+    "tier2_snapshot_validation_chosen": {
+      "tier1": 1.0,
+      "tags": 8.0,
+      "genome": 0.5,
+      "description": "Tuned standalone on warm validation sample"
+    }
+  },
+  "popularity_config": {
+    "variant": "most_liked",
+    "description": "positive_rating_count in train (ratings >= positive_threshold)",
+    "positive_threshold": 4.0
+  },
+  "served_weights_per_k": {
+    "K_3_4": {
+      "k_eval": 3,
+      "w_c": 0.0,
+      "w_f": 1.0,
+      "w_p": 0.0
+    },
+    "K_5_7": {
+      "k_eval": 5,
+      "w_c": 0.0,
+      "w_f": 1.0,
+      "w_p": 0.0
+    },
+    "K_8_14": {
+      "k_eval": 10,
+      "w_c": 0.0,
+      "w_f": 1.0,
+      "w_p": 0.0
+    },
+    "K_15_plus": {
+      "k_eval": 20,
+      "w_c": 0.1,
+      "w_f": 0.9,
+      "w_p": 0.0
+    }
+  },
+  "warm_validation_table_existing": {
+    "sample_size": 20000,
+    "full_eval_users": 94312,
+    "metrics": {
+      "item_knn_cf": {
+        "precision": {
+          "mean": 0.061844,
+          "ci_lower": 0.061166,
+          "ci_upper": 0.062483
+        },
+        "recall": {
+          "mean": 0.074551,
+          "ci_lower": 0.073595,
+          "ci_upper": 0.075447
+        },
+        "ndcg": {
+          "mean": 0.083807,
+          "ci_lower": 0.082846,
+          "ci_upper": 0.08473
+        },
+        "hit_rate": {
+          "mean": 0.358716,
+          "ci_lower": 0.35545,
+          "ci_upper": 0.361707
+        },
+        "mrr": {
+          "mean": 0.162056,
+          "ci_lower": 0.16009,
+          "ci_upper": 0.16398
+        },
+        "catalog_coverage": 0.077975,
+        "mean_recommended_popularity": {
+          "mean": 32330.767549,
+          "ci_lower": 32283.144459,
+          "ci_upper": 32379.496709
+        },
+        "activity_breakdown": [
+          {
+            "bucket": "Q1 (Low)",
+            "n_users": 23727,
+            "min_train_ratings": 40,
+            "max_train_ratings": 61,
+            "precision": 0.04026636321490286,
+            "recall": 0.1022797014452091,
+            "ndcg": 0.07906983607916493,
+            "hit_rate": 0.2871833775867156,
+            "mrr": 0.12070972992391628
+          },
+          {
+            "bucket": "Q2 (Med-Low)",
+            "n_users": 23652,
+            "min_train_ratings": 62,
+            "max_train_ratings": 102,
+            "precision": 0.04852866565195332,
+            "recall": 0.08078120544825262,
+            "ndcg": 0.07236464792612864,
+            "hit_rate": 0.31798579401319127,
+            "mrr": 0.13728064877227739
+          },
+          {
+            "bucket": "Q3 (Med-High)",
+            "n_users": 23421,
+            "min_train_ratings": 103,
+            "max_train_ratings": 201,
+            "precision": 0.0633790188292558,
+            "recall": 0.0659793973150797,
+            "ndcg": 0.07641014143919024,
+            "hit_rate": 0.3703086973229153,
+            "mrr": 0.16241991822560545
+          },
+          {
+            "bucket": "Q4 (High)",
+            "n_users": 23503,
+            "min_train_ratings": 202,
+            "max_train_ratings": 11163,
+            "precision": 0.09549844700676509,
+            "recall": 0.04883038659715189,
+            "ndcg": 0.1074758382170144,
+            "hit_rate": 0.460366761689997,
+            "mrr": 0.22836719932409844
+          }
+        ],
+        "session_strata_breakdown": [
+          {
+            "strata": "< 1 day (Onboarding Spree)",
+            "n_users": 43434,
+            "pct_of_evaluated": 46.05791968442149,
+            "min_span_days": 0.0,
+            "max_span_days": 0.9998726851851852,
+            "precision": 0.049640834369388036,
+            "recall": 0.08135554180039982,
+            "ndcg": 0.07520898724669357,
+            "hit_rate": 0.30648800478887506,
+            "mrr": 0.1333210267576202
+          },
+          {
+            "strata": "1-30 days (Short-term / Casual)",
+            "n_users": 15541,
+            "pct_of_evaluated": 16.479857480674,
+            "min_span_days": 1.000173611111111,
+            "max_span_days": 29.99857638888889,
+            "precision": 0.060420822340904706,
+            "recall": 0.07403482933810827,
+            "ndcg": 0.0811963908275615,
+            "hit_rate": 0.35493211505051153,
+            "mrr": 0.15761199510153887
+          },
+          {
+            "strata": ">= 30 days (Multi-session / Longitudinal)",
+            "n_users": 35328,
+            "pct_of_evaluated": 37.46222283490451,
+            "min_span_days": 30.002627314814816,
+            "max_span_days": 8101.3568981481485,
+            "precision": 0.07747395833333333,
+            "recall": 0.06641246894417412,
+            "ndcg": 0.09552663439019707,
+            "hit_rate": 0.42459239130434784,
+            "mrr": 0.19933988239015416
+          }
+        ]
+      },
+      "popularity_most_liked": {
+        "precision": {
+          "mean": 0.040078,
+          "ci_lower": 0.039524,
+          "ci_upper": 0.040628
+        },
+        "recall": {
+          "mean": 0.04501,
+          "ci_lower": 0.044264,
+          "ci_upper": 0.045719
+        },
+        "ndcg": {
+          "mean": 0.05192,
+          "ci_lower": 0.051107,
+          "ci_upper": 0.052611
+        },
+        "hit_rate": {
+          "mean": 0.250883,
+          "ci_lower": 0.248115,
+          "ci_upper": 0.253694
+        },
+        "mrr": {
+          "mean": 0.10484,
+          "ci_lower": 0.103258,
+          "ci_upper": 0.106467
+        },
+        "catalog_coverage": 0.015157,
+        "mean_recommended_popularity": {
+          "mean": 42145.362669,
+          "ci_lower": 42112.183241,
+          "ci_upper": 42177.828834
+        }
+      },
+      "content_tier2_snapshot": {
+        "precision": {
+          "mean": 0.045277,
+          "ci_lower": 0.044716,
+          "ci_upper": 0.045785
+        },
+        "recall": {
+          "mean": 0.055639,
+          "ci_lower": 0.054824,
+          "ci_upper": 0.056415
+        },
+        "ndcg": {
+          "mean": 0.063345,
+          "ci_lower": 0.062505,
+          "ci_upper": 0.064061
+        },
+        "hit_rate": {
+          "mean": 0.302228,
+          "ci_lower": 0.29928,
+          "ci_upper": 0.305199
+        },
+        "mrr": {
+          "mean": 0.135879,
+          "ci_lower": 0.134008,
+          "ci_upper": 0.137638
+        },
+        "catalog_coverage": 0.174063,
+        "mean_recommended_popularity": {
+          "mean": 24220.246158,
+          "ci_lower": 24159.955587,
+          "ci_upper": 24282.282745
+        }
+      }
+    },
+    "paired_comparisons": {
+      "cf_vs_popularity": {
+        "ndcg": {
+          "metric": "NDCG@10",
+          "mean_diff": 0.031887,
+          "ci_lower": 0.031106,
+          "ci_upper": 0.032634,
+          "relative_lift": 0.6142,
+          "pct_cf_better": 27.7,
+          "pct_equal": 60.82,
+          "pct_pop_better": 11.47,
+          "distinguishable_from_zero": true
+        },
+        "hit_rate": {
+          "metric": "HIT_RATE@10",
+          "mean_diff": 0.107833,
+          "ci_lower": 0.105193,
+          "ci_upper": 0.110359,
+          "relative_lift": 0.4298,
+          "pct_cf_better": 15.28,
+          "pct_equal": 80.23,
+          "pct_pop_better": 4.5,
+          "distinguishable_from_zero": true
+        },
+        "recall": {
+          "metric": "RECALL@10",
+          "mean_diff": 0.029541,
+          "ci_lower": 0.028763,
+          "ci_upper": 0.030255,
+          "relative_lift": 0.6563,
+          "pct_cf_better": 22.29,
+          "pct_equal": 70.33,
+          "pct_pop_better": 7.38,
+          "distinguishable_from_zero": true
+        }
+      },
+      "cf_vs_content_tier2": {
+        "ndcg": {
+          "metric": "NDCG@10",
+          "mean_diff": 0.020462,
+          "ci_lower": 0.019576,
+          "ci_upper": 0.021383,
+          "relative_lift": 0.323,
+          "pct_cf_better": 26.19,
+          "pct_equal": 56.17,
+          "pct_content_better": 17.64,
+          "distinguishable_from_zero": true
+        },
+        "hit_rate": {
+          "metric": "HIT_RATE@10",
+          "mean_diff": 0.056488,
+          "ci_lower": 0.053359,
+          "ci_upper": 0.059555,
+          "relative_lift": 0.1869,
+          "pct_cf_better": 14.82,
+          "pct_equal": 76.01,
+          "pct_content_better": 9.17,
+          "distinguishable_from_zero": true
+        },
+        "recall": {
+          "metric": "RECALL@10",
+          "mean_diff": 0.018913,
+          "ci_lower": 0.01796,
+          "ci_upper": 0.019841,
+          "relative_lift": 0.3399,
+          "pct_cf_better": 22.08,
+          "pct_equal": 65.13,
+          "pct_content_better": 12.79,
+          "distinguishable_from_zero": true
+        }
+      },
+      "tier2_vs_tier1": {
+        "ndcg": {
+          "metric": "NDCG@10",
+          "mean_diff": 0.063796,
+          "ci_lower": 0.062929,
+          "ci_upper": 0.064556,
+          "relative_lift": 22.6271,
+          "pct_tier2_better": 31.35,
+          "pct_equal": 67.3,
+          "pct_tier1_better": 1.34,
+          "distinguishable_from_zero": true
+        },
+        "hit_rate": {
+          "metric": "HIT_RATE@10",
+          "mean_diff": 0.294476,
+          "ci_lower": 0.291295,
+          "ci_upper": 0.297403,
+          "relative_lift": 13.2049,
+          "pct_tier2_better": 30.52,
+          "pct_equal": 68.41,
+          "pct_tier1_better": 1.07,
+          "distinguishable_from_zero": true
+        },
+        "recall": {
+          "metric": "RECALL@10",
+          "mean_diff": 0.054426,
+          "ci_lower": 0.053613,
+          "ci_upper": 0.055194,
+          "relative_lift": 18.2365,
+          "pct_tier2_better": 31.06,
+          "pct_equal": 67.85,
+          "pct_tier1_better": 1.09,
+          "distinguishable_from_zero": true
+        }
+      },
+      "tier2_vs_popularity": {
+        "ndcg": {
+          "metric": "NDCG@10",
+          "mean_diff": 0.014696,
+          "ci_lower": 0.013927,
+          "ci_upper": 0.015484,
+          "relative_lift": 0.283,
+          "pct_tier2_better": 22.93,
+          "pct_equal": 62.05,
+          "pct_pop_better": 15.02,
+          "distinguishable_from_zero": true
+        },
+        "hit_rate": {
+          "metric": "HIT_RATE@10",
+          "mean_diff": 0.065894,
+          "ci_lower": 0.062755,
+          "ci_upper": 0.0688,
+          "relative_lift": 0.2626,
+          "pct_tier2_better": 13.91,
+          "pct_equal": 78.77,
+          "pct_pop_better": 7.32,
+          "distinguishable_from_zero": true
+        },
+        "recall": {
+          "metric": "RECALL@10",
+          "mean_diff": 0.012401,
+          "ci_lower": 0.011598,
+          "ci_upper": 0.01319,
+          "relative_lift": 0.2755,
+          "pct_tier2_better": 18.1,
+          "pct_equal": 70.35,
+          "pct_pop_better": 11.56,
+          "distinguishable_from_zero": true
+        }
+      }
+    }
+  },
+  "frozen_config_id": "0ab4db5f288b8a8a3cb720369a082fa9d45dc2d28031050e0be95578cba3feaa"
+}

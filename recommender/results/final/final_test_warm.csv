@@ -1,0 +1,5 @@
+split,model,n_users,ndcg_mean,ndcg_ci_lower,ndcg_ci_upper,precision_mean,recall_mean,hit_rate_mean,mrr_mean,catalog_coverage,mean_popularity
+test,popularity_most_liked,94604,0.052278,0.051527,0.053009,0.040302,0.043883,0.25574,0.108902,0.01729,43817.45
+test,content_tier1_clean,94604,0.002627,0.002496,0.002756,0.002256,0.002656,0.021754,0.00587,0.16497,1816.2
+test,content_tier2_snapshot,94604,0.067308,0.066492,0.068156,0.048569,0.056049,0.319659,0.146228,0.177118,26330.7
+test,item_knn_cf,94604,0.081848,0.08098,0.082807,0.060247,0.070813,0.357987,0.163552,0.076165,33963.59

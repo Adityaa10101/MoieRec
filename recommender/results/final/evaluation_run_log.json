@@ -1,0 +1,20 @@
+{
+  "execution_title": "MoieRec Phase 2H Final Frozen Evaluation",
+  "frozen_config_id": "0ab4db5f288b8a8a3cb720369a082fa9d45dc2d28031050e0be95578cba3feaa",
+  "git_commit": "97f4433460d8eb9a0c179f463b3ace81cf7a676a",
+  "dirty_working_tree": true,
+  "start_time": "2026-10-04T16:16:19.381983+00:00",
+  "end_time": "2026-10-04T16:32:33.774525+00:00",
+  "total_runtime_seconds": 974.45,
+  "command_line": "python -u scratch/execute_final_evaluation.py",
+  "created_artifacts": [
+    "recommender/results/final/freeze_record.json",
+    "recommender/results/final/final_cold_final.json",
+    "recommender/results/final/final_cold_final.csv",
+    "recommender/results/final/final_test_warm.json",
+    "recommender/results/final/final_test_warm.csv",
+    "docs/figures/ndcg_cold_start_all_candidates.png",
+    "docs/figures/ndcg_cold_start_long_tail.png",
+    "docs/figures/warm_test_metrics_bar.png"
+  ]
+}
