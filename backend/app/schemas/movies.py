@@ -10,13 +10,41 @@ Honesty contract:
   - source: always "popularity"
 """
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 
 class CastMember(BaseModel):
     name: str
     character: Optional[str] = None
+
+
+class NearestPickExplanation(BaseModel):
+    movie_id: int
+    title: str
+    similarity: float
+
+
+class SharedFeatureExplanation(BaseModel):
+    feature: str
+    raw_name: str
+    contribution: float
+    feature_type: str
+
+
+class ComponentsExplanation(BaseModel):
+    content: float
+    popularity: float
+
+
+class ExplanationOut(BaseModel):
+    nearest_pick: NearestPickExplanation
+    top_shared_features: List[SharedFeatureExplanation] = Field(default_factory=list)
+    components: ComponentsExplanation
+    match_percent: int
+    similarity_threshold: Optional[float] = None
+    alpha: Optional[float] = None
+    reason_labels: Optional[dict[str, str]] = None
 
 
 class MovieOut(BaseModel):
@@ -40,13 +68,13 @@ class MovieOut(BaseModel):
     # Popularity signal (from training data)
     train_positive_count: Optional[int] = None
 
-    # Future-contract fields — honest null values now
+    # Ranking & personalization fields
     rank: Optional[int] = None                   # position in this response's list
-    score: None = None                           # no personalized score
-    match_percent: None = None                   # null — no personalization
-    reason_codes: List[str] = Field(default_factory=list)   # empty — no explanation
-    explanation: None = None                     # null — no explanation
-    source: str = "popularity"                   # Model 0: popularity only
+    score: Optional[float] = None                # personalized score or cosine
+    match_percent: Optional[int] = None          # relative rank among candidate pool (0-100), NOT a probability
+    reason_codes: List[str] = Field(default_factory=list)   # reason codes derived from evidence
+    explanation: Optional[ExplanationOut] = None # structured explainability evidence
+    source: str = "popularity"                   # "hybrid_v1", "content_similarity", or "popularity"
 
     model_config = {"from_attributes": True}
 
@@ -60,4 +88,19 @@ class RecommendationRow(BaseModel):
 
 class HomeResponse(BaseModel):
     hero: Optional[MovieOut] = None
+    rows: List[RecommendationRow] = Field(default_factory=list)
+
+
+class PersonalizedHomeRequest(BaseModel):
+    liked_movie_ids: List[int] = Field(..., max_length=50, description="Max 50 liked MovieLens movie_ids")
+    exclude_movie_ids: Optional[List[int]] = Field(default_factory=list, description="MovieLens movie_ids to exclude (disliked, etc.)")
+
+
+class PersonalizedHomeResponse(BaseModel):
+    personalized: bool
+    k: int
+    config_version: str
+    alpha_used: Optional[float] = None
+    ignored_ids: List[int] = Field(default_factory=list)
+    message: Optional[str] = None
     rows: List[RecommendationRow] = Field(default_factory=list)

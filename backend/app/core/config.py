@@ -4,9 +4,15 @@ from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import json
 
+import sys
+
 # backend/ directory is three levels up from this file (app/core/config.py)
 _BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
 _PROJECT_DIR = _BACKEND_DIR.parent
+
+# Ensure project root is on sys.path so backend can import recommender.serving.hybrid_scorer
+if str(_PROJECT_DIR) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_DIR))
 
 
 class Settings(BaseSettings):
@@ -23,6 +29,12 @@ class Settings(BaseSettings):
     # Data paths (relative to project root by default)
     CATALOG_DB_PATH: str = "data/serving/catalog.sqlite"
     TMDB_CACHE_DB_PATH: str = "data/serving/tmdb_cache.sqlite"
+    MODEL_ARTIFACTS_DIR: str = "data/serving/model_v1"
+
+    @property
+    def model_artifacts_path(self) -> Path:
+        p = Path(self.MODEL_ARTIFACTS_DIR)
+        return p if p.is_absolute() else _PROJECT_DIR / p
 
     # CORS Origins — localhost:5173 only for this phase
     CORS_ORIGINS: Union[List[str], str] = [

@@ -233,3 +233,36 @@ async def search(
         *[_enrich(r, rank=i + 1) for i, r in enumerate(catalog_rows)]
     )
     return list(movies)
+
+
+@router.get("/movies/{movie_id}/similar", response_model=list[MovieOut], summary="Content-only similar movies")
+async def get_similar_movies(
+    movie_id: int,
+    limit: int = Query(20, ge=1, le=50),
+):
+    """
+    Returns content-only nearest neighbors for a movie based on Tier 2 features (genres and tags).
+    source="content_similarity", labeled "similar by genres and tags".
+    """
+    from app.services.hybrid_service import get_hybrid_scorer
+
+    scorer = get_hybrid_scorer()
+    if not scorer.is_valid_movie_id(movie_id):
+        raise HTTPException(status_code=404, detail="Movie not found")
+
+    sim_items = scorer.similar_items(movie_id=movie_id, n=limit * 3)
+    results: list[MovieOut] = []
+    for cand in sim_items:
+        catalog_row = fetch_movie(cand["movie_id"])
+        if not catalog_row:
+            continue
+        enriched = await _enrich(catalog_row, rank=len(results) + 1)
+        if enriched.poster_url:
+            m_dict = enriched.model_dump()
+            m_dict["score"] = cand["score"]
+            m_dict["source"] = "content_similarity"
+            results.append(MovieOut(**m_dict))
+            if len(results) == limit:
+                break
+
+    return results
