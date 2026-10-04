@@ -6,15 +6,27 @@ interface UserTasteContextType {
   watchlist: Set<string>;
   liked: Set<string>;
   disliked: Set<string>;
-  isInWatchlist: (movieId: string) => boolean;
-  isLiked: (movieId: string) => boolean;
-  isDisliked: (movieId: string) => boolean;
+  validLikedIds: number[];
+  validDislikedIds: number[];
+  isOnboardingOpen: boolean;
+  onboardingDismissed: boolean;
+  setIsOnboardingOpen: (open: boolean) => void;
+  dismissOnboarding: () => void;
+  isInWatchlist: (movieId: string | number) => boolean;
+  isLiked: (movieId: string | number) => boolean;
+  isDisliked: (movieId: string | number) => boolean;
   toggleWatchlist: (movie: Movie) => void;
   toggleLike: (movie: Movie) => void;
   toggleDislike: (movie: Movie) => void;
+  removeLike: (movieId: string | number) => void;
+  removeDislike: (movieId: string | number) => void;
+  clearAllPicks: () => void;
 }
 
 const UserTasteContext = createContext<UserTasteContextType | undefined>(undefined);
+
+// Helper to test if ID is numeric (MovieLens ID)
+const isNumericId = (id: string | number) => /^\d+$/.test(String(id));
 
 export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showToast } = useToast();
@@ -22,29 +34,46 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [watchlist, setWatchlist] = useState<Set<string>>(() => {
     try {
       const saved = localStorage.getItem('moierec_watchlist');
-      return saved ? new Set(JSON.parse(saved)) : new Set(['blade-runner-2049']);
+      if (!saved) return new Set();
+      const parsed: string[] = JSON.parse(saved);
+      return new Set(parsed.filter(isNumericId));
     } catch {
-      return new Set(['blade-runner-2049']);
+      return new Set();
     }
   });
 
   const [liked, setLiked] = useState<Set<string>>(() => {
     try {
       const saved = localStorage.getItem('moierec_liked');
-      return saved ? new Set(JSON.parse(saved)) : new Set(['arrival', 'oppenheimer']);
+      if (!saved) return new Set();
+      const parsed: string[] = JSON.parse(saved);
+      // Filter out invalid legacy string slugs (like 'arrival', 'oppenheimer')
+      return new Set(parsed.filter(isNumericId));
     } catch {
-      return new Set(['arrival', 'oppenheimer']);
+      return new Set();
     }
   });
 
   const [disliked, setDisliked] = useState<Set<string>>(() => {
     try {
       const saved = localStorage.getItem('moierec_disliked');
-      return saved ? new Set(JSON.parse(saved)) : new Set();
+      if (!saved) return new Set();
+      const parsed: string[] = JSON.parse(saved);
+      return new Set(parsed.filter(isNumericId));
     } catch {
       return new Set();
     }
   });
+
+  const [onboardingDismissed, setOnboardingDismissed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('moierec_onboarding_dismissed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -70,59 +99,109 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [disliked]);
 
-  const isInWatchlist = (movieId: string) => watchlist.has(movieId);
-  const isLiked = (movieId: string) => liked.has(movieId);
-  const isDisliked = (movieId: string) => disliked.has(movieId);
+  useEffect(() => {
+    try {
+      localStorage.setItem('moierec_onboarding_dismissed', String(onboardingDismissed));
+    } catch {
+      // storage unavailable
+    }
+  }, [onboardingDismissed]);
+
+  const dismissOnboarding = () => {
+    setOnboardingDismissed(true);
+    setIsOnboardingOpen(false);
+  };
+
+  const validLikedIds = Array.from(liked)
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n > 0);
+
+  const validDislikedIds = Array.from(disliked)
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n > 0);
+
+  const isInWatchlist = (movieId: string | number) => watchlist.has(String(movieId));
+  const isLiked = (movieId: string | number) => liked.has(String(movieId));
+  const isDisliked = (movieId: string | number) => disliked.has(String(movieId));
 
   const toggleWatchlist = (movie: Movie) => {
+    const idStr = String(movie.movie_id || movie.id);
+    const wasIn = watchlist.has(idStr);
     setWatchlist((prev) => {
       const next = new Set(prev);
-      if (next.has(movie.id)) {
-        next.delete(movie.id);
-        showToast(`Removed "${movie.title}" from watchlist`, { icon: 'info' });
-      } else {
-        next.add(movie.id);
-        showToast(`"${movie.title}" added to your screening watchlist`, { icon: 'bookmark' });
-      }
+      if (wasIn) next.delete(idStr);
+      else next.add(idStr);
       return next;
     });
+    if (wasIn) {
+      showToast(`Removed "${movie.title}" from watchlist`, { icon: 'info' });
+    } else {
+      showToast(`"${movie.title}" added to your screening watchlist`, { icon: 'bookmark' });
+    }
   };
 
   const toggleLike = (movie: Movie) => {
+    const idStr = String(movie.movie_id || movie.id);
+    const wasLiked = liked.has(idStr);
     setLiked((prev) => {
       const next = new Set(prev);
-      if (next.has(movie.id)) {
-        next.delete(movie.id);
-        showToast(`Removed like for "${movie.title}"`, { icon: 'info' });
-      } else {
-        next.add(movie.id);
-        setDisliked((d) => {
-          const nd = new Set(d);
-          nd.delete(movie.id);
-          return nd;
-        });
-        showToast(`"${movie.title}" added to liked`, { icon: 'heart' });
-      }
+      if (wasLiked) next.delete(idStr);
+      else next.add(idStr);
+      return next;
+    });
+    if (wasLiked) {
+      showToast(`Removed like for "${movie.title}"`, { icon: 'info' });
+    } else {
+      setDisliked((d) => {
+        const nd = new Set(d);
+        nd.delete(idStr);
+        return nd;
+      });
+      showToast(`"${movie.title}" added to liked`, { icon: 'heart' });
+    }
+  };
+
+  const toggleDislike = (movie: Movie) => {
+    const idStr = String(movie.movie_id || movie.id);
+    const wasDisliked = disliked.has(idStr);
+    setDisliked((prev) => {
+      const next = new Set(prev);
+      if (wasDisliked) next.delete(idStr);
+      else next.add(idStr);
+      return next;
+    });
+    if (!wasDisliked) {
+      setLiked((l) => {
+        const nl = new Set(l);
+        nl.delete(idStr);
+        return nl;
+      });
+      showToast(`Preferences adjusted: less titles like "${movie.title}"`, { icon: 'info' });
+    }
+  };
+
+  const removeLike = (movieId: string | number) => {
+    const idStr = String(movieId);
+    setLiked((prev) => {
+      const next = new Set(prev);
+      next.delete(idStr);
       return next;
     });
   };
 
-  const toggleDislike = (movie: Movie) => {
+  const removeDislike = (movieId: string | number) => {
+    const idStr = String(movieId);
     setDisliked((prev) => {
       const next = new Set(prev);
-      if (next.has(movie.id)) {
-        next.delete(movie.id);
-      } else {
-        next.add(movie.id);
-        setLiked((l) => {
-          const nl = new Set(l);
-          nl.delete(movie.id);
-          return nl;
-        });
-        showToast(`Preferences adjusted: less titles like "${movie.title}"`, { icon: 'info' });
-      }
+      next.delete(idStr);
       return next;
     });
+  };
+
+  const clearAllPicks = () => {
+    setLiked(new Set());
+    setDisliked(new Set());
+    showToast('Cleared all taste picks', { icon: 'info' });
   };
 
   return (
@@ -131,12 +210,21 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         watchlist,
         liked,
         disliked,
+        validLikedIds,
+        validDislikedIds,
+        isOnboardingOpen,
+        onboardingDismissed,
+        setIsOnboardingOpen,
+        dismissOnboarding,
         isInWatchlist,
         isLiked,
         isDisliked,
         toggleWatchlist,
         toggleLike,
         toggleDislike,
+        removeLike,
+        removeDislike,
+        clearAllPicks,
       }}
     >
       {children}

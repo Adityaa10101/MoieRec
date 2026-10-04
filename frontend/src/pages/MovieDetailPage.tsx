@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, Link } from '../router/Router';
-import { fetchMovieDetail } from '../api/client';
+import { fetchMovieDetail, fetchSimilarMovies } from '../api/client';
 import { ALL_MOCK_MOVIES } from '../data/mockMovies';
 import type { ApiMovie } from '../api/types';
 import { ArrowLeft, Clock, Calendar, Star, Bookmark, User } from 'lucide-react';
 import { useUserTaste } from '../context/UserTasteContext';
+import { RecommendationRow } from '../components/recommendations/RecommendationRow';
 
 function SkeletonDetail() {
   return (
@@ -30,8 +31,18 @@ export const MovieDetailPage: React.FC = () => {
   const numericId = rawId ? parseInt(rawId, 10) : null;
 
   const [movie, setMovie] = useState<ApiMovie | null>(null);
+  const [similarMovies, setSimilarMovies] = useState<ApiMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!numericId || isNaN(numericId)) return;
+    const controller = new AbortController();
+    fetchSimilarMovies(numericId, 20, controller.signal)
+      .then((items) => setSimilarMovies(items))
+      .catch(() => setSimilarMovies([]));
+    return () => controller.abort();
+  }, [numericId]);
 
   useEffect(() => {
     if (!numericId || isNaN(numericId)) {
@@ -243,6 +254,21 @@ export const MovieDetailPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Content-only Similar Movies Row (D5) */}
+      {!loading && movie && similarMovies.length > 0 && (
+        <div className="pt-6">
+          <RecommendationRow
+            rowData={{
+              id: `row-similar-${numericId}`,
+              title: 'More Like This',
+              subtitle: 'Content-only recommendations based on shared genres and tags',
+              movies: similarMovies,
+            }}
+            badge="SIMILAR · CONTENT SIMILARITY"
+          />
         </div>
       )}
     </div>

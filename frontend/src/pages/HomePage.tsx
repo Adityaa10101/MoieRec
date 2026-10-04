@@ -3,10 +3,12 @@ import { HERO_MOVIE, MOCK_RECOMMENDATION_ROWS } from '../data/mockMovies';
 import { HeroSpotlight } from '../components/movie/HeroSpotlight';
 import { RecommendationRow } from '../components/recommendations/RecommendationRow';
 import { WhyThisModal } from '../components/feedback/WhyThisModal';
+import { OnboardingModal } from '../components/feedback/OnboardingModal';
 import { TasteRadarDock } from '../components/feedback/TasteRadarDock';
 import { MovieCardSkeleton } from '../components/common/MovieCardSkeleton';
-import { fetchHome } from '../api/client';
-import type { HomeResponse, ApiMovie } from '../api/types';
+import { fetchHome, fetchPersonalizedHome } from '../api/client';
+import { useUserTaste } from '../context/UserTasteContext';
+import type { HomeResponse, ApiMovie, RecommendationRow as ApiRecommendationRow } from '../api/types';
 
 // Honesty banner shown when falling back to mock data
 const DemoBanner: React.FC = () => (
@@ -17,13 +19,34 @@ const DemoBanner: React.FC = () => (
 );
 
 export const HomePage: React.FC = () => {
+  const {
+    validLikedIds,
+    validDislikedIds,
+    isOnboardingOpen,
+    setIsOnboardingOpen,
+    onboardingDismissed,
+  } = useUserTaste();
+
   const [homeData, setHomeData] = useState<HomeResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(false);
 
-  // WhyThis modal — only shown when movie has a non-null explanation (never in Phase 2E.2)
+  // Personalized feed state
+  const [personalizedRows, setPersonalizedRows] = useState<ApiRecommendationRow[]>([]);
+  const [personalizedLoading, setPersonalizedLoading] = useState(false);
+  const [personalizedError, setPersonalizedError] = useState(false);
+
+  // WhyThis modal — opens only for cards with real explanation evidence
   const [selectedMovieForWhyThis, setSelectedMovieForWhyThis] = useState<ApiMovie | null>(null);
 
+  // Onboarding prompt on first visit when < 3 likes exist and not dismissed
+  useEffect(() => {
+    if (validLikedIds.length < 3 && !onboardingDismissed) {
+      setIsOnboardingOpen(true);
+    }
+  }, [validLikedIds.length, onboardingDismissed, setIsOnboardingOpen]);
+
+  // Load standard popularity home feed
   useEffect(() => {
     const controller = new AbortController();
     let mounted = true;
@@ -52,8 +75,48 @@ export const HomePage: React.FC = () => {
     };
   }, []);
 
+  // Fetch personalized feed (debounced ~400ms, cancellable, reacts to likes/dislikes)
+  useEffect(() => {
+    if (validLikedIds.length < 3) {
+      setPersonalizedRows([]);
+      setPersonalizedError(false);
+      setPersonalizedLoading(false);
+      return;
+    }
+
+    setPersonalizedLoading(true);
+    setPersonalizedError(false);
+    const controller = new AbortController();
+
+    const timer = setTimeout(async () => {
+      try {
+        const resp = await fetchPersonalizedHome(
+          validLikedIds,
+          validDislikedIds,
+          controller.signal,
+        );
+        if (resp.personalized && resp.rows && resp.rows.length > 0) {
+          setPersonalizedRows(resp.rows);
+          setPersonalizedError(false);
+        } else {
+          setPersonalizedRows([]);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') return;
+        setPersonalizedError(true);
+        setPersonalizedRows([]);
+      } finally {
+        setPersonalizedLoading(false);
+      }
+    }, 400);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [validLikedIds, validDislikedIds]);
+
   // Build a mock ApiMovie for the hero from HERO_MOVIE when offline
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mockHeroAsApi: ApiMovie = {
     movie_id: 0,
     tmdb_id: null,
@@ -78,7 +141,6 @@ export const HomePage: React.FC = () => {
   };
 
   // Convert mock rows to API shape for offline fallback
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mockRowsAsApi = MOCK_RECOMMENDATION_ROWS.map((row) => ({
     id: row.id,
     title: row.title.replace(/Because you liked.*|Neural.*|Trending.*|Cluster.*|Archival.*/, 'Popular Films'),
@@ -129,8 +191,6 @@ export const HomePage: React.FC = () => {
         <HeroSpotlight
           movie={displayHero}
           onOpenWhyThis={(m) => {
-            // Only show WhyThis if the movie has a non-null explanation
-            // In Phase 2E.2, explanation is always null, so this never fires
             if (m.explanation != null) setSelectedMovieForWhyThis(m);
           }}
         />
@@ -138,9 +198,47 @@ export const HomePage: React.FC = () => {
 
       {/* Recommendation Rows */}
       <main className="relative z-20 space-y-16 pb-28 max-w-7xl mx-auto px-6 sm:px-12">
+        {/* Notice if personalized request failed (D2: hide rows with small notice, no mock data) */}
+        {personalizedError && (
+          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono flex items-center gap-2">
+            <span>ℹ</span>
+            <span>Personalized recommendations temporarily unavailable (backend offline)</span>
+          </div>
+        )}
+
+        {/* Personalized Rows (rendered ABOVE popularity rows with badge) */}
+        {personalizedLoading && (
+          <section className="space-y-4">
+            <div className="space-y-2">
+              <div className="h-3 w-32 bg-amber-500/20 rounded animate-pulse" />
+              <div className="h-7 w-64 bg-white/10 rounded animate-pulse" />
+            </div>
+            <div className="flex gap-5 overflow-hidden">
+              {Array.from({ length: 5 }).map((_, j) => (
+                <MovieCardSkeleton key={j} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {personalizedRows.map((row) => {
+          const badge =
+            row.id === 'row-personalized-picked' || row.id.startsWith('row-personalized')
+              ? 'PERSONALIZED · HYBRID v1.1'
+              : 'SIMILAR BY GENRES & TAGS';
+          return (
+            <RecommendationRow
+              key={row.id}
+              rowData={row}
+              badge={badge}
+              onOpenWhyThis={(movie) => setSelectedMovieForWhyThis(movie)}
+            />
+          );
+        })}
+
+        {/* Standard Popularity Rows */}
         {loading
-          ? // Skeleton rows
-            [1, 2, 3].map((i) => (
+          ? [1, 2, 3].map((i) => (
               <section key={i} className="space-y-4">
                 <div className="space-y-2">
                   <div className="h-3 w-32 bg-white/10 rounded animate-pulse" />
@@ -155,14 +253,25 @@ export const HomePage: React.FC = () => {
               </section>
             ))
           : displayRows.map((row) => (
-              <RecommendationRow key={row.id} rowData={row} />
+              <RecommendationRow
+                key={row.id}
+                rowData={row}
+                badge="MODEL 0 (POPULARITY)"
+                onOpenWhyThis={(movie) => setSelectedMovieForWhyThis(movie)}
+              />
             ))}
       </main>
 
       {/* TasteRadarDock — shows local state only, no fake vector */}
       <TasteRadarDock />
 
-      {/* WhyThis modal — only renders when explanation is non-null (never in Phase 2E.2) */}
+      {/* Onboarding Modal */}
+      <OnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={() => setIsOnboardingOpen(false)}
+      />
+
+      {/* WhyThis modal — renders only from explanation data with real numbers */}
       {selectedMovieForWhyThis && selectedMovieForWhyThis.explanation != null && (
         <WhyThisModal
           isOpen={!!selectedMovieForWhyThis}

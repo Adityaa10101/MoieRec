@@ -18,7 +18,7 @@ export const HERO_MOVIE: Movie = {
   certificate: 'R',
   rating: 4.8,
   matchScore: 96,
-  matchBadgeText: '96% MATCH FOR YOU',
+  matchBadgeText: 'POPULAR',
   matchReason: 'BECAUSE OF WORLD-BUILDING, PHILOSOPHICAL SCALE & ZIMMER SCORE',
   genres: ['Sci-Fi', 'Neo-Noir', 'Cyberpunk', 'Mystery'],
   tags: ['Auteur Vision', 'Atmospheric Dread', 'Roger Deakins Lighting', 'Dystopian Solitude'],
@@ -54,7 +54,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 56m',
         rating: 4.7,
         matchScore: 97,
-        matchBadgeText: '97% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Drama', 'Mystery'],
         tags: ['Non-linear Time', 'Linguistics'],
         overview:
@@ -72,7 +72,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 30m',
         rating: 4.5,
         matchScore: 94,
-        matchBadgeText: '94% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Drama', 'Mystery'],
         tags: ['Scientific Faith', 'Signal Theory'],
         overview:
@@ -90,7 +90,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 29m',
         rating: 4.9,
         matchScore: 95,
-        matchBadgeText: '95% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Adventure', 'Mystery'],
         tags: ['Human Evolution', 'Cosmic Canon'],
         overview:
@@ -108,7 +108,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 47m',
         rating: 4.7,
         matchScore: 92,
-        matchBadgeText: '92% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Drama', 'Mystery'],
         tags: ['Grief & Cosmos', 'Poetic Memory'],
         overview:
@@ -126,7 +126,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 24m',
         rating: 4.6,
         matchScore: 91,
-        matchBadgeText: '91% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Adventure', 'Drama'],
         tags: ['Ingenuity', 'Procedural Grit'],
         overview:
@@ -144,7 +144,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 3m',
         rating: 4.3,
         matchScore: 89,
-        matchBadgeText: '89% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Drama', 'Mystery'],
         tags: ['Psychological Void', 'Paternal Voyage'],
         overview:
@@ -171,7 +171,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '3h 0m',
         rating: 4.9,
         matchScore: 98,
-        matchBadgeText: '98% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Biography', 'Drama', 'History'],
         tags: ['Editing & Score', 'Tension'],
         overview:
@@ -189,7 +189,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 48m',
         rating: 4.7,
         matchScore: 96,
-        matchBadgeText: '96% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Drama', 'Thriller'],
         tags: ['Chamber Sci-Fi', 'Turing Test'],
         overview:
@@ -207,7 +207,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 49m',
         rating: 4.8,
         matchScore: 95,
-        matchBadgeText: '95% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Action', 'Drama'],
         tags: ['Lubezki Vision', 'Long Takes'],
         overview:
@@ -225,7 +225,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 55m',
         rating: 4.5,
         matchScore: 93,
-        matchBadgeText: '93% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Horror', 'Mystery'],
         tags: ['Metamorphic Sound', 'Cosmic Horror'],
         overview:
@@ -243,7 +243,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 13m',
         rating: 4.4,
         matchScore: 91,
-        matchBadgeText: '91% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Action', 'Adventure'],
         tags: ['FX2 Guerilla', 'Location Scale'],
         overview:
@@ -261,7 +261,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 19m',
         rating: 4.8,
         matchScore: 92,
-        matchBadgeText: '92% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Comedy', 'Adventure'],
         tags: ['Absurdist Heart', 'Kinetic Pacing'],
         overview:
@@ -288,7 +288,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 42m',
         rating: 4.8,
         matchScore: 94,
-        matchBadgeText: '94% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama'],
         tags: ['Emotional Depth', 'Memory Tape'],
         overview:
@@ -306,7 +306,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 29m',
         rating: 4.6,
         matchScore: 93,
-        matchBadgeText: '93% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Mystery', 'Thriller'],
         tags: ['Quantum Puzzle', 'Micro-Budget'],
         overview:
@@ -324,7 +324,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 31m',
         rating: 4.5,
         matchScore: 90,
-        matchBadgeText: '90% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Sci-Fi', 'Mystery', 'Drama'],
         tags: ['Steadicam Purity', 'Audio Mystery'],
         overview:
@@ -342,7 +342,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 2m',
         rating: 4.9,
         matchScore: 91,
-        matchBadgeText: '91% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama', 'Romance'],
         tags: ['Sublime Gaze', 'The Gaze'],
         overview:
@@ -360,7 +360,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 28m',
         rating: 4.7,
         matchScore: 89,
-        matchBadgeText: '89% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama', 'Mystery', 'Thriller'],
         tags: ['Class Ambiguity', 'Murakami Tone'],
         overview:
@@ -378,7 +378,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 59m',
         rating: 4.8,
         matchScore: 92,
-        matchBadgeText: '92% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama'],
         tags: ['Catharsis', 'Dialogue Pace'],
         overview:
@@ -405,7 +405,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 11m',
         rating: 4.6,
         matchScore: 95,
-        matchBadgeText: '95% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama', 'Romance', 'Sport'],
         tags: ['Reznor Score', 'Kinetic Electro'],
         overview:
@@ -423,7 +423,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 21m',
         rating: 4.7,
         matchScore: 93,
-        matchBadgeText: '93% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Comedy', 'Drama', 'Romance', 'Sci-Fi'],
         tags: ['Absurdist Tale', 'Fish-Eye Lenses'],
         overview:
@@ -441,7 +441,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 49m',
         rating: 4.5,
         matchScore: 91,
-        matchBadgeText: '91% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Action', 'Thriller'],
         tags: ['Photojournalism', 'Visceral Audio'],
         overview:
@@ -459,7 +459,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '1h 45m',
         rating: 4.8,
         matchScore: 94,
-        matchBadgeText: '94% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama', 'Romance'],
         tags: ['Subtle Melancholy', 'In-Yun'],
         overview:
@@ -477,7 +477,7 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
         runtime: '2h 31m',
         rating: 4.8,
         matchScore: 92,
-        matchBadgeText: '92% MATCH',
+        matchBadgeText: 'POPULAR',
         genres: ['Drama', 'Mystery', 'Crime'],
         tags: ["Palme d'Or", 'Courtroom Dissection'],
         overview:

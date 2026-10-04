@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, ThumbsUp, Play } from 'lucide-react';
+import { Bookmark, ThumbsUp, Play, Sparkles } from 'lucide-react';
 import type { ApiMovie } from '../../api/types';
 import { useAmbientBackdrop } from '../../context/AmbientBackdropContext';
 import { useUserTaste } from '../../context/UserTasteContext';
@@ -9,9 +9,10 @@ import { useRouter } from '../../router/Router';
 interface MovieCardProps {
   movie: ApiMovie;
   index?: number;
+  onOpenWhyThis?: (movie: ApiMovie) => void;
 }
 
-export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0 }) => {
+export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0, onOpenWhyThis }) => {
   const { setHoveredMovie } = useAmbientBackdrop();
   const { setIsCardHovered } = usePopcornCursor();
   const { isInWatchlist, isLiked, toggleWatchlist, toggleLike } = useUserTaste();
@@ -21,10 +22,14 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0 }) => {
   const inWatchlist = isInWatchlist(movieIdStr);
   const liked = isLiked(movieIdStr);
 
+  // Top N% chip: N = max(1, 100 - match_percent)
+  const topPercent = movie.match_percent != null ? Math.max(1, 100 - movie.match_percent) : null;
+
   // Adapt to the shape that context expects (local state only, no scores)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const asContextMovie = (): any => ({
     id: movieIdStr,
+    movie_id: movie.movie_id,
     title: movie.title,
     year: movie.year,
     genres: movie.genres,
@@ -34,6 +39,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0 }) => {
     matchScore: 0,
     tags: [],
     director: movie.directors?.[0] || '',
+    explanation: movie.explanation,
+    reason_codes: movie.reason_codes,
   });
 
   const handleMouseEnter = () => {
@@ -79,6 +86,22 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0 }) => {
             </svg>
             <span className="text-[10px] font-mono uppercase tracking-wider">No Poster</span>
           </div>
+        )}
+
+        {/* Top N% pick Chip */}
+        {topPercent != null && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onOpenWhyThis && movie.explanation) onOpenWhyThis(movie);
+            }}
+            className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-md bg-amber-500 text-black text-[10px] font-mono font-bold shadow-md hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
+            title="Relative rank among candidates for your picks, not a probability"
+          >
+            <Sparkles className="w-2.5 h-2.5" />
+            <span>Top {topPercent}% pick</span>
+          </button>
         )}
 
         {/* Watchlist button */}
@@ -128,6 +151,17 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0 }) => {
           </span>
 
           <div className="flex items-center gap-1.5 text-slate-400">
+            {/* Why This Button (only if explanation exists) */}
+            {movie.explanation != null && onOpenWhyThis && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onOpenWhyThis(movie); }}
+                className="w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center text-amber-400/80 hover:text-amber-400 transition-colors"
+                title="Why recommended? (Explainability Breakdown)"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+              </button>
+            )}
+
             <button
               onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.movie_id}`); }}
               className="w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center hover:text-amber-400 transition-colors"

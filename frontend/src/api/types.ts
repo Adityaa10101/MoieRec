@@ -9,6 +9,34 @@ export interface CastMember {
   character: string | null;
 }
 
+export interface NearestPickExplanation {
+  movie_id: number;
+  title: string;
+  similarity: number;
+}
+
+export interface SharedFeatureExplanation {
+  feature: string;
+  raw_name: string;
+  contribution: number;
+  feature_type: string;
+}
+
+export interface ComponentsExplanation {
+  content: number;
+  popularity: number;
+}
+
+export interface MovieExplanation {
+  nearest_pick: NearestPickExplanation;
+  top_shared_features: SharedFeatureExplanation[];
+  components: ComponentsExplanation;
+  match_percent: number;
+  similarity_threshold?: number;
+  alpha?: number;
+  reason_labels?: Record<string, string>;
+}
+
 export interface ApiMovie {
   movie_id: number;
   tmdb_id: number | null;
@@ -25,11 +53,11 @@ export interface ApiMovie {
   directors: string[];
   train_positive_count: number | null;
   rank: number | null;
-  score: null;                    // always null — no personalization
-  match_percent: null;            // always null — honesty contract
+  score: number | null;           // personalized score or cosine similarity
+  match_percent: number | null;   // relative rank within pool (0-100), not a probability
   reason_codes: string[];
-  explanation: null;              // always null
-  source: 'popularity';
+  explanation: MovieExplanation | null;
+  source: 'popularity' | 'hybrid_v1' | 'hybrid_v1.1' | 'content_similarity';
 }
 
 export interface RecommendationRow {
@@ -41,5 +69,15 @@ export interface RecommendationRow {
 
 export interface HomeResponse {
   hero: ApiMovie | null;
+  rows: RecommendationRow[];
+}
+
+export interface PersonalizedHomeResponse {
+  personalized: boolean;
+  k: number;
+  config_version: string;
+  alpha_used?: number | null;
+  ignored_ids: number[];
+  message?: string | null;
   rows: RecommendationRow[];
 }

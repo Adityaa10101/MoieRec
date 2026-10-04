@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, Link } from '../../router/Router';
-import { Film, Search, Radar, Bell, Menu, X, Check } from 'lucide-react';
+import { Film, Search, Radar, Bell, Menu, X, Check, Sparkles } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
+import { useUserTaste } from '../../context/UserTasteContext';
 
 interface NavbarProps {
   onOpenSearch: () => void;
@@ -10,6 +11,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
   const { path } = useRouter();
   const { showToast } = useToast();
+  const { setIsOnboardingOpen, validLikedIds } = useUserTaste();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -96,6 +98,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
 
         {/* Right Trailing Profile & Curatorial Status */}
         <div className="flex items-center gap-3 sm:gap-4">
+          {/* Edit your picks action button (D1) */}
+          <button
+            onClick={() => setIsOnboardingOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 text-xs font-medium transition-colors cursor-pointer"
+            title="Edit your onboarding movie picks"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Edit your picks</span>
+            <span className="sm:hidden">Picks</span>
+            {validLikedIds.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-black font-mono text-[10px] font-bold">
+                {validLikedIds.length}
+              </span>
+            )}
+          </button>
+
           {/* Curated Taste Indicator Pill */}
           <Link
             to="/my-taste"
