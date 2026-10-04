@@ -114,11 +114,18 @@ MoieRec/
 
 ## Local Development Commands (Phase 2E.2 Serving Slice)
 
-### 1. Catalog Export (Recommender Environment)
-Generate `data/serving/catalog.sqlite` from processed MovieLens 25M benchmark parquets:
+### 1. Catalog & Model Artifacts Export (Recommender Environment)
+Generate `data/serving/catalog.sqlite` and `data/serving/model_v1/`:
 ```powershell
 # Using .venv_recommender:
+# 1. Export catalog sqlite
 .\.venv_recommender\Scripts\python.exe -m recommender.serving.export_catalog
+
+# 2. Run offline hybrid grid tuning (Cold-Start Protocol v2 on cold_dev)
+.\.venv_recommender\Scripts\python.exe -m recommender.hybrid.tune_hybrid
+
+# 3. Export serving model artifacts (item features, norms, pop scores, vocab)
+.\.venv_recommender\Scripts\python.exe recommender/serving/export_model_artifacts.py
 ```
 
 ### 2. Backend Environment & TMDB Configuration
@@ -145,6 +152,7 @@ cd ..
 ```
 - API Documentation: `http://127.0.0.1:8000/docs`
 - Health check: `http://127.0.0.1:8000/api/health`
+- Personalized feed: `POST http://127.0.0.1:8000/api/personalized/home`
 - Home feed: `http://127.0.0.1:8000/api/home`
 
 ### 5. Start Frontend Dev Server

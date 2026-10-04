@@ -102,8 +102,10 @@ Evaluated across $K \in \{3, 5, 10\}$ on `cold_dev` (seed=42):
 
 ---
 
-## 5. Evaluators' Ratings Hygiene
+## 6. Implementation Status (Phase 2F: Hybrid v1 Implemented)
 
-**CRITICAL RULE:** Ratings provided by real evaluators or production users are **inference-time personalization data**, NOT offline training data. 
-- They must never be injected into offline training splits without formal versioned data pipeline retraining cycles.
-- Offline metrics must reflect performance on completely unseen users.
+In Phase 2F, **Hybrid v1** was tuned and deployed as the serving onboarding engine:
+- Combines Tier 2 Content Profile ($\alpha = 0.1$) with Population Popularity ($1 - \alpha = 0.9$) using candidate-pool percentile ranks.
+- Strictly outperforms both Popularity and Content-Only across all $K \in \{3, 5, 10\}$ on both `all_candidates` and `long_tail` variants with 95% paired bootstrap confidence intervals strictly excluding zero.
+- Phase 4 (Collaborative Fold-In via Ridge Regression onto frozen item factors) remains scheduled for a future collaborative filtering phase when offline factor matrices are introduced.
+

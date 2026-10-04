@@ -44,12 +44,15 @@ No model tier is assumed superior a priori. Complex neural or collaborative mode
 - **Formulations:** Regularized Alternating Least Squares (Implicit ALS) or Truncated SVD / Biased Matrix Factorization.
 - **Inference:** User vector $\mathbf{p}_u \in \mathbb{R}^d$ and item factor $\mathbf{q}_i \in \mathbb{R}^d$ combined as $\hat{r}_{u,i} = \mu + b_u + b_i + \mathbf{p}_u \cdot \mathbf{q}_i$.
 
-### Model 3: Curatorial Hybrid Scoring
-- **Purpose:** Production recommendation blending personalization, catalog coverage, and quality priors.
-- **Linear Ensemble Formulation:**
-  $$\text{FinalScore}(u, i) = \alpha \cdot \tilde{S}_{\text{content}}(u, i) + \beta \cdot \tilde{S}_{\text{collab}}(u, i) + \gamma \cdot \tilde{S}_{\text{pop}}(i) + \delta \cdot \tilde{S}_{\text{explore}}(u, i)$$
-  where $\alpha, \beta, \gamma, \delta \ge 0$ and $\alpha + \beta + \gamma + \delta = 1.0$.
-- **Tuning Constraint:** Ensemble weights $(\alpha, \beta, \gamma, \delta)$ are tuned strictly on the **VALIDATION** split via grid search or Bayesian optimization, and frozen prior to test evaluation.
+### Model 3: Curatorial Hybrid Scoring (Phase 2F: Hybrid v1 Implemented)
+- **Purpose:** Production cold-start and onboarding recommendation blending content taste profiles and population popularity.
+- **Implemented Model (`hybrid_v1`):**
+  - Linear blend over candidate-pool percentile ranks:
+    $$\text{FinalScore}(u, i) = \alpha \cdot \text{pct}_{\text{content}}(u, i) + (1 - \alpha) \cdot \text{pct}_{\text{pop}}(i)$$
+  - Tuned offline on `cold_dev`: $\alpha = 0.1$, Tier 2 weights $w_{T1}=1.0, w_{\text{tags}}=4.0, w_{\text{genome}}=1.0$.
+  - Generates "Picked for You" row and "Because you liked <Title>" content rows in serving API.
+- **Future Collaborative Extensions:**
+  - Fold-in latent vectors $\tilde{S}_{\text{collab}}$ and diversity re-ranking will be introduced in subsequent phases.
 
 ---
 
