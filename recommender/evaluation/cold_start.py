@@ -440,3 +440,69 @@ class ColdStartEvaluator:
             variant=variant,
             per_user_metrics=per_user,
         )
+
+    def evaluate_scores(
+        self,
+        k_onboarding: int,
+        scores: np.ndarray,
+        eval_users: List[int],
+        revealed_list: List[List[int]],
+        ground_truth_list: List[Set[int]],
+        mask_indices_list: List[Set[int]],
+        n_excluded: int,
+        model_name: str = "custom",
+        protocol: str = "v2",
+        variant: str = "all_candidates",
+    ) -> ColdStartEvaluationResult:
+        """Evaluate precomputed user scores matrix under cold-start onboarding protocol."""
+        n_users = len(eval_users)
+        all_topk = []
+        batch_size = 500
+
+        for start_idx in range(0, n_users, batch_size):
+            end_idx = min(start_idx + batch_size, n_users)
+            b_scores = scores[start_idx:end_idx].astype(np.float64, copy=True)
+            for b_i, u_idx in enumerate(range(start_idx, end_idx)):
+                b_scores[b_i, list(mask_indices_list[u_idx])] = -np.inf
+            topk_batch = select_topk_exact(b_scores, k=self.k_eval, tie_ranks=self.tie_ranks)
+            all_topk.append(topk_batch)
+
+        predicted_topk = np.vstack(all_topk) if all_topk else np.zeros((0, self.k_eval), dtype=int)
+
+        hits = compute_hits(predicted_topk, ground_truth_list)
+        gt_counts = np.array([len(gt) for gt in ground_truth_list], dtype=np.int64)
+
+        precisions = precision_at_k(hits, self.k_eval)
+        recalls = recall_at_k(hits, gt_counts, self.k_eval)
+        ndcgs = ndcg_at_k(hits, gt_counts, self.k_eval)
+        hit_rates = hit_rate_at_k(hits, self.k_eval)
+        mrrs = mrr_at_k(hits, self.k_eval)
+
+        prec_s = MetricSummary(*compute_bootstrap_ci(precisions, self.n_bootstrap, seed=self.seed))
+        rec_s = MetricSummary(*compute_bootstrap_ci(recalls, self.n_bootstrap, seed=self.seed))
+        ndcg_s = MetricSummary(*compute_bootstrap_ci(ndcgs, self.n_bootstrap, seed=self.seed))
+        hr_s = MetricSummary(*compute_bootstrap_ci(hit_rates, self.n_bootstrap, seed=self.seed))
+        mrr_s = MetricSummary(*compute_bootstrap_ci(mrrs, self.n_bootstrap, seed=self.seed))
+
+        per_user = {
+            "precision": precisions,
+            "recall": recalls,
+            "ndcg": ndcgs,
+            "hit_rate": hit_rates,
+            "mrr": mrrs,
+        }
+
+        return ColdStartEvaluationResult(
+            k_onboarding=k_onboarding,
+            model_name=model_name,
+            n_evaluated_users=n_users,
+            n_excluded_users=n_excluded,
+            precision=prec_s,
+            recall=rec_s,
+            ndcg=ndcg_s,
+            hit_rate=hr_s,
+            mrr=mrr_s,
+            protocol=protocol,
+            variant=variant,
+            per_user_metrics=per_user,
+        )

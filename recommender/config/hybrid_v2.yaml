@@ -1,0 +1,116 @@
+version: hybrid_v2
+adopted_as_served_default: true
+bucket_schedule:
+  K_3_4:
+    w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+  K_5_7:
+    w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+  K_8_14:
+    w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+  K_15_plus:
+    w_c: 0.1
+    w_f: 0.9
+    w_p: 0.0
+tuned_weights_per_k:
+  '3':
+    w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+  '5':
+    w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+  '10':
+    w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+  '20':
+    w_c: 0.1
+    w_f: 0.9
+    w_p: 0.0
+top3_weights_per_k:
+  '3':
+  - w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+    objective: 0.7398
+  - w_c: 0.0
+    w_f: 0.9
+    w_p: 0.1
+    objective: 0.6692
+  - w_c: 0.0
+    w_f: 0.8
+    w_p: 0.2
+    objective: 0.6129
+  '5':
+  - w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+    objective: 0.9644
+  - w_c: 0.0
+    w_f: 0.9
+    w_p: 0.1
+    objective: 0.8438
+  - w_c: 0.0
+    w_f: 0.8
+    w_p: 0.2
+    objective: 0.7579
+  '10':
+  - w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+    objective: 1.2113
+  - w_c: 0.1
+    w_f: 0.9
+    w_p: 0.0
+    objective: 1.0379
+  - w_c: 0.0
+    w_f: 0.9
+    w_p: 0.1
+    objective: 1.0134
+  '20':
+  - w_c: 0.1
+    w_f: 0.9
+    w_p: 0.0
+    objective: 1.3152
+  - w_c: 0.0
+    w_f: 1.0
+    w_p: 0.0
+    objective: 1.3046
+  - w_c: 0.2
+    w_f: 0.8
+    w_p: 0.0
+    objective: 1.2135
+content_block_weights:
+  w_t1: 1.0
+  w_tags: 4.0
+  w_genome: 1.0
+collaborative_config:
+  a: 0.5
+  shrinkage: 0.0
+  k: 200
+  ndcg: 0.083266
+  precision: 0.0614
+  recall: 0.0736
+  hit_rate: 0.3594
+  mrr: 0.1616
+  catalog_coverage: 0.0478
+  mean_recommended_popularity: 32293.8
+  cf_min_support: 185
+normalization: percentile
+zero_cf_percentile: average_rank_of_tied_zeros
+selection_objective: mean(NDCG_all/NDCG_pop_all, NDCG_lt/NDCG_pop_lt)
+selection_constraint: NDCG_all >= NDCG_pop_all
+provenance:
+  git_commit: 2b6aa5ca854783f202a70ae5a0813b22dd978730
+  git_dirty: true
+  timestamp: '2026-10-04T07:53:17.789305+00:00'
+  runtime_seconds: 3941.62
+tuning_note: Tuned on cold_dev only. Confidence intervals are optimistic because weights
+  were selected on cold_dev.

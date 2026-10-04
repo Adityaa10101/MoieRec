@@ -1,8 +1,13 @@
-"""
-Collaborative filtering submodule placeholder for MoieRec.
+"""Collaborative Filtering package for MoieRec."""
 
-Planned components:
-- user-item interaction matrix manipulation
-- matrix factorization (SVD / ALS)
-- collaborative filtering recommendation generator
-"""
+from recommender.collaborative.item_cf import (
+    ItemItemCollaborativeRecommender,
+    compute_item_cooccurrence_and_counts,
+    compute_or_load_topk_neighbors,
+)
+
+__all__ = [
+    "ItemItemCollaborativeRecommender",
+    "compute_item_cooccurrence_and_counts",
+    "compute_or_load_topk_neighbors",
+]
