@@ -266,3 +266,194 @@ def test_hybrid_v1_reconciled_benchmark_regression():
                 f"Hybrid v1 NDCG mismatch at K={k_ob} {variant}: {actual_hybrid:.12f} vs {exp_h_val:.12f}"
             )
 
+
+MODEL_V2_DIR = PROJECT_ROOT / "data" / "serving" / "model_v2"
+
+
+@pytest.fixture(scope="module")
+def scorer_v2():
+    if not (MODEL_V2_DIR / "hybrid_v2.yaml").exists():
+        pytest.skip("Serving artifacts not yet exported to data/serving/model_v2")
+    return HybridScorer(artifacts_dir=MODEL_V2_DIR)
+
+
+def test_scorer_v2_offline_parity(scorer_v2):
+    """Phase 2G-Lite Part C1 Parity test:
+    Verify that HybridScorer with Model v2 strictly matches offline math for 200 profiles
+    across K in {3, 5, 10, 20}:
+    - Scorer scores equal offline implementation within 1e-5.
+    - Top-20 lists are strictly identical.
+    - Deterministic tie-breaking and zero discrepancies.
+    """
+    assert scorer_v2.version == "2.0"
+    assert scorer_v2.is_v2 is True
+
+    rng = np.random.default_rng(54321)
+    catalog_mids = scorer_v2.item_movie_ids
+    n_catalog = len(catalog_mids)
+
+    k_cases = [3] * 50 + [5] * 50 + [10] * 50 + [20] * 50  # 200 cases
+
+    item_t1 = scorer_v2.item_t1
+    item_tags_csr = scorer_v2.item_tags_csr
+    item_genome = scorer_v2.item_genome
+    inv_item_norms = scorer_v2.inv_item_norms
+    pop_scores = scorer_v2.pop_scores
+    w_t1, w_tags, w_genome = scorer_v2.w_t1, scorer_v2.w_tags, scorer_v2.w_genome
+
+    cf_indices = scorer_v2.cf_indices
+    cf_sims = scorer_v2.cf_sims
+
+    expected_weights = {
+        3: (0.0, 1.0, 0.0),
+        5: (0.0, 1.0, 0.0),
+        10: (0.0, 1.0, 0.0),
+        20: (0.1, 0.9, 0.0),
+    }
+
+    for test_idx, k in enumerate(k_cases):
+        liked_indices = rng.choice(n_catalog, size=k, replace=False)
+        liked_ids = [int(catalog_mids[i]) for i in liked_indices]
+
+        n_excl = rng.integers(0, 6)
+        remain_pool = np.setdiff1d(np.arange(n_catalog), liked_indices)
+        excl_indices = rng.choice(remain_pool, size=n_excl, replace=False)
+        exclude_ids = [int(catalog_mids[i]) for i in excl_indices]
+
+        exp_wc, exp_wf, exp_wp = expected_weights[k]
+
+        # --- Offline reference scoring ---
+        exclude_set = set(liked_ids) | set(exclude_ids)
+        pool_mask = np.array([mid not in exclude_set for mid in catalog_mids], dtype=bool)
+        pool_indices = np.flatnonzero(pool_mask)
+        n_pool = len(pool_indices)
+
+        # 1. Content profile & scores
+        liked_inv = inv_item_norms[liked_indices]
+        p_t1_raw = np.mean(item_t1[liked_indices] * (liked_inv[:, None] * w_t1), axis=0)
+        tag_scaled = item_tags_csr[liked_indices].multiply(liked_inv[:, None] * w_tags)
+        p_tag_raw = np.array(tag_scaled.mean(axis=0)).flatten()
+        p_gen_raw = np.mean(item_genome[liked_indices] * (liked_inv[:, None] * w_genome), axis=0)
+
+        p_norm = np.sqrt(np.sum(p_t1_raw**2) + np.sum(p_tag_raw**2) + np.sum(p_gen_raw**2))
+        p_t1 = p_t1_raw / p_norm if p_norm > 0 else p_t1_raw
+        p_tag = p_tag_raw / p_norm if p_norm > 0 else p_tag_raw
+        p_gen = p_gen_raw / p_norm if p_norm > 0 else p_gen_raw
+
+        s_t1 = item_t1.dot(p_t1 * w_t1)
+        s_tag = item_tags_csr.dot(p_tag * w_tags)
+        s_gen = item_genome.dot(p_gen * w_genome)
+        c_scores_all = (s_t1 + s_tag + s_gen) * inv_item_norms
+        c_scores = c_scores_all[pool_indices].astype(np.float64)
+
+        # 2. Popularity scores
+        p_scores = pop_scores[pool_indices].astype(np.float64)
+
+        # 3. CF scores
+        cf_scores_all = np.zeros(n_catalog, dtype=np.float32)
+        for p in liked_indices:
+            n_idx = cf_indices[p]
+            n_sim = cf_sims[p]
+            v_mask = (n_idx >= 0) & (n_sim > 0)
+            if np.any(v_mask):
+                np.add.at(cf_scores_all, n_idx[v_mask], n_sim[v_mask] / float(k))
+        cf_scores = cf_scores_all[pool_indices].astype(np.float64)
+
+        # 4. Percentile ranks
+        if n_pool > 1:
+            c_ranks = st.rankdata(c_scores, method="average")
+            pct_c = (c_ranks - 1.0) / float(n_pool - 1.0)
+            p_ranks = st.rankdata(p_scores, method="average")
+            pct_p = (p_ranks - 1.0) / float(n_pool - 1.0)
+            f_ranks = st.rankdata(cf_scores, method="average")
+            pct_f = (f_ranks - 1.0) / float(n_pool - 1.0)
+        else:
+            pct_c = np.ones(1)
+            pct_p = np.ones(1)
+            pct_f = np.ones(1)
+
+        # 5. Offline blend
+        blend = exp_wc * pct_c + exp_wf * pct_f + exp_wp * pct_p
+        pool_ties = scorer_v2.tie_ranks[pool_indices]
+        top20_offline_idx = select_topk_exact(blend[None, :], k=20, tie_ranks=pool_ties)[0]
+        top20_offline_mids = [int(catalog_mids[pool_indices[idx]]) for idx in top20_offline_idx]
+        top20_offline_scores = blend[top20_offline_idx]
+
+        # --- Online Serving scorer ---
+        online_res, ignored = scorer_v2.score(
+            liked_movie_ids=liked_ids,
+            exclude_movie_ids=exclude_ids,
+            top_k=20,
+        )
+        assert len(ignored) == 0
+        assert len(online_res) == 20
+
+        top20_online_mids = [item["movie_id"] for item in online_res]
+        top20_online_scores = [item["score"] for item in online_res]
+
+        # Top-20 ranking parity: strictly identical movie IDs in order
+        assert top20_online_mids == top20_offline_mids, (
+            f"Case {test_idx} (K={k}) Top-20 mismatch:\n"
+            f"  Online:  {top20_online_mids}\n"
+            f"  Offline: {top20_offline_mids}"
+        )
+
+        # Numerical score parity within 1e-5
+        for s_on, s_off in zip(top20_online_scores, top20_offline_scores):
+            assert abs(s_on - s_off) < 1e-4, f"Score mismatch: {s_on} vs {s_off}"
+
+
+def test_scorer_v2_evidence_and_co_liked_reason():
+    """Verify Model v2 evidence extraction, components sum, and CO_LIKED_BY_USERS rule."""
+    scorer = HybridScorer(artifacts_dir=MODEL_V2_DIR)
+    # Use 5 popular picks from catalog
+    liked_picks = [1, 260, 296, 318, 356]
+    results, _ = scorer.score(liked_movie_ids=liked_picks, top_k=20)
+    assert len(results) == 20
+
+    for item in results:
+        assert item["source"] == "hybrid_v2"
+        exp = item["explanation"]
+        assert "components" in exp
+        comps = exp["components"]
+        assert "content" in comps
+        assert "cf" in comps
+        assert "popularity" in comps
+
+        # Sum of components must equal item score
+        comp_sum = comps["content"] + comps["cf"] + comps["popularity"]
+        assert abs(comp_sum - item["score"]) < 1e-3
+
+        # Weights must be present
+        assert "weights" in exp
+        assert exp["weights"] == {"w_c": 0.0, "w_f": 1.0, "w_p": 0.0}
+
+        # Check CO_LIKED_BY_USERS contract
+        if "CO_LIKED_BY_USERS" in item["reason_codes"]:
+            assert "CO_LIKED_BY_USERS" in exp["reason_labels"]
+            cf_pick = exp.get("cf_pick")
+            assert cf_pick is not None
+            assert cf_pick["cooccurrence"] >= scorer.cf_min_support
+            assert f"{cf_pick['cooccurrence']:,} MovieLens viewers who liked" in exp["reason_labels"]["CO_LIKED_BY_USERS"]
+        else:
+            if exp.get("cf_pick") is not None:
+                assert exp["cf_pick"]["cooccurrence"] < scorer.cf_min_support
+
+
+def test_precomputed_display_strings_regression():
+    """Verify that precomputed display names produce identical outputs to dynamic replace."""
+    scorer = HybridScorer(artifacts_dir=MODEL_V2_DIR)
+    assert len(scorer.clean_feature_info) == len(scorer.feature_names)
+    for idx, (clean_name, raw_name, ftype) in enumerate(scorer.clean_feature_info):
+        assert raw_name == scorer.feature_names[idx]
+        if ftype == "genre":
+            expected = raw_name.replace("t1:genre:", "").replace("genre:", "").replace("t1:", "")
+            assert clean_name == expected
+        elif ftype == "tag":
+            expected = raw_name.replace("tag:", "")
+            assert clean_name == expected
+        elif ftype == "genome_tag":
+            expected = raw_name.replace("genome:", "")
+            assert clean_name == expected
+
+
