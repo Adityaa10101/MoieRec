@@ -224,7 +224,7 @@ export const HomePage: React.FC = () => {
         {personalizedRows.map((row) => {
           const badge =
             row.id === 'row-personalized-picked' || row.id.startsWith('row-personalized')
-              ? 'PERSONALIZED · HYBRID v1.1'
+              ? 'PERSONALIZED · HYBRID v2'
               : 'SIMILAR BY GENRES & TAGS';
           return (
             <RecommendationRow

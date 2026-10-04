@@ -25,6 +25,14 @@ export interface SharedFeatureExplanation {
 export interface ComponentsExplanation {
   content: number;
   popularity: number;
+  cf?: number;
+}
+
+export interface CfPickExplanation {
+  movie_id: number;
+  title: string;
+  similarity: number;
+  cooccurrence: number;
 }
 
 export interface MovieExplanation {
@@ -34,6 +42,8 @@ export interface MovieExplanation {
   match_percent: number;
   similarity_threshold?: number;
   alpha?: number;
+  weights?: { w_c: number; w_f: number; w_p: number };
+  cf_pick?: CfPickExplanation;
   reason_labels?: Record<string, string>;
 }
 
@@ -57,7 +67,7 @@ export interface ApiMovie {
   match_percent: number | null;   // relative rank within pool (0-100), not a probability
   reason_codes: string[];
   explanation: MovieExplanation | null;
-  source: 'popularity' | 'hybrid_v1' | 'hybrid_v1.1' | 'content_similarity';
+  source: 'popularity' | 'hybrid_v1' | 'hybrid_v1.1' | 'hybrid_v2' | 'content_similarity';
 }
 
 export interface RecommendationRow {
@@ -77,6 +87,7 @@ export interface PersonalizedHomeResponse {
   k: number;
   config_version: string;
   alpha_used?: number | null;
+  weights_used?: { w_c: number; w_f: number; w_p: number } | null;
   ignored_ids: number[];
   message?: string | null;
   rows: RecommendationRow[];

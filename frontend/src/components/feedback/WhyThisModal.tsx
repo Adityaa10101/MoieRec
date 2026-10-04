@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Sparkles, Film, Tag, BarChart3, CheckCircle2 } from 'lucide-react';
+import { X, Sparkles, Film, Tag, BarChart3, CheckCircle2, Users } from 'lucide-react';
 import type { Movie } from '../../types/movie';
 import type { SharedFeatureExplanation } from '../../api/types';
 
@@ -20,14 +20,22 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
   const components = explanation.components || { content: 0, popularity: 0 };
   const matchPercent = explanation.match_percent ?? 50;
   const alphaUsed = explanation.alpha ?? 0.5;
+  const weights = explanation.weights;
+  const cfPick = explanation.cf_pick;
 
   // Top N% pick: N = max(1, 100 - match_percent)
   const topPercent = Math.max(1, 100 - matchPercent);
 
   // Component percentages relative to their sum for the bar visualization
-  const totalComponents = components.content + components.popularity;
-  const contentPct = totalComponents > 0 ? (components.content / totalComponents) * 100 : 50;
-  const popPct = totalComponents > 0 ? (components.popularity / totalComponents) * 100 : 50;
+  const cContent = components.content || 0;
+  const cCf = components.cf || 0;
+  const cPop = components.popularity || 0;
+  const hasCf = components.cf !== undefined || (weights && weights.w_f > 0) || cfPick !== undefined;
+
+  const totalComponents = cContent + cCf + cPop;
+  const contentPct = totalComponents > 0 ? (cContent / totalComponents) * 100 : 0;
+  const cfPct = totalComponents > 0 ? (cCf / totalComponents) * 100 : 0;
+  const popPct = totalComponents > 0 ? (cPop / totalComponents) * 100 : 0;
 
   return (
     <div
@@ -43,7 +51,7 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-500 font-bold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Hybrid Recommendation Evidence</span>
+              <span>Hybrid v2 Recommendation Evidence</span>
             </div>
             <h3 className="font-serif text-2xl text-white font-bold">{movie.title}</h3>
           </div>
@@ -68,12 +76,12 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
           </div>
         </div>
 
-        {/* Nearest Pick Card */}
+        {/* Nearest Content Pick Card */}
         {nearestPick && nearestPick.title && (
           <div className="p-4 rounded-xl bg-[#191a22] border border-white/10 space-y-2">
             <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-semibold flex items-center gap-1.5">
               <Film className="w-3.5 h-3.5 text-amber-500" />
-              <span>Closest Movie in Your Picks</span>
+              <span>Closest Movie in Your Picks (Content Match)</span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm font-semibold text-white">{nearestPick.title}</div>
@@ -84,7 +92,30 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
           </div>
         )}
 
-        {/* Real Content vs Popularity Component Breakdown + Alpha Used */}
+        {/* Collaborative Filtering Evidence Line (when present) */}
+        {cfPick && cfPick.title && (
+          <div className="p-4 rounded-xl bg-[#191a22] border border-sky-500/20 space-y-2">
+            <div className="text-[11px] font-mono text-sky-400 uppercase tracking-wider font-semibold flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-sky-400" />
+              <span>Collaborative Filtering Evidence</span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-semibold text-white">{cfPick.title}</div>
+              <div className="text-xs font-mono text-sky-300 font-bold bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20 whitespace-nowrap">
+                sim {cfPick.similarity.toFixed(3)}
+              </div>
+            </div>
+            <div className="text-xs text-slate-300 pt-0.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+              <span>
+                <strong className="text-sky-300 font-mono font-semibold">{cfPick.cooccurrence.toLocaleString()}</strong> MovieLens viewers who liked{' '}
+                <em className="text-white not-italic font-medium">{cfPick.title}</em> also liked this
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Real Component Breakdown + Simplex Weights Used */}
         <div className="space-y-3 p-4 rounded-xl bg-[#191a22] border border-white/10">
           <div className="flex items-center justify-between text-xs">
             <span className="font-mono text-slate-300 uppercase tracking-wider text-[11px] font-semibold flex items-center gap-1.5">
@@ -92,48 +123,78 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
               <span>Scoring Blend Components</span>
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded font-bold">
-                α = {alphaUsed.toFixed(2)}
-              </span>
+              {weights ? (
+                <span className="text-[11px] font-mono bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded font-bold">
+                  w = [{weights.w_c.toFixed(1)}, {weights.w_f.toFixed(1)}, {weights.w_p.toFixed(1)}]
+                </span>
+              ) : (
+                <span className="text-[11px] font-mono bg-amber-500/15 border border-amber-500/30 text-amber-300 px-2 py-0.5 rounded font-bold">
+                  α = {alphaUsed.toFixed(2)}
+                </span>
+              )}
               <span className="text-[11px] font-mono text-slate-400">
-                Total: {(components.content + components.popularity).toFixed(3)}
+                Score: {totalComponents.toFixed(3)}
               </span>
             </div>
           </div>
 
-          {/* Visual Bar */}
+          {/* Visual 3-Component Bar */}
           <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden flex">
-            <div
-              className="h-full bg-amber-500 transition-all duration-500"
-              style={{ width: `${contentPct}%` }}
-              title={`Content Component: ${components.content.toFixed(3)} (α=${alphaUsed.toFixed(2)})`}
-            />
-            <div
-              className="h-full bg-indigo-500 transition-all duration-500"
-              style={{ width: `${popPct}%` }}
-              title={`Popularity Component: ${components.popularity.toFixed(3)} (1-α=${(1 - alphaUsed).toFixed(2)})`}
-            />
+            {contentPct > 0 && (
+              <div
+                className="h-full bg-amber-500 transition-all duration-500"
+                style={{ width: `${contentPct}%` }}
+                title={`Content Component: ${cContent.toFixed(3)}`}
+              />
+            )}
+            {hasCf && cfPct > 0 && (
+              <div
+                className="h-full bg-sky-500 transition-all duration-500"
+                style={{ width: `${cfPct}%` }}
+                title={`Collaborative Component: ${cCf.toFixed(3)}`}
+              />
+            )}
+            {popPct > 0 && (
+              <div
+                className="h-full bg-indigo-500 transition-all duration-500"
+                style={{ width: `${popPct}%` }}
+                title={`Popularity Component: ${cPop.toFixed(3)}`}
+              />
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+          <div className={`grid ${hasCf ? 'grid-cols-3' : 'grid-cols-2'} gap-2 text-xs pt-1`}>
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5 text-amber-400 font-medium">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span>Content Component</span>
+                <span>Content</span>
               </div>
               <div className="font-mono text-xs text-white font-bold pl-3.5">
-                {components.content.toFixed(3)}{' '}
+                {cContent.toFixed(3)}{' '}
                 <span className="text-slate-500 font-normal text-[10px]">({contentPct.toFixed(0)}%)</span>
               </div>
             </div>
 
+            {hasCf && (
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 text-sky-400 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-sky-500" />
+                  <span>Collaborative</span>
+                </div>
+                <div className="font-mono text-xs text-white font-bold pl-3.5">
+                  {cCf.toFixed(3)}{' '}
+                  <span className="text-slate-500 font-normal text-[10px]">({cfPct.toFixed(0)}%)</span>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5 text-indigo-400 font-medium">
                 <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                <span>Popularity Component</span>
+                <span>Popularity</span>
               </div>
               <div className="font-mono text-xs text-white font-bold pl-3.5">
-                {components.popularity.toFixed(3)}{' '}
+                {cPop.toFixed(3)}{' '}
                 <span className="text-slate-500 font-normal text-[10px]">({popPct.toFixed(0)}%)</span>
               </div>
             </div>
@@ -165,7 +226,7 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
           </div>
         )}
 
-        {/* Reason Codes & Honest Labels (C1) */}
+        {/* Reason Codes & Honest Labels */}
         {movie.reason_codes && movie.reason_codes.length > 0 && (
           <div className="space-y-2 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
             <div className="text-[11px] font-mono text-amber-400 uppercase tracking-wider font-semibold">
@@ -177,6 +238,10 @@ export const WhyThisModal: React.FC<WhyThisModalProps> = ({ isOpen, onClose, mov
                 if (!label) {
                   if (code === 'SIMILAR_TO_PICK') {
                     label = nearestPick?.title ? `Similar to ${nearestPick.title}` : 'Similar to your pick';
+                  } else if (code === 'CO_LIKED_BY_USERS') {
+                    label = cfPick?.title
+                      ? `${cfPick.cooccurrence.toLocaleString()} MovieLens viewers who liked ${cfPick.title} also liked this`
+                      : 'Co-liked by MovieLens viewers';
                   } else if (code === 'SHARED_GENRES') {
                     const genres = sharedFeatures.filter((f) => f.feature_type === 'genre').map((f) => f.feature);
                     label = genres.length > 0 ? `Shared genres: ${genres.join(', ')}` : 'Shared genres';

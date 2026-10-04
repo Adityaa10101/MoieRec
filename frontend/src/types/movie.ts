@@ -33,7 +33,7 @@ export interface Movie {
   match_percent?: number | null;
   reason_codes?: string[];
   explanation?: MovieExplanation | null;
-  source?: 'popularity' | 'hybrid_v1' | 'hybrid_v1.1' | 'content_similarity';
+  source?: 'popularity' | 'hybrid_v1' | 'hybrid_v1.1' | 'hybrid_v2' | 'content_similarity';
 }
 
 export interface RecommendationRowData {
