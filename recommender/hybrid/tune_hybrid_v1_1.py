@@ -46,8 +46,8 @@ FEAT_DIR = PROJECT_ROOT / "data" / "processed" / "ml-25m" / "features"
 ID_MAP_DIR = PROJECT_ROOT / "data" / "processed" / "ml-25m" / "id_mappings"
 V1_CONFIG_PATH = PROJECT_ROOT / "recommender" / "config" / "hybrid_v1.yaml"
 OUTPUT_CONFIG_PATH = PROJECT_ROOT / "recommender" / "config" / "hybrid_v1_1.yaml"
-OUTPUT_JSON_PATH = PROJECT_ROOT / "recommender" / "results" / "hybrid_v1_1_cold_dev.json"
-OUTPUT_CSV_PATH = PROJECT_ROOT / "recommender" / "results" / "hybrid_v1_1_cold_dev.csv"
+OUTPUT_JSON_PATH = PROJECT_ROOT / "recommender" / "results" / "hybrid_v1_1_cold_dev_reconciled.json"
+OUTPUT_CSV_PATH = PROJECT_ROOT / "recommender" / "results" / "hybrid_v1_1_cold_dev_reconciled.csv"
 
 # Safety guard: never touch forbidden files
 _FORBIDDEN = {"test.parquet", "cold_final"}
@@ -275,12 +275,10 @@ def main() -> None:
     stats_dict = train_stats.set_index("movie_id")["positive_rating_count"].to_dict()
     pop_scores = np.array([stats_dict.get(int(m), 0) for m in candidate_mids], dtype=np.float32)
 
-    top200_train = (
-        train_stats.sort_values("positive_rating_count", ascending=False)
-        .head(200)["movie_id"]
-        .tolist()
-    )
-    top200_mids = set(top200_train)
+    # Canonical top-200 most-rated TRAIN movies (Protocol v2)
+    from recommender.evaluation.cold_start import compute_canonical_top200_train_mids
+    top200_mids = compute_canonical_top200_train_mids(SPLITS_DIR / "train.parquet")
+    print(f"Canonical top-200 train movies loaded: {len(top200_mids)}")
 
     k_values = [3, 5, 10, 20]
     variants = ["all_candidates", "long_tail"]

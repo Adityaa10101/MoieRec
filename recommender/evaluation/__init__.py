@@ -18,6 +18,11 @@ from recommender.evaluation.protocol import (
     EvaluationContext,
     build_evaluation_context,
 )
+from recommender.evaluation.cold_start import (
+    ColdStartEvaluator,
+    compute_canonical_top200_train_mids,
+    load_cold_start_split,
+)
 from recommender.evaluation.evaluator import (
     Evaluator,
     EvaluationResult,

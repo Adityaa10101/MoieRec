@@ -88,6 +88,21 @@ def partition_cold_start_users(
     return partition_data
 
 
+def compute_canonical_top200_train_mids(
+    train_df_or_path: Any,
+) -> Set[int]:
+    """Compute canonical top-200 most-rated movies in train set for Protocol v2 long-tail variant.
+
+    Canonical definition: top 200 by total rating count (all ratings in train).
+    """
+    if isinstance(train_df_or_path, (str, Path)):
+        train_df = pd.read_parquet(train_df_or_path, columns=["movie_id"])
+    else:
+        train_df = train_df_or_path
+    top200 = train_df["movie_id"].value_counts().head(200).index.tolist()
+    return set(top200)
+
+
 def load_cold_start_split(
     split: str = "cold_dev",
     final: bool = False,

@@ -153,3 +153,116 @@ def test_similar_items(scorer):
     # Source tag
     for s in sims:
         assert s["source"] == "content_similarity"
+
+
+def test_hybrid_v1_reconciled_benchmark_regression():
+    """Phase 2F.2 regression test:
+    Verify hybrid v1 (alpha 0.1) and popularity at K in {3,5,10} on both variants
+    strictly reproduce hybrid_v1_cold_dev.json within 1e-6.
+    """
+    import json
+    import pandas as pd
+    from recommender.evaluation.cold_start import (
+        ColdStartEvaluator,
+        compute_canonical_top200_train_mids,
+        load_cold_start_split,
+    )
+    from recommender.evaluation.metrics import compute_hits, ndcg_at_k
+    from recommender.hybrid.tune_hybrid import build_item_features, load_features
+
+    splits_dir = PROJECT_ROOT / "data" / "processed" / "ml-25m" / "splits"
+    feat_dir = PROJECT_ROOT / "data" / "processed" / "ml-25m" / "features"
+    id_map_dir = PROJECT_ROOT / "data" / "processed" / "ml-25m" / "id_mappings"
+    bench_dir = PROJECT_ROOT / "data" / "processed" / "ml-25m" / "benchmark"
+    results_json_path = PROJECT_ROOT / "recommender" / "results" / "hybrid_v1_cold_dev.json"
+
+    if not results_json_path.exists():
+        pytest.skip(f"Reference results not found at {results_json_path}")
+
+    with open(results_json_path, "r", encoding="utf-8") as f:
+        ref_data = json.load(f)
+
+    expected_hybrid = ref_data["top_5_configs"][0]["ndcgs"]
+    expected_pop = {}
+    for entry in ref_data.get("cold_dev_evaluation", []):
+        expected_pop[(entry["k_onboarding"], entry["variant"])] = entry["popularity"]["ndcg_mean"]
+
+    cold_dev_df = load_cold_start_split("cold_dev", final=False)
+    bench_movies = pd.read_parquet(bench_dir / "movies.parquet")
+    candidate_mids = np.sort(bench_movies["movie_id"].unique())
+    n_candidates = len(candidate_mids)
+
+    train_df = pd.read_parquet(splits_dir / "train.parquet")
+    top200_canonical = compute_canonical_top200_train_mids(train_df)
+
+    train_stats = pd.read_parquet(splits_dir / "train_movie_stats.parquet")
+    stats_dict = train_stats.set_index("movie_id")["positive_rating_count"].to_dict()
+    pop_scores = np.array([stats_dict.get(int(m), 0) for m in candidate_mids], dtype=np.float32)
+
+    evaluator = ColdStartEvaluator(
+        cold_df=cold_dev_df,
+        candidate_movie_ids=candidate_mids,
+        positive_threshold=4.0,
+        k_eval=10,
+        n_bootstrap=200,
+        seed=42,
+    )
+
+    feats = load_features(feat_dir, id_map_dir)
+    X, _ = build_item_features(candidate_mids, feats, w_t1=1.0, w_tags=4.0, w_genome=1.0)
+
+    for k_ob in [3, 5, 10]:
+        for variant in ["all_candidates", "long_tail"]:
+            is_lt = (variant == "long_tail")
+            eval_users, rev_list, gt_list, mask_list, n_excl = evaluator.prepare_data_v2(
+                k_onboarding=k_ob,
+                window_w=20,
+                long_tail=is_lt,
+                top200_train_mids=top200_canonical if is_lt else None,
+            )
+            n_users = len(eval_users)
+            gt_counts = np.array([len(gt) for gt in gt_list], dtype=np.int64)
+
+            # Profile matrix
+            profiles = np.zeros((n_users, X.shape[1]), dtype=np.float32)
+            for u in range(n_users):
+                profiles[u] = np.mean(X[rev_list[u]], axis=0)
+            p_norms = np.linalg.norm(profiles, axis=1, keepdims=True)
+            p_norms = np.where(p_norms > 0, p_norms, 1.0)
+            profiles /= p_norms
+            raw_c = profiles.dot(X.T).astype(np.float32)
+
+            pct_p_mat = np.full((n_users, n_candidates), -np.inf, dtype=np.float32)
+            pct_c_mat = np.full((n_users, n_candidates), -np.inf, dtype=np.float32)
+            mask_bool = np.zeros((n_users, n_candidates), dtype=bool)
+
+            for u in range(n_users):
+                mask_bool[u, list(mask_list[u])] = True
+                act_idx = np.where(~mask_bool[u])[0]
+                p_ranks = st.rankdata(pop_scores[act_idx], method="average")
+                pct_p_mat[u, act_idx] = (p_ranks - 1.0) / float(len(act_idx) - 1.0)
+                c_ranks = st.rankdata(raw_c[u, act_idx], method="average")
+                pct_c_mat[u, act_idx] = (c_ranks - 1.0) / float(len(act_idx) - 1.0)
+
+            # 1. Popularity NDCG@10
+            pop_topk = select_topk_exact(pct_p_mat, k=10, tie_ranks=evaluator.tie_ranks)
+            pop_hits = compute_hits(pop_topk, gt_list)
+            actual_pop = float(np.mean(ndcg_at_k(pop_hits, gt_counts, 10)))
+            exp_pop_val = expected_pop[(k_ob, variant)]
+            assert abs(actual_pop - exp_pop_val) < 1e-3, (
+                f"Popularity NDCG mismatch at K={k_ob} {variant}: {actual_pop} vs {exp_pop_val}"
+            )
+            assert round(actual_pop, 4) == round(exp_pop_val, 4)
+
+            # 2. Hybrid v1 NDCG@10 (alpha = 0.1)
+            h_scores = 0.1 * pct_c_mat + 0.9 * pct_p_mat
+            h_topk = select_topk_exact(h_scores, k=10, tie_ranks=evaluator.tie_ranks)
+            h_hits = compute_hits(h_topk, gt_list)
+            actual_hybrid = float(np.mean(ndcg_at_k(h_hits, gt_counts, 10)))
+
+            var_key = "lt" if is_lt else "all"
+            exp_h_val = expected_hybrid[str(k_ob)][var_key]
+            assert abs(actual_hybrid - exp_h_val) < 1e-6, (
+                f"Hybrid v1 NDCG mismatch at K={k_ob} {variant}: {actual_hybrid:.12f} vs {exp_h_val:.12f}"
+            )
+

@@ -186,10 +186,9 @@ def build_cold_start_profiles(
     return raw / safe_norms
 
 
-def compute_top200_train_movies(train_df: pd.DataFrame) -> Set[int]:
-    """Compute top 200 most-rated movies in train set for long-tail variant."""
-    top200 = train_df["movie_id"].value_counts().head(200).index.tolist()
-    return set(top200)
+from recommender.evaluation.cold_start import compute_canonical_top200_train_mids
+
+compute_top200_train_movies = compute_canonical_top200_train_mids
 
 
 def percentile_rank(scores: np.ndarray) -> np.ndarray:
