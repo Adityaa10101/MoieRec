@@ -1,4 +1,4 @@
-# Recommendation Explainability & Rank Semantics (Phase 2F / 2F.1)
+# Recommendation Explainability & Rank Semantics (Phase 2G-Lite / hybrid_v2)
 
 ## 1. Rank Semantics: "Top N% pick"
 
@@ -24,17 +24,16 @@ Raw content cosine similarity and popularity counts cannot be directly summed du
    For candidate pool $\mathcal{C}$ with size $M$:
    $$\text{pct}_c(i) = \frac{\text{rank}(s_c(i)) - 1}{M - 1}, \quad \text{pct}_p(i) = \frac{\text{rank}(s_p(i)) - 1}{M - 1}$$
    where ties receive the average fractional rank.
-2. **Hybrid Utility Function**:
-   $$\text{final}(i) = \alpha(K) \cdot \text{pct}_c(i) + (1 - \alpha(K)) \cdot \text{pct}_p(i)$$
-   Under `hybrid_v1.1`, $\alpha(K)$ is determined dynamically by the bucket schedule:
-   - $K \in [3, 4] \rightarrow \alpha = 0.3$
-   - $K \in [5, 7] \rightarrow \alpha = 0.6$
-   - $K \in [8, 14] \rightarrow \alpha = 0.7$
-   - $K \ge 15 \rightarrow \alpha = 0.8$
+2. **Hybrid Utility Function (v2)**:
+   $$\text{final}(i) = w_c(K) \cdot \text{pct}_{\text{CF}}(i) + w_f(K) \cdot \text{pct}_c(i) + w_p(K) \cdot \text{pct}_p(i)$$
+   Under `hybrid_v2`, K-adaptive simplex weights $(w_c, w_f, w_p)$ replace the scalar $\alpha$:
+   - $K \in [3, 14] \rightarrow (w_c, w_f, w_p) = (0.0, 1.0, 0.0)$ — pure content
+   - $K \ge 15 \rightarrow (w_c, w_f, w_p) = (0.1, 0.9, 0.0)$ — 10% CF, 90% content
 3. **Additive Component Decomposition**:
-   $$\text{content\_component} = \alpha(K) \cdot \text{pct}_c(i)$$
-   $$\text{popularity\_component} = (1 - \alpha(K)) \cdot \text{pct}_p(i)$$
-   These two components strictly sum to the final hybrid score, displayed as real numbers and percentage bars alongside $\alpha$ in the Why-This telemetry modal.
+   $$\text{cf\_component} = w_c(K) \cdot \text{pct}_{\text{CF}}(i)$$
+   $$\text{content\_component} = w_f(K) \cdot \text{pct}_c(i)$$
+   $$\text{popularity\_component} = w_p(K) \cdot \text{pct}_p(i)$$
+   The three components strictly sum to the final hybrid score, displayed as real numbers and percentage bars alongside $(w_c, w_f, w_p)$ in the Why-This telemetry modal.
 
 ---
 
@@ -55,7 +54,10 @@ Every explanation and reason code displayed in the UI is derived from verified m
 4. **`POPULAR_WITH_VIEWERS`**:
    - Criterion: Emitted **only if** the popularity component exceeds or equals the content component ($\text{popularity\_comp} \ge \text{content\_comp}$).
    - Display String: `"Popular with MovieLens viewers"`
-5. **Rule of Evidence**:
+5. **`CF_EVIDENCE`** (v2 only):
+   - Criterion: Emitted **only if** the CF component weight $w_c > 0$ AND the candidate has at least one qualifying neighbour (co-occurrence $\ge 5$) among the user's picks.
+   - Display String: `"Co-watched with <pick title> by <cooc> viewers"`
+6. **Rule of Evidence**:
    - **No evidence $\rightarrow$ no reason code.** If an item does not satisfy a code's mathematical criterion, that code is not returned.
 
 ---
@@ -63,7 +65,7 @@ Every explanation and reason code displayed in the UI is derived from verified m
 ## 4. Row Badges & Semantic Attribution (C2)
 
 Row badges clearly distinguish the underlying algorithmic source of every section:
-- **"Picked for You"**: Badge carries **`PERSONALIZED · HYBRID v1.1`** (source: `hybrid_v1.1`).
+- **"Picked for You"**: Badge carries **`PERSONALIZED · HYBRID v2`** (source: `hybrid_v2`).
 - **"Because you liked <Title>"**: Badge carries **`SIMILAR BY GENRES & TAGS`** (source: `content_similarity`).
 - **Baseline Rows**: Badge carries **`MODEL 0 (POPULARITY)`** (source: `popularity`).
 
@@ -78,6 +80,12 @@ Row badges clearly distinguish the underlying algorithmic source of every sectio
       "movie_id": 260,
       "title": "Star Wars: Episode IV - A New Hope",
       "similarity": 0.4521
+    },
+    "cf_pick": {
+      "movie_id": 1196,
+      "title": "Star Wars: Episode V - The Empire Strikes Back",
+      "sim": 0.7832,
+      "cooc": 142
     },
     "top_shared_features": [
       {
@@ -100,11 +108,13 @@ Row badges clearly distinguish the underlying algorithmic source of every sectio
       }
     ],
     "components": {
-      "content": 0.5892,
-      "popularity": 0.3940
+      "cf": 0.0,
+      "content": 0.7142,
+      "popularity": 0.0
     },
     "match_percent": 98,
-    "alpha": 0.60,
+    "weights": {"w_c": 0.0, "w_f": 1.0, "w_p": 0.0},
+    "alpha": null,
     "similarity_threshold": 0.1278,
     "reason_labels": {
       "SIMILAR_TO_PICK": "Similar to Star Wars: Episode IV - A New Hope",

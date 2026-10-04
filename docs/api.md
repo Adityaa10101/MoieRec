@@ -1,7 +1,7 @@
-# MoieRec Serving API Specification (Phase 2F)
+# MoieRec Serving API Specification (Phase 2G-Lite)
 
-> **Version**: 2F  
-> **Status**: Active (Model 0: Popularity Baseline + Hybrid v1 Personalization)  
+> **Version**: 2G-Lite  
+> **Status**: Active (Model 0: Popularity Baseline + Hybrid v2 Personalization)  
 > **Base URL**: `http://127.0.0.1:8000`
 
 ---
@@ -11,7 +11,7 @@
 The MoieRec serving API provides real catalog data sourced from MovieLens 25M benchmark splits combined with TMDB metadata (synopses, posters, backdrops, cast, director) and real-time offline-tuned hybrid personalization.
 
 ### Honesty Contract & Anti-Deception Rules
-1. **Stateless Personalization**: Recommendations in `POST /api/personalized/home` are computed from explicit guest picks (`liked_movie_ids`) using the offline-tuned `hybrid_v1` model (Tier 2 content similarity + popularity percentiles).
+1. **Stateless Personalization**: Recommendations in `POST /api/personalized/home` are computed from explicit guest picks (`liked_movie_ids`) using the offline-tuned `hybrid_v2` model (item-item CF + Tier 2 content similarity + popularity percentiles, K-adaptive simplex weights).
 2. **Transparent Rank Semantics**:
    - `match_percent`: Defined strictly as the item's relative percentile rank within the candidate pool ($0-100$). Never displayed or claimed as a "match probability".
    - `score`: The real combined hybrid score $\alpha \cdot \text{pct}_{\text{content}} + (1 - \alpha) \cdot \text{pct}_{\text{popularity}}$.
@@ -36,11 +36,22 @@ The MoieRec serving API provides real catalog data sourced from MovieLens 25M be
 | :--- | :--- | :--- |
 | `nearest_pick` | `NearestPickExplanation` | User pick with highest cosine similarity (`movie_id`, `title`, `similarity`) |
 | `top_shared_features`| `list[SharedFeatureExplanation]` | Top 3 positively contributing features (`feature`, `raw_name`, `contribution`, `feature_type`) |
-| `components` | `ComponentsExplanation` | Decomposed hybrid components (`content`, `popularity`) |
+| `components` | `ComponentsExplanation` | Decomposed hybrid components (`cf`, `content`, `popularity`) — v2 adds `cf` |
+| `cf_pick` | `CfPickExplanation` or `null` | CF evidence: the user pick that contributes most CF signal (`movie_id`, `title`, `sim`, `cooc`) |
 | `match_percent` | `integer` | Relative percentile rank within candidate pool ($0-100$) |
 | `similarity_threshold` | `float` or `null` | Data-derived threshold for `SIMILAR_TO_PICK` (0.1278) |
-| `alpha` | `float` or `null` | Dynamic alpha used for this profile size from the bucket schedule |
+| `alpha` | `float` or `null` | Dynamic alpha (v1.1) or `null` for v2 |
+| `weights` | `object` or `null` | v2 simplex weights: `{"w_c": float, "w_f": float, "w_p": float}` |
 | `reason_labels` | `dict[string, string]` or `null` | Human-readable honest labels for each active reason code |
+
+### `CfPickExplanation` Schema (v2 only)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `movie_id` | `integer` | MovieLens ID of the contributing user pick |
+| `title` | `string` | Display title |
+| `sim` | `float` | Item-item cosine similarity between candidate and this pick |
+| `cooc` | `integer` | Co-occurrence count (users who rated both in train set) |
 
 ### `MovieOut` Schema
 
@@ -64,7 +75,7 @@ The MoieRec serving API provides real catalog data sourced from MovieLens 25M be
 | `match_percent` | `integer` or `null` | Relative percentile rank ($0-100$) |
 | `reason_codes` | `list[string]` | Verified reason codes |
 | `explanation` | `ExplanationOut` or `null` | Structured explainability telemetry |
-| `source` | `string` | `"hybrid_v1.1"`, `"content_similarity"`, or `"popularity"` |
+| `source` | `string` | `"hybrid_v2"`, `"hybrid_v1.1"`, `"content_similarity"`, or `"popularity"` |
 
 ---
 
@@ -88,14 +99,14 @@ Stateless personalized recommendations based on user picks.
   {
     "personalized": true,
     "k": 5,
-    "config_version": "1.1",
-    "alpha_used": 0.60,
+    "config_version": "2",
+    "weights_used": {"w_c": 0.0, "w_f": 1.0, "w_p": 0.0},
     "ignored_ids": [],
     "rows": [ ... ]
   }
   ```
 - **Rows Returned**:
-  - Row 1: "Picked for You" (Hybrid v1.1, 20 items with TMDB posters; badge: `"PERSONALIZED · HYBRID v1.1"`, `source: "hybrid_v1.1"`)
+  - Row 1: "Picked for You" (Hybrid v2, 20 items with TMDB posters; badge: `"PERSONALIZED · HYBRID v2"`, `source: "hybrid_v2"`)
   - Rows 2–3: "Because you liked <Title>" (Content similarity for the 2 most recent picks; badge: `"SIMILAR BY GENRES & TAGS"`, `source: "content_similarity"`)
 - **Reason Code Contract (Label Honesty)**:
   - `SIMILAR_TO_PICK`: `"Similar to <pick title>"`

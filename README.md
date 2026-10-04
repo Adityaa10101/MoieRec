@@ -6,29 +6,27 @@ Instead of operating as a static demonstration, MoieRec integrates content-based
 
 ---
 
-## Current Status: Phase 1 (Foundation)
+## Current Status: Phase 2G-Lite (Item-Item CF + Hybrid v2)
 
 > [!NOTE]
-> **Implemented in Phase 1 (Current):**
-> - Modular repository structure (`frontend/`, `backend/`, `recommender/`, `data/`, `docs/`)
-> - Frontend foundation: React 19, Vite, TypeScript, Tailwind CSS, Framer Motion, Lucide React
-> - Service-oriented API client and UI/service decoupling
-> - Backend foundation: FastAPI, Pydantic, Uvicorn, CORS configuration
-> - Operational health check endpoint: `GET /api/health`
-> - Structured recommender package layout with submodule contracts
-> - Partitioned data folders with `.gitkeep` and Git exclusion patterns
-> - Local development setup and environment variable configuration
+> **Fully Implemented (Phases 1 – 2G-Lite):**
+> - React 19 + Vite + TypeScript + Tailwind CSS + Framer Motion cinematic frontend
+> - FastAPI backend with TMDB metadata proxy, SQLite catalog, and offline hybrid scoring
+> - Content-based TF-IDF vectorisation over genres, tags, and MovieLens genome features
+> - Item-item collaborative filtering with TF-IDF normalisation and min-support guard
+> - Hybrid v2 recommender: 3-component simplex blend (CF + content + popularity), K-adaptive weight schedule
+> - Cold-Start Protocol v2 evaluation (NDCG@K, Recall@K, long-tail variant, 1000 bootstrap resamples)
+> - Offline parity regression tests (offline ↔ serving score match to 1e-5)
+> - Explainability: nearest pick, shared features, CF evidence, honest reason codes, Why-This modal
+> - Honest rank semantics: "Top N% pick" chip (never a probability or match %)
 
 > [!IMPORTANT]
-> **Planned for Later Phases (Not Yet Implemented):**
+> **Out of Scope (by design):**
 > - User authentication & JWT session management
 > - MongoDB models and database connection
-> - TMDB API integration and live poster/backdrop ingestion
-> - MovieLens dataset downloading and offline ETL pipelines
-> - Collaborative filtering models (SVD, ALS)
-> - Content-based NLP vectorization (TF-IDF, Embeddings)
-> - Hybrid score combination, serendipity ranking, and explanations
-> - Final Home, Movie Details, Movie DNA, and Discovery UI pages
+> - Matrix factorization / ALS / SVD
+> - MMR diversity re-ranking
+> - Collaborative filtering with session persistence
 
 ---
 
@@ -58,27 +56,30 @@ MoieRec/
 │   ├── app/
 │   │   ├── api/          # Route controllers & endpoints
 │   │   ├── core/         # Settings & environment configuration
-│   │   ├── db/           # Database connectors (MongoDB / Motor)
-│   │   ├── models/       # Database document models
 │   │   ├── schemas/      # Pydantic request/response schemas
 │   │   ├── services/     # Business logic & recommender adapters
 │   │   └── main.py       # FastAPI application entry point
 │   └── requirements.txt
 │
-├── recommender/          # ML Engine Package (Decoupled from API)
+├── recommender/          # ML Engine Package (decoupled from API)
 │   ├── preprocessing/    # Cleaning, sparse matrix building, train/test split
 │   ├── content_based/    # TF-IDF, metadata embeddings, cosine similarity
-│   ├── collaborative/    # Matrix factorization (SVD, ALS)
-│   ├── hybrid/           # Weighted fusion, re-ranking, and explanations
-│   ├── evaluation/       # Top-K ranking, RMSE, coverage, diversity metrics
-│   └── models/           # Checkpoints and serialized model artifacts
+│   ├── collaborative/    # Item-item CF (cosine + min-support guard)
+│   ├── hybrid/           # Weighted simplex fusion (v1, v1.1, v2)
+│   ├── evaluation/       # Cold-Start Protocol v2, NDCG@K, bootstrap CIs
+│   ├── serving/          # HybridScorer, export scripts, latency benchmark
+│   ├── config/           # hybrid_v1.yaml, hybrid_v2.yaml
+│   ├── tests/            # Parity and regression tests
+│   └── results/          # Offline evaluation result files
 │
 ├── data/                 # Dataset partitions (Git-ignored)
 │   ├── raw/              # Original MovieLens & TMDB dumps
 │   ├── processed/        # Tokenized matrices & cleaned datasets
+│   ├── serving/          # SQLite catalog + model artifacts (git-ignored)
 │   └── external/         # External ID mappings & taxonomies
 │
 ├── docs/                 # Architectural notes & developer guides
+│   └── ml/               # Per-model documentation
 ├── .env.example          # Environment variables template
 ├── .gitignore            # Git exclusion rules
 └── README.md             # Project documentation
@@ -101,31 +102,37 @@ MoieRec/
 - **Validation**: [Pydantic v2](https://docs.pydantic.dev/) & [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/)
 - **Environment**: Python 3.14+ (or >=3.10)
 
-### Machine Learning / Recommender Stack (Planned)
-- **Scientific Computing**: NumPy, Pandas, SciPy (Sparse matrices)
-- **Algorithms**: Scikit-Learn (TF-IDF, SVD), Implicit / Surprise
-- **Evaluation**: Custom ranking suite (Precision@K, Recall@K, NDCG@K, Coverage, Diversity)
+### Machine Learning / Recommender Stack
+- **Scientific Computing**: NumPy, Pandas, SciPy (sparse matrices)
+- **Algorithms**: Scikit-Learn (TF-IDF cosine similarity), custom item-item CF
+- **Evaluation**: Custom Cold-Start Protocol v2 (NDCG@K, Recall@K, long-tail variant, 1,000 bootstrap resamples)
+- **Hybrid Fusion**: K-adaptive simplex blend (CF + content + popularity)
+- **Serving**: HybridScorer with compact top-K arrays (~42 MB CF overhead, p50 ~65 ms)
 
-### Planned Data Sources
-1. **MovieLens (100k / 1M)**: User-item rating matrices and timestamps for collaborative filtering and offline benchmarking.
+### Data Sources
+1. **MovieLens 25M**: User-item rating matrices and timestamps for offline benchmarking. Partitioned into train / cold_dev / cold_final splits.
 2. **The Movie Database (TMDB) API**: Dynamic movie artwork, overviews, cast, crew, keywords, and release dates for content-based semantics and rich UI presentation.
 
 ---
 
 ## Local Development Commands (Phase 2E.2 Serving Slice)
 
-### 1. Catalog & Model Artifacts Export (Recommender Environment)
-Generate `data/serving/catalog.sqlite` and `data/serving/model_v1/`:
+### 1. Build Serving Artifacts (Recommender Environment)
+Generate `data/serving/catalog.sqlite` and `data/serving/model_v2/`:
 ```powershell
 # Using .venv_recommender:
 # 1. Export catalog sqlite
 .\.venv_recommender\Scripts\python.exe -m recommender.serving.export_catalog
 
-# 2. Run offline hybrid grid tuning (Cold-Start Protocol v2 on cold_dev)
-.\.venv_recommender\Scripts\python.exe -m recommender.hybrid.tune_hybrid
+# 2. Build item-item CF cache and run hybrid v2 tuning on cold_dev
+.\.venv_recommender\Scripts\python.exe -m recommender.collaborative.item_cf
+.\.venv_recommender\Scripts\python.exe -m recommender.hybrid.tune_hybrid_v2
 
-# 3. Export serving model artifacts (item features, norms, pop scores, vocab)
+# 3. Export v1.1 serving artifacts
 .\.venv_recommender\Scripts\python.exe recommender/serving/export_model_artifacts.py
+
+# 4. Export v2 compact CF arrays
+.\.venv_recommender\Scripts\python.exe -m recommender.serving.export_model_v2_artifacts
 ```
 
 ### 2. Backend Environment & TMDB Configuration
@@ -165,11 +172,10 @@ npm run dev
 
 ---
 
-## Future Implementation Phases
+## Implementation Phases
 
-1. **Phase 2A (Current Foundation)**: Clean architecture, modular packages, verified local runtimes.
-2. **Phase 2B (Data Engineering & Preprocessing)**: MovieLens dataset download, clean ETL pipeline, sparse matrix generation, and metadata tokenization.
-3. **Phase 3 (Core ML Models)**: Content-based similarity engine and collaborative matrix factorization.
-4. **Phase 4 (Hybrid Pipeline & Explainability)**: Score fusion, diversity re-ranking, and explanation extraction.
-5. **Phase 5 (Database & Backend Services)**: MongoDB integration, TMDB proxy services, user watchlist/interaction persistence.
-6. **Phase 6 (Cinematic Frontend & Discovery UI)**: Movie cards, recommendation carousels, taste profiles, interactive explanation badges, and discovery controls.
+1. **Phase 1 (Foundation)**: Clean architecture, modular packages, verified local runtimes.
+2. **Phase 2A–2B (Data Engineering)**: MovieLens 25M download, ETL pipeline, sparse matrix generation, metadata tokenization.
+3. **Phase 2C–2E (Content-Based + Serving)**: TF-IDF vectorisation, cosine similarity, FastAPI serving slice, TMDB integration.
+4. **Phase 2F–2F.2 (Hybrid v1 / v1.1)**: Popularity + content hybrid, Cold-Start Protocol v2, alpha schedule tuning, long-tail reconciliation.
+5. **Phase 2G-Lite (Item-Item CF + Hybrid v2)**: Item-item collaborative filtering, 3-component simplex blend, adoption evaluation, frontend Why-This CF evidence. ← **Current**
