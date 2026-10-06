@@ -109,7 +109,7 @@ async def get_personalized_home(request: PersonalizedHomeRequest):
         RecommendationRow(
             id="row-personalized-picked",
             title="Picked for You",
-            subtitle="Curated hybrid blend based on your taste picks",
+            subtitle=f"Scored from your picks using collaborative filtering{' and content similarity' if len(valid_liked) >= 15 else ''}",
             movies=picked_movies,
         )
     ]

@@ -148,7 +148,7 @@ def test_personalized_home_happy_path(client, scorer):
     # Check movie properties
     for m in picked_row["movies"]:
         assert m["movie_id"] not in liked_ids  # Liked movies excluded
-        assert m["source"] in ("hybrid_v1", "hybrid_v1.1")
+        assert m["source"] in ("hybrid_v1", "hybrid_v1.1", "hybrid_v2")
         assert data.get("alpha_used") is not None
         assert m["score"] is not None
         assert m["match_percent"] is not None
@@ -158,10 +158,18 @@ def test_personalized_home_happy_path(client, scorer):
         # Explanation object exists
         expl = m["explanation"]
         assert expl is not None
-        assert expl["nearest_pick"]["movie_id"] in liked_ids
         assert expl["match_percent"] == m["match_percent"]
         assert "content" in expl["components"]
         assert "popularity" in expl["components"]
+        if scorer.is_v2:
+            # At K=3, w_c=0, so nearest_pick is None and content codes gated
+            assert expl["nearest_pick"] is None
+            assert "SIMILAR_TO_PICK" not in m["reason_codes"]
+            assert "SHARED_GENRES" not in m["reason_codes"]
+            assert "SHARED_TAGS" not in m["reason_codes"]
+            assert "POPULAR_WITH_VIEWERS" not in m["reason_codes"]
+        else:
+            assert expl["nearest_pick"]["movie_id"] in liked_ids
 
         # No fabricated meters
         assert "directorAffinity" not in m
@@ -216,23 +224,53 @@ def test_reason_codes_evidence_contract(client, scorer):
         expl = m["explanation"]
         assert expl is not None
 
-        # SIMILAR_TO_PICK: only if nearest_pick.similarity >= similarity_threshold
-        if "SIMILAR_TO_PICK" in codes:
-            assert expl["nearest_pick"]["similarity"] >= scorer.similarity_threshold
+        if scorer.is_v2:
+            # At K=5, w_c=0, w_p=0, w_f=1.0: no content or popularity codes allowed
+            assert "SIMILAR_TO_PICK" not in codes
+            assert "SHARED_GENRES" not in codes
+            assert "SHARED_TAGS" not in codes
+            assert "POPULAR_WITH_VIEWERS" not in codes
+            if "CO_LIKED_BY_USERS" in codes:
+                assert expl.get("cf_pick") is not None
+                assert expl["cf_pick"]["cooccurrence"] >= scorer.cf_min_support
+        else:
+            if "SIMILAR_TO_PICK" in codes:
+                assert expl["nearest_pick"]["similarity"] >= scorer.similarity_threshold
+            if "SHARED_GENRES" in codes:
+                genre_contribs = [f for f in expl["top_shared_features"] if f["feature_type"] == "genre"]
+                assert any(f["contribution"] > 0 for f in genre_contribs)
+            if "SHARED_TAGS" in codes:
+                tag_contribs = [f for f in expl["top_shared_features"] if f["feature_type"] in ("tag", "genome_tag")]
+                assert any(f["contribution"] > 0 for f in tag_contribs)
+            if "POPULAR_WITH_VIEWERS" in codes:
+                assert expl["components"]["popularity"] >= expl["components"]["content"]
 
-        # SHARED_GENRES: only if top_shared_features has at least one genre with contribution > 0
-        if "SHARED_GENRES" in codes:
-            genre_contribs = [f for f in expl["top_shared_features"] if f["feature_type"] == "genre"]
-            assert any(f["contribution"] > 0 for f in genre_contribs)
 
-        # SHARED_TAGS: only if top_shared_features has at least one tag/genome with contribution > 0
-        if "SHARED_TAGS" in codes:
-            tag_contribs = [f for f in expl["top_shared_features"] if f["feature_type"] in ("tag", "genome_tag")]
-            assert any(f["contribution"] > 0 for f in tag_contribs)
+def test_reason_codes_gating_k_ge_15(client, scorer):
+    """At K >= 15, w_c=0.1 > 0, so content evidence is extracted, but w_p=0 so popularity is never emitted."""
+    liked_ids = [int(scorer.item_movie_ids[i]) for i in range(16)]
 
-        # POPULAR_WITH_VIEWERS: only if popularity component >= content component
-        if "POPULAR_WITH_VIEWERS" in codes:
-            assert expl["components"]["popularity"] >= expl["components"]["content"]
+    resp = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids})
+    assert resp.status_code == 200
+    picked_row = resp.json()["rows"][0]
+
+    for m in picked_row["movies"]:
+        codes = m["reason_codes"]
+        expl = m["explanation"]
+        assert expl is not None
+
+        if scorer.is_v2:
+            # w_c=0.1 > 0: nearest_pick exists
+            assert expl["nearest_pick"] is not None
+            assert expl["nearest_pick"]["movie_id"] in liked_ids
+            # w_p is still 0.0: popularity reason code strictly forbidden
+            assert "POPULAR_WITH_VIEWERS" not in codes
+            if "SIMILAR_TO_PICK" in codes:
+                assert expl["nearest_pick"]["similarity"] >= scorer.similarity_threshold
+            if "CO_LIKED_BY_USERS" in codes:
+                assert expl.get("cf_pick") is not None
+                assert expl["cf_pick"]["cooccurrence"] >= scorer.cf_min_support
+
 
 
 # ---------------------------------------------------------------------------

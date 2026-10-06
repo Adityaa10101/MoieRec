@@ -430,6 +430,10 @@ class HybridScorer:
         )[0]
 
         # 8. Evidence extraction only for returned items (Latency Fix C3)
+        eff_w_c = w_c if self.is_v2 else alpha_used
+        eff_w_f = w_f if self.is_v2 else 0.0
+        eff_w_p = w_p if self.is_v2 else (1.0 - alpha_used)
+
         ranked_items = []
         for rank, p_idx in enumerate(topk_pool_idx, start=1):
             global_item_idx = pool_indices[p_idx]
@@ -437,69 +441,69 @@ class HybridScorer:
             title = self.get_title(movie_id)
             inv_norm_cand = float(self.inv_item_norms[global_item_idx])
 
-            # (a) Nearest content pick: liked movie with highest cosine similarity
-            cand_t1_v = self.item_t1[global_item_idx]
-            cand_tag_csr = self.item_tags_csr[global_item_idx]
-            cand_gen_v = self.item_genome[global_item_idx]
-
-            liked_t1_dots = self.item_t1[liked_indices].dot(cand_t1_v) * (self.w_t1 ** 2)
-            liked_tag_dots = np.array(
-                self.item_tags_csr[liked_indices].dot(cand_tag_csr.T).toarray()
-            ).flatten() * (self.w_tags ** 2)
-            liked_gen_dots = self.item_genome[liked_indices].dot(cand_gen_v) * (self.w_genome ** 2)
-
-            liked_cosines = (liked_t1_dots + liked_tag_dots + liked_gen_dots) * (
-                liked_inv_norms * inv_norm_cand
-            )
-            best_liked_pos = int(np.argmax(liked_cosines))
-            nearest_pick_mid = valid_liked[best_liked_pos]
-            nearest_pick_cos = float(liked_cosines[best_liked_pos])
-            nearest_pick = {
-                "movie_id": nearest_pick_mid,
-                "title": self.get_title(nearest_pick_mid),
-                "similarity": round(nearest_pick_cos, 4),
-            }
-
-            # (b) Top shared features: top 3 positive feature contributions to profile-item cosine
-            c_t1 = (p_t1 * cand_t1_v) * (self.w_t1 * inv_norm_cand)
-            tag_col_idx = cand_tag_csr.indices
-            tag_vals = cand_tag_csr.data
-            c_tags = (p_tag[tag_col_idx] * tag_vals) * (self.w_tags * inv_norm_cand)
-            c_gen = (p_gen * cand_gen_v) * (self.w_genome * inv_norm_cand)
-
-            pos_features = []
-            # T1 pos
-            for f_idx, val in enumerate(c_t1):
-                if val > 0:
-                    clean_name, raw_name, f_type = self.clean_feature_info[f_idx]
-                    pos_features.append((val, clean_name, raw_name, f_type))
-
-            # Tags pos
-            tag_offset = self.d_t1
-            for local_col, val in zip(tag_col_idx, c_tags):
-                if val > 0:
-                    global_feat_idx = tag_offset + local_col
-                    clean_name, raw_name, f_type = self.clean_feature_info[global_feat_idx]
-                    pos_features.append((val, clean_name, raw_name, f_type))
-
-            # Genome pos
-            genome_offset = self.d_t1 + self.d_tags
-            for local_col, val in enumerate(c_gen):
-                if val > 0:
-                    global_feat_idx = genome_offset + local_col
-                    clean_name, raw_name, f_type = self.clean_feature_info[global_feat_idx]
-                    pos_features.append((val, clean_name, raw_name, f_type))
-
-            # Sort positive contributions descending
-            pos_features.sort(key=lambda x: -x[0])
+            # (a) Nearest content pick & top shared features: only when eff_w_c > 0
+            nearest_pick = None
+            nearest_pick_cos = 0.0
             top_shared_features = []
-            for val, clean_name, raw_name, f_type in pos_features[:3]:
-                top_shared_features.append({
-                    "feature": clean_name,
-                    "raw_name": raw_name,
-                    "contribution": round(float(val), 4),
-                    "feature_type": f_type,
-                })
+
+            if eff_w_c > 0:
+                cand_t1_v = self.item_t1[global_item_idx]
+                cand_tag_csr = self.item_tags_csr[global_item_idx]
+                cand_gen_v = self.item_genome[global_item_idx]
+
+                liked_t1_dots = self.item_t1[liked_indices].dot(cand_t1_v) * (self.w_t1 ** 2)
+                liked_tag_dots = np.array(
+                    self.item_tags_csr[liked_indices].dot(cand_tag_csr.T).toarray()
+                ).flatten() * (self.w_tags ** 2)
+                liked_gen_dots = self.item_genome[liked_indices].dot(cand_gen_v) * (self.w_genome ** 2)
+
+                liked_cosines = (liked_t1_dots + liked_tag_dots + liked_gen_dots) * (
+                    liked_inv_norms * inv_norm_cand
+                )
+                best_liked_pos = int(np.argmax(liked_cosines))
+                nearest_pick_mid = valid_liked[best_liked_pos]
+                nearest_pick_cos = float(liked_cosines[best_liked_pos])
+                nearest_pick = {
+                    "movie_id": nearest_pick_mid,
+                    "title": self.get_title(nearest_pick_mid),
+                    "similarity": round(nearest_pick_cos, 4),
+                }
+
+                # (b) Top shared features: top 3 positive feature contributions
+                c_t1 = (p_t1 * cand_t1_v) * (self.w_t1 * inv_norm_cand)
+                tag_col_idx = cand_tag_csr.indices
+                tag_vals = cand_tag_csr.data
+                c_tags = (p_tag[tag_col_idx] * tag_vals) * (self.w_tags * inv_norm_cand)
+                c_gen = (p_gen * cand_gen_v) * (self.w_genome * inv_norm_cand)
+
+                pos_features = []
+                for f_idx, val in enumerate(c_t1):
+                    if val > 0:
+                        clean_name, raw_name, f_type = self.clean_feature_info[f_idx]
+                        pos_features.append((val, clean_name, raw_name, f_type))
+
+                tag_offset = self.d_t1
+                for local_col, val in zip(tag_col_idx, c_tags):
+                    if val > 0:
+                        global_feat_idx = tag_offset + local_col
+                        clean_name, raw_name, f_type = self.clean_feature_info[global_feat_idx]
+                        pos_features.append((val, clean_name, raw_name, f_type))
+
+                genome_offset = self.d_t1 + self.d_tags
+                for local_col, val in enumerate(c_gen):
+                    if val > 0:
+                        global_feat_idx = genome_offset + local_col
+                        clean_name, raw_name, f_type = self.clean_feature_info[global_feat_idx]
+                        pos_features.append((val, clean_name, raw_name, f_type))
+
+                pos_features.sort(key=lambda x: -x[0])
+                for val, clean_name, raw_name, f_type in pos_features[:3]:
+                    top_shared_features.append({
+                        "feature": clean_name,
+                        "raw_name": raw_name,
+                        "contribution": round(float(val), 4),
+                        "feature_type": f_type,
+                    })
 
             # (c) Components
             if self.is_v2:
@@ -518,44 +522,45 @@ class HybridScorer:
             match_pct = int(round(float(pct_final_pool[p_idx]) * 100))
             match_pct = max(0, min(100, match_pct))
 
-            # (e) Reason codes & Honest Labels
+            # (e) Reason codes & Honest Labels (Components with weight > 0 only)
             reason_codes = []
             reason_labels = {}
 
-            # SIMILAR_TO_PICK: only if nearest_pick cosine >= similarity_threshold
-            if nearest_pick_cos >= self.similarity_threshold:
-                reason_codes.append("SIMILAR_TO_PICK")
-                reason_labels["SIMILAR_TO_PICK"] = f"Similar to {nearest_pick['title']}"
+            # Content evidence only when eff_w_c > 0
+            if eff_w_c > 0 and nearest_pick is not None:
+                if nearest_pick_cos >= self.similarity_threshold:
+                    reason_codes.append("SIMILAR_TO_PICK")
+                    reason_labels["SIMILAR_TO_PICK"] = f"Similar to {nearest_pick['title']}"
 
-            # Extract shared genres and tags from top_shared_features
-            shared_genres = [
-                f["feature"] for f in top_shared_features if f["feature_type"] == "genre" and f["contribution"] > 0
-            ]
-            shared_tags = [
-                f["feature"] for f in top_shared_features if f["feature_type"] in ("tag", "genome_tag") and f["contribution"] > 0
-            ]
+                shared_genres = [
+                    f["feature"] for f in top_shared_features if f["feature_type"] == "genre" and f["contribution"] > 0
+                ]
+                shared_tags = [
+                    f["feature"] for f in top_shared_features if f["feature_type"] in ("tag", "genome_tag") and f["contribution"] > 0
+                ]
 
-            if shared_genres:
-                reason_codes.append("SHARED_GENRES")
-                reason_labels["SHARED_GENRES"] = f"Shared genres: {', '.join(shared_genres)}"
+                if shared_genres:
+                    reason_codes.append("SHARED_GENRES")
+                    reason_labels["SHARED_GENRES"] = f"Shared genres: {', '.join(shared_genres)}"
 
-            if shared_tags:
-                reason_codes.append("SHARED_TAGS")
-                reason_labels["SHARED_TAGS"] = f"Shared tags: {', '.join(shared_tags)}"
+                if shared_tags:
+                    reason_codes.append("SHARED_TAGS")
+                    reason_labels["SHARED_TAGS"] = f"Shared tags: {', '.join(shared_tags)}"
 
-            # POPULAR_WITH_VIEWERS: only if popularity component is the dominant or positive contributor
-            if not self.is_v2:
-                if components["popularity"] >= components["content"]:
-                    reason_codes.append("POPULAR_WITH_VIEWERS")
-                    reason_labels["POPULAR_WITH_VIEWERS"] = "Popular with MovieLens viewers"
-            else:
-                if w_p > 0 and components["popularity"] >= max(components["content"], components["cf"]):
-                    reason_codes.append("POPULAR_WITH_VIEWERS")
-                    reason_labels["POPULAR_WITH_VIEWERS"] = "Popular with MovieLens viewers"
+            # POPULAR_WITH_VIEWERS: only when eff_w_p > 0
+            if eff_w_p > 0:
+                if not self.is_v2:
+                    if components["popularity"] >= components["content"]:
+                        reason_codes.append("POPULAR_WITH_VIEWERS")
+                        reason_labels["POPULAR_WITH_VIEWERS"] = "Popular with MovieLens viewers"
+                else:
+                    if components["popularity"] >= max(components["content"], components["cf"]):
+                        reason_codes.append("POPULAR_WITH_VIEWERS")
+                        reason_labels["POPULAR_WITH_VIEWERS"] = "Popular with MovieLens viewers"
 
-            # (f) CF Contributor & CO_LIKED_BY_USERS Reason Code (C2)
+            # (f) CF Contributor & CO_LIKED_BY_USERS: only when eff_w_f > 0 and support threshold met
             cf_pick = None
-            if self.is_v2 and self.cf_indices is not None:
+            if self.is_v2 and self.cf_indices is not None and eff_w_f > 0:
                 best_cf_sim = -1.0
                 best_cf_pick_mid = None
                 best_cf_cooc = 0
