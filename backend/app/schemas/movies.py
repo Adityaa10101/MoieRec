@@ -46,7 +46,7 @@ class CfPickExplanation(BaseModel):
 
 
 class ExplanationOut(BaseModel):
-    nearest_pick: NearestPickExplanation
+    nearest_pick: Optional[NearestPickExplanation] = None
     top_shared_features: List[SharedFeatureExplanation] = Field(default_factory=list)
     components: ComponentsExplanation
     match_percent: int
@@ -115,3 +115,20 @@ class PersonalizedHomeResponse(BaseModel):
     ignored_ids: List[int] = Field(default_factory=list)
     message: Optional[str] = None
     rows: List[RecommendationRow] = Field(default_factory=list)
+
+
+class GenreFilterItem(BaseModel):
+    name: str
+    count: int
+
+
+class DecadeFilterItem(BaseModel):
+    decade: int
+    label: str
+    count: int
+
+
+class MetaFiltersResponse(BaseModel):
+    genres: List[GenreFilterItem]
+    decades: List[DecadeFilterItem]
+

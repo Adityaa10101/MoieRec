@@ -155,6 +155,7 @@ def app_client():
         patch("app.db.catalog.get_catalog_conn", return_value=cat_conn),
         patch("app.db.tmdb_cache.get_cache_conn", return_value=cache_conn),
         patch("app.services.tmdb.get_tmdb_data", new_callable=AsyncMock) as mock_tmdb,
+        patch("app.api.endpoints.movies.get_tmdb_data", mock_tmdb),
     ):
         mock_tmdb.return_value = MOCK_TMDB_PAYLOAD
 
@@ -435,3 +436,91 @@ class TestTmdbImageUrlBuilder:
         assert url1 == url2
         assert pattern.match(url1)
         assert "//" not in url1.replace("https://", "")
+
+
+class TestBatchEndpoint:
+    def test_batch_happy_path(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/batch?ids=1,2")
+        assert resp.status_code == 200
+        movies = resp.json()
+        assert isinstance(movies, list)
+        mids = [m["movie_id"] for m in movies]
+        assert 1 in mids
+        for m in movies:
+            assert m["source"] == "popularity"
+            assert m["score"] is None
+            assert m["match_percent"] is None
+            assert m["poster_url"] is not None
+
+    def test_batch_skips_unknown_ids(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/batch?ids=1,9999999")
+        assert resp.status_code == 200
+        movies = resp.json()
+        mids = [m["movie_id"] for m in movies]
+        assert 1 in mids
+        assert 9999999 not in mids
+
+    def test_batch_empty_or_invalid_strings(self, app_client):
+        client, _ = app_client
+        assert client.get("/api/movies/batch?ids=").json() == []
+        assert client.get("/api/movies/batch?ids=abc,def").json() == []
+
+    def test_batch_max_100_enforced(self, app_client):
+        client, _ = app_client
+        many_ids = ",".join(str(i) for i in range(101))
+        resp = client.get(f"/api/movies/batch?ids={many_ids}")
+        assert resp.status_code == 400
+        assert "Maximum 100" in resp.json()["detail"]
+
+
+class TestMetaFiltersEndpoint:
+    def test_meta_filters(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/meta/filters")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "genres" in data
+        assert "decades" in data
+        assert isinstance(data["genres"], list)
+        assert isinstance(data["decades"], list)
+        assert len(data["genres"]) > 0
+        assert len(data["decades"]) > 0
+        assert "name" in data["genres"][0]
+        assert "count" in data["genres"][0]
+        assert "decade" in data["decades"][0]
+        assert "label" in data["decades"][0]
+        assert all(g["name"] not in ("IMAX", "(no genres listed)") for g in data["genres"])
+
+
+class TestPopularSortingAndValidation:
+    def test_sort_newest(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/popular?sort=newest&limit=5")
+        assert resp.status_code == 200
+        movies = resp.json()
+        assert len(movies) >= 1
+
+    def test_sort_oldest(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/popular?sort=oldest&limit=5")
+        assert resp.status_code == 200
+        movies = resp.json()
+        assert len(movies) >= 1
+
+    def test_invalid_sort_returns_400(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/popular?sort=unsupported")
+        assert resp.status_code == 400
+
+    def test_invalid_decade_returns_400(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/popular?decade=1995")
+        assert resp.status_code == 400
+
+    def test_invalid_year_returns_400(self, app_client):
+        client, _ = app_client
+        resp = client.get("/api/movies/popular?year=1800")
+        assert resp.status_code == 400
+

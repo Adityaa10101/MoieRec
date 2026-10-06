@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException, Query
 from app.db.catalog import (
     fetch_hero,
     fetch_movie,
+    fetch_movies_by_ids,
     fetch_popular,
     search_movies,
 )
@@ -193,16 +194,84 @@ async def get_home():
 async def get_popular(
     genre: Optional[str] = Query(None, description="Filter by genre name"),
     decade: Optional[int] = Query(None, description="Filter by decade start year (e.g. 2010)"),
+    year: Optional[int] = Query(None, description="Filter by release year (e.g. 1999)"),
+    sort: Optional[str] = Query("popular", description="Sort order: 'popular' (default), 'newest', 'oldest'"),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
-    """Returns movies ordered by popularity (train_positive_count). No personalization."""
-    import asyncio
-    catalog_rows = fetch_popular(limit=limit, offset=offset, genre=genre, decade=decade)
+    """Returns movies ordered by popularity (or newest/oldest). Strictly validated. No personalization."""
+    # Strict validation
+    if sort not in ("popular", "newest", "oldest"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid sort parameter. Must be one of: 'popular', 'newest', 'oldest'",
+        )
+    if decade is not None:
+        if decade < 1870 or decade > 2030 or (decade % 10 != 0):
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid decade parameter. Must be a multiple of 10 between 1870 and 2030.",
+            )
+    if year is not None:
+        if year < 1870 or year > 2030:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid year parameter. Must be between 1870 and 2030.",
+            )
+    if genre is not None and len(genre.strip()) > 50:
+        raise HTTPException(status_code=400, detail="Genre parameter too long")
+
+    catalog_rows = fetch_popular(
+        limit=limit,
+        offset=offset,
+        genre=genre.strip() if genre else None,
+        decade=decade,
+        year=year,
+        sort=sort,
+    )
     movies = await asyncio.gather(
         *[_enrich(r, rank=offset + i + 1) for i, r in enumerate(catalog_rows)]
     )
     return list(movies)
+
+
+@router.get("/movies/batch", response_model=list[MovieOut], summary="Batch movie metadata")
+async def get_movies_batch(
+    ids: str = Query(..., description="Comma-separated MovieLens movie_ids (max 100)"),
+):
+    """
+    Fetch metadata for up to 100 movie IDs in batch.
+    Skips unknown IDs and movies without TMDB data gracefully.
+    Preserves MovieOut shape without faking personalization fields.
+    """
+    if not ids or not ids.strip():
+        return []
+
+    tokens = [t.strip() for t in ids.split(",") if t.strip()]
+    if len(tokens) > 100:
+        raise HTTPException(status_code=400, detail="Maximum 100 movie IDs allowed")
+
+    parsed_ids = []
+    seen = set()
+    for t in tokens:
+        try:
+            val = int(t)
+            if val > 0 and val not in seen:
+                seen.add(val)
+                parsed_ids.append(val)
+        except ValueError:
+            continue
+
+    if not parsed_ids:
+        return []
+
+    catalog_rows = fetch_movies_by_ids(parsed_ids)
+    catalog_map = {r["movie_id"]: r for r in catalog_rows}
+    ordered_rows = [catalog_map[mid] for mid in parsed_ids if mid in catalog_map]
+
+    enriched = await asyncio.gather(*[_enrich(r) for r in ordered_rows])
+    # Skips unknown ids and movies without TMDB data gracefully
+    return [m for m in enriched if m.tmdb_id is not None and m.poster_url is not None]
 
 
 @router.get("/movies/{movie_id}", response_model=MovieOut, summary="Movie detail")

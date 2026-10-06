@@ -61,15 +61,30 @@ def fetch_movie(movie_id: int) -> Optional[dict]:
     return movie_row_to_dict(row) if row else None
 
 
+def fetch_movies_by_ids(movie_ids: list[int]) -> list[dict]:
+    """Fetch multiple movies by their movie_id in one query. Only movies WITH a tmdb_id are returned."""
+    if not movie_ids:
+        return []
+    conn = get_catalog_conn()
+    placeholders = ",".join("?" for _ in movie_ids)
+    cur = conn.execute(
+        f"SELECT * FROM movies WHERE movie_id IN ({placeholders}) AND tmdb_id IS NOT NULL",
+        movie_ids,
+    )
+    return [movie_row_to_dict(r) for r in cur.fetchall()]
+
+
 def fetch_popular(
     limit: int = 20,
     offset: int = 0,
     genre: Optional[str] = None,
     decade: Optional[int] = None,
+    year: Optional[int] = None,
+    sort: Optional[str] = "popular",
 ) -> list[dict]:
     """
-    Return movies ordered by train_positive_count DESC, with optional
-    genre/decade filters. Only movies WITH a tmdb_id are returned.
+    Return movies ordered by train_positive_count DESC (or year DESC/ASC), with optional
+    genre/decade/year filters. Only movies WITH a tmdb_id are returned.
     """
     where_clauses = ["tmdb_id IS NOT NULL"]
     params: list = []
@@ -80,11 +95,33 @@ def fetch_popular(
         )
         params.append(genre)
 
-    if decade is not None:
+    if year is not None:
+        where_clauses.append("year = ?")
+        params.append(year)
+    elif decade is not None:
         where_clauses.append("year >= ? AND year < ?")
         params.extend([decade, decade + 10])
 
     where_sql = " AND ".join(where_clauses)
+
+    if sort == "newest":
+        order_by_sql = """
+            COALESCE(year, 0) DESC,
+            COALESCE(train_positive_count, 0) DESC,
+            (movie_id * 2654435761) & 0xFFFFFFFF ASC
+        """
+    elif sort == "oldest":
+        order_by_sql = """
+            COALESCE(year, 9999) ASC,
+            COALESCE(train_positive_count, 0) DESC,
+            (movie_id * 2654435761) & 0xFFFFFFFF ASC
+        """
+    else:
+        order_by_sql = """
+            COALESCE(train_positive_count, 0) DESC,
+            (movie_id * 2654435761) & 0xFFFFFFFF ASC
+        """
+
     params.extend([limit, offset])
 
     conn = get_catalog_conn()
@@ -92,14 +129,52 @@ def fetch_popular(
         f"""
         SELECT * FROM movies
         WHERE {where_sql}
-        ORDER BY
-            COALESCE(train_positive_count, 0) DESC,
-            (movie_id * 2654435761) & 0xFFFFFFFF ASC
+        ORDER BY {order_by_sql}
         LIMIT ? OFFSET ?
         """,
         params,
     )
     return [movie_row_to_dict(r) for r in cur.fetchall()]
+
+
+def fetch_catalog_meta_filters() -> dict:
+    """Return genres and decades with movie counts from the catalog (only movies with a tmdb_id)."""
+    conn = get_catalog_conn()
+    cur = conn.execute(
+        "SELECT genres FROM movies WHERE tmdb_id IS NOT NULL"
+    )
+    genre_counts: dict[str, int] = {}
+    for (g_json,) in cur.fetchall():
+        try:
+            for g in json.loads(g_json or "[]"):
+                if g and g not in ("IMAX", "(no genres listed)"):
+                    genre_counts[g] = genre_counts.get(g, 0) + 1
+        except Exception:
+            continue
+
+    sorted_genres = [
+        {"name": g, "count": count}
+        for g, count in sorted(genre_counts.items(), key=lambda x: -x[1])
+    ]
+
+    cur = conn.execute(
+        """
+        SELECT (year / 10) * 10 AS decade, COUNT(*) AS count
+        FROM movies
+        WHERE tmdb_id IS NOT NULL AND year IS NOT NULL AND year >= 1920
+        GROUP BY decade
+        ORDER BY decade DESC
+        """
+    )
+    decades = [
+        {"decade": int(r["decade"]), "label": f"{int(r['decade'])}s", "count": int(r["count"])}
+        for r in cur.fetchall()
+    ]
+
+    return {
+        "genres": sorted_genres,
+        "decades": decades,
+    }
 
 
 def fetch_hero() -> Optional[dict]:
