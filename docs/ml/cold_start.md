@@ -21,7 +21,7 @@ MoieRec addresses cold-start through a systematic 4-phase user evolution lifecyc
 [Phase 3: Real-Time Content Recs] ──► Cosine similarity over candidate catalog (0ms latency)
          │
          ▼
-[Phase 4: Collaborative Fold-In]  ──► Fix item latent matrix V; solve user vector u = (V^T V + λI)^-1 V^T r
+[Phase 4: Collaborative Scoring] ──► Item-kNN scoring from the user's picks over precomputed item similarities
          │
          ▼
 [Steady State: Hybrid Model]     ──► Weighted blend: α*Content + β*Collaborative + γ*Popularity
@@ -47,8 +47,8 @@ MoieRec addresses cold-start through a systematic 4-phase user evolution lifecyc
   $$\text{Score}_{\text{content}}(u, j) = \cos(\mathbf{u}_{\text{content}}, \mathbf{v}_j) = \frac{\mathbf{u}_{\text{content}} \cdot \mathbf{v}_j}{\|\mathbf{u}_{\text{content}}\|_2 \|\mathbf{v}_j\|_2}$$
 - Provides zero-latency, highly relevant recommendations without requiring any collaborative matrix operations.
 
-### Phase 4: Collaborative Fold-In (Folding-In)
-- When the user accumulates 5 or more ratings, they are folded into the collaborative latent space without full matrix refactoring:
+### Phase 4: Collaborative Item-kNN Scoring (Scoring from User's Picks)
+- When the user accumulates ratings, item-kNN collaborative filtering scores candidates from the user's picks:
   - The item factor matrix $\mathbf{V} \in \mathbb{R}^{M \times d}$ is held **fixed** (frozen from the offline model).
   - The user's latent factor $\mathbf{u}_{\text{collab}} \in \mathbb{R}^d$ is computed via ridge regression:
     $$\mathbf{u}_{\text{collab}} = \left(\mathbf{V}_u^T \mathbf{V}_u + \lambda \mathbf{I}\right)^{-1} \mathbf{V}_u^T \mathbf{r}_u$$
@@ -107,5 +107,5 @@ Evaluated across $K \in \{3, 5, 10\}$ on `cold_dev` (seed=42):
 In Phase 2F, **Hybrid v1** was tuned and deployed as the serving onboarding engine:
 - Combines Tier 2 Content Profile ($\alpha = 0.1$) with Population Popularity ($1 - \alpha = 0.9$) using candidate-pool percentile ranks.
 - Strictly outperforms both Popularity and Content-Only across all $K \in \{3, 5, 10\}$ on both `all_candidates` and `long_tail` variants with 95% paired bootstrap confidence intervals strictly excluding zero.
-- Phase 4 (Collaborative Fold-In via Ridge Regression onto frozen item factors) remains scheduled for a future collaborative filtering phase when offline factor matrices are introduced.
+- Phase 4 was implemented in Phase 2G-Lite via item-kNN scoring from the user's picks over precomputed item–item similarities.
 

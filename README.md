@@ -13,8 +13,8 @@ Instead of operating as a static demonstration, MoieRec integrates content-based
 > - React 19 + Vite + TypeScript + Tailwind CSS + Framer Motion cinematic frontend
 > - FastAPI backend with TMDB metadata proxy, SQLite catalog, and offline hybrid scoring
 > - Content-based TF-IDF vectorisation over genres, tags, and MovieLens genome features
-> - Item-item collaborative filtering with TF-IDF normalisation and min-support guard
-> - Hybrid v2 recommender: 3-component simplex blend (CF + content + popularity), K-adaptive weight schedule
+> - Item-item collaborative filtering with TF-IDF normalisation, min-support guard, and item-kNN scoring from the user's picks
+> - Hybrid v2 recommender: selected by validation as pure CF at K <= 14, 90% CF / 10% content at K >= 15 (not a 3-way blend in practice; popularity receives 0 weight)
 > - Cold-Start Protocol v2 evaluation (NDCG@K, Recall@K, long-tail variant, 1000 bootstrap resamples)
 > - Offline parity regression tests (offline ↔ serving score match to 1e-5)
 > - Explainability: nearest pick, shared features, CF evidence, honest reason codes, Why-This modal
@@ -106,7 +106,7 @@ MoieRec/
 - **Scientific Computing**: NumPy, Pandas, SciPy (sparse matrices)
 - **Algorithms**: Scikit-Learn (TF-IDF cosine similarity), custom item-item CF
 - **Evaluation**: Custom Cold-Start Protocol v2 (NDCG@K, Recall@K, long-tail variant, 1,000 bootstrap resamples)
-- **Hybrid Fusion**: K-adaptive simplex blend (CF + content + popularity)
+- **Hybrid Fusion**: K-adaptive schedule selected by validation (pure CF at K <= 14, 90% CF / 10% content at K >= 15; not a three-way blend in practice)
 - **Serving**: HybridScorer with compact top-K arrays (~42 MB CF overhead, p50 ~65 ms)
 
 ### Data Sources
@@ -178,4 +178,4 @@ npm run dev
 2. **Phase 2A–2B (Data Engineering)**: MovieLens 25M download, ETL pipeline, sparse matrix generation, metadata tokenization.
 3. **Phase 2C–2E (Content-Based + Serving)**: TF-IDF vectorisation, cosine similarity, FastAPI serving slice, TMDB integration.
 4. **Phase 2F–2F.2 (Hybrid v1 / v1.1)**: Popularity + content hybrid, Cold-Start Protocol v2, alpha schedule tuning, long-tail reconciliation.
-5. **Phase 2G-Lite (Item-Item CF + Hybrid v2)**: Item-item collaborative filtering, 3-component simplex blend, adoption evaluation, frontend Why-This CF evidence. ← **Current**
+5. **Phase 2G-Lite (Item-Item CF + Hybrid v2)**: Item-item collaborative filtering with item-kNN scoring from user's picks, K-adaptive weights (pure CF at K <= 14, 90% CF / 10% content at K >= 15), adoption evaluation, frontend Why-This CF evidence. ← **Current**

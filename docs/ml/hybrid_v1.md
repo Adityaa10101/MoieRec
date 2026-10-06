@@ -65,7 +65,7 @@ Tag TF-IDF and Genome features are snapshot features aggregated across the entir
 ## Known Limits & Approximation Notes
 
 1. **User Pick Approximation**: The first $K$ chronologically recorded positive interactions of MovieLens users approximate real user onboarding picks. Real onboarding involves active user choice rather than passive logging.
-2. **Cold-Start Only**: `hybrid_v1` is an onboarding / cold-start heuristic. Collaborative filtering fold-in, sequential interactions, and matrix factorization remain for later phases.
+2. **Cold-Start Only**: `hybrid_v1` is an onboarding / cold-start heuristic. Collaborative filtering item-kNN scoring from the user's picks, sequential interactions, and matrix factorization remain for later phases.
 
 ---
 

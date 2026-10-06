@@ -52,7 +52,7 @@ No model tier is assumed superior a priori. Complex neural or collaborative mode
   - Tuned offline on `cold_dev`: $\alpha = 0.1$, Tier 2 weights $w_{T1}=1.0, w_{\text{tags}}=4.0, w_{\text{genome}}=1.0$.
   - Generates "Picked for You" row and "Because you liked <Title>" content rows in serving API.
 - **Future Collaborative Extensions:**
-  - Fold-in latent vectors $\tilde{S}_{\text{collab}}$ and diversity re-ranking will be introduced in subsequent phases.
+  - Item-kNN scoring vectors from the user's picks and diversity re-ranking will be introduced in subsequent phases.
 
 ---
 

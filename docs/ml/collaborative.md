@@ -10,7 +10,7 @@
 
 Content-based filtering (Phase 2C–2E) encodes a movie via its genres, tags, and genome features. Two thematically unrelated movies that users co-rate highly will not be captured by content similarity alone. Item-item collaborative filtering (neighborhood CF) plugs this gap: it scores a candidate by aggregating ratings from users who also rated the candidate, weighted by the cosine similarity of the user's picks and the co-rated items.
 
-Because MoieRec operates **without user accounts** (stateless, session-only profile), the CF component runs in **fold-in** mode: given a guest's explicit liked-movie picks, we look up pre-computed item–item similarities and aggregate a score on the fly at serving time.
+Because MoieRec operates **without user accounts** (stateless, session-only profile), the CF component runs via **item-kNN scoring from the user's picks**: given a guest's explicit liked-movie picks, we look up pre-computed item–item similarities and aggregate a score on the fly at serving time.
 
 ---
 
@@ -51,7 +51,7 @@ Combined size: ~42 MB. These are exported to `data/serving/model_v2/` by
 
 ---
 
-## 3. Serving Score (Fold-In)
+## 3. Serving Score (Item-kNN Scoring from the User's Picks)
 
 Given a guest profile $\mathcal{P} = \{p_1, \ldots, p_K\}$ (liked movie IDs, K picks), the CF score for candidate $c$ is:
 
@@ -94,7 +94,7 @@ Results are in `results/cf_validation.json` and embedded in `results/hybrid_v2_c
 
 ## 6. Limitations & Future Work
 
-- **No matrix factorisation**: Phase 2G-Lite deliberately excludes SVD/ALS/fold-in MF.
+- **No matrix factorisation**: Phase 2G-Lite deliberately excludes SVD/ALS/latent factor models.
 - **No cold item support**: Items with zero train ratings have no neighbours and receive CF score = 0.
 - **Static profile**: User preferences are captured from the single-session pick list only. Sequence/temporal dynamics are not modelled.
 - **Scale**: The full MovieLens-25M item space is not pre-computed pairwise; only top-200 neighbours per item are stored.

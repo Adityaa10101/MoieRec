@@ -31,7 +31,7 @@ Unchanged from v1.1: log-scaled rating count, percentile-normalised within the c
 Unchanged from v1.1: cosine similarity between the user's TF-IDF feature profile and each candidate item, percentile-normalised.
 
 ### 2.3 CF Component (`pct_CF`)
-Item-item similarity fold-in score (see [`collaborative.md`](collaborative.md)):
+Item-item similarity score via item-kNN scoring from the user's picks (see [`collaborative.md`](collaborative.md)):
 
 $$s_{\text{CF}}(c) = \frac{\sum_{p \in \mathcal{P}} \text{sim}(c, p) \cdot \mathbf{1}[\text{cooc}(c,p) \ge 5]}{\max\!\left(1, \sum_{p \in \mathcal{P}} \mathbf{1}[\text{cooc}(c,p) \ge 5]\right)}$$
 
@@ -39,20 +39,24 @@ Percentile-normalised within the candidate pool as `pct_CF`.
 
 ---
 
-## 3. Weight Schedule (Tuned on cold_dev)
+## 3. Weight Schedule & Served Model Reality
 
-The simplex weights $(w_c, w_f, w_p)$ are tuned per K value. Tuning used the same **selection objective** as v1.1: maximise $\text{mean}(\text{NDCG}_{\text{all}} / \text{NDCG}_{\text{pop}\_\text{all}},\; \text{NDCG}_{\text{lt}} / \text{NDCG}_{\text{pop}\_\text{lt}})$ subject to $\text{NDCG}_{\text{all}} \ge \text{NDCG}_{\text{pop}\_\text{all}}$.
+The weights $(w_c, w_f, w_p)$ were tuned per K value on `cold_dev`. Tuning used the selection objective: maximise $\text{mean}(\text{NDCG}_{\text{all}} / \text{NDCG}_{\text{pop}\_\text{all}},\; \text{NDCG}_{\text{lt}} / \text{NDCG}_{\text{pop}\_\text{lt}})$ subject to $\text{NDCG}_{\text{all}} \ge \text{NDCG}_{\text{pop}\_\text{all}}$.
 
-### Optimal weights per K
+### Served Model Specification (Selected by Validation)
+In practice, the served model is **not a three-way blend**:
+- **$K \le 14$ ($K \in [3, 14]$)**: Pure collaborative filtering ($w_{\text{CF}} = 1.0, w_{\text{content}} = 0.0, w_{\text{pop}} = 0.0$).
+- **$K \ge 15$**: 90% Collaborative Filtering + 10% Content Similarity ($w_{\text{CF}} = 0.9, w_{\text{content}} = 0.1, w_{\text{pop}} = 0.0$).
+- Popularity weight is strictly $0.0$ across all buckets in the served model.
 
-| K bucket | $w_c$ (CF) | $w_f$ (content) | $w_p$ (pop) | Notes |
-|----------|-----------|-----------------|-------------|-------|
-| 3–4 | 0.0 | 1.0 | 0.0 | Pure content |
-| 5–7 | 0.0 | 1.0 | 0.0 | Pure content |
-| 8–14 | 0.0 | 1.0 | 0.0 | Pure content |
-| 15+ | 0.1 | 0.9 | 0.0 | CF adds marginal lift |
+| K bucket | CF Weight | Content Weight | Popularity Weight | Served Reality |
+|----------|-----------|----------------|-------------------|----------------|
+| 3–4      | 1.0       | 0.0            | 0.0               | Pure Item-kNN CF |
+| 5–7      | 1.0       | 0.0            | 0.0               | Pure Item-kNN CF |
+| 8–14     | 1.0       | 0.0            | 0.0               | Pure Item-kNN CF |
+| 15+      | 0.9       | 0.1            | 0.0               | 90% Item-CF + 10% Content |
 
-**Key finding**: The CF component provides lift mainly at K=20 (users with many picks expose richer co-occurrence signal). At K ≤ 10, pure content dominates because the guest profile is small and the CF fold-in has high variance.
+**Key finding**: Item-kNN CF provides strong personalization signal. At $K \ge 15$, content similarity adds a modest 10% regularization lift. Popularity receives zero weight in the served configuration, making it an honest two-regime recommender rather than a 3-way blend.
 
 ---
 

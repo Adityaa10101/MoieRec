@@ -143,7 +143,7 @@ All paired comparisons assess user-level differences ($\Delta \text{NDCG@10}$) e
 ## 4. Warm Test Evaluation Results (`TEST` Split)
 
 ### 4.1 Final-Fit Protocol
-Following the canonical final-fit rule, models were refitted on the combined **TRAIN + VALIDATION** dataset ($19,572,447$ ratings across $136,204$ users):
+Following the canonical final-fit rule, models were refitted on the combined **TRAIN + VALIDATION** dataset ($19,572,447$ ratings across $97,270$ users, verified against `split_metadata.json` [corrected from stale $136,204$ figure]):
 - **Candidate Pool**: Exactly $18,276$ benchmark movies.
 - **Candidate Filtering**: For each user, candidate items strictly exclude all movies interacted with in either train or validation.
 - **Relevant Ground Truth**: All items in `test.parquet` rated $\ge 4.0$ that belong to the candidate catalog.
@@ -264,6 +264,8 @@ Comparing NDCG@10 on the warm validation cohort ($N=94,312$) to the final held-o
 | **Popularity** | 0.0519 | 0.0523 | $+0.0004$ | $+0.77\%$ |
 | **Content Tier 2** | 0.0633 | 0.0673 | $+0.0040$ | $+6.32\%$ |
 | **Content Tier 1** | 0.0029 | 0.0026 | $-0.0003$ | $-10.34\%$ |
+
+> **Note on Tier 2 Validation Metrics**: The $0.0633$ NDCG@10 figure in the table above comes from the 20,000-user validation tuning sample evaluated alongside CF tuning (`recommender/results/cf_validation.json` and `cf_validation.csv`), whereas $0.0666$ ($0.066616$) was measured across all $94,303$ eligible validation users in the full validation evaluation (`recommender/results/content_tier2_snapshot_validation.json`).
 
 **Verdict on Generalization**:
 The performance shift across all models and splits is $|\Delta| \le 0.018$ NDCG points. Ranking order, relative lifts, and significance conclusions remain 100% invariant between tuning and test splits. The models exhibit **zero hyperparameter overfitting**.
