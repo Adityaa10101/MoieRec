@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RouterProvider, useRouter } from './router/Router';
 import { ToastProvider } from './context/ToastContext';
 import { AmbientBackdropProvider } from './context/AmbientBackdropContext';
@@ -8,15 +8,23 @@ import { RootLayout } from './layouts/RootLayout';
 import { HomePage } from './pages/HomePage';
 import { MovieDetailPage } from './pages/MovieDetailPage';
 import { ExplorePage } from './pages/ExplorePage';
-import { MyTastePage } from './pages/MyTastePage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
+import { LibraryPage } from './pages/LibraryPage';
+import { AboutPage } from './pages/AboutPage';
 import { ApiHealthCard } from './components/status/ApiHealthCard';
 
 const RouteDispatcher: React.FC = () => {
-  const { path } = useRouter();
+  const { path, navigate } = useRouter();
 
-  if (path === '/' || path === '') {
+  // Route redirects
+  useEffect(() => {
+    if (path === '/login' || path === '/register') {
+      navigate('/');
+    } else if (path === '/my-taste') {
+      navigate('/library');
+    }
+  }, [path, navigate]);
+
+  if (path === '/' || path === '' || path === '/login' || path === '/register') {
     return <HomePage />;
   }
 
@@ -28,16 +36,12 @@ const RouteDispatcher: React.FC = () => {
     return <ExplorePage />;
   }
 
-  if (path === '/my-taste') {
-    return <MyTastePage />;
+  if (path === '/library' || path === '/my-taste') {
+    return <LibraryPage />;
   }
 
-  if (path === '/login') {
-    return <LoginPage />;
-  }
-
-  if (path === '/register') {
-    return <RegisterPage />;
+  if (path === '/about') {
+    return <AboutPage />;
   }
 
   if (path === '/system-status') {

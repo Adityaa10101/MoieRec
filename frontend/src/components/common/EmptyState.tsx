@@ -34,24 +34,24 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
   const defaultTitle =
     type === 'watchlist'
-      ? 'Your screening room is quiet.'
+      ? 'Your watchlist is empty.'
       : type === 'discovery'
-      ? 'No titles match this exact intersection.'
-      : 'Curatorial connection momentarily disrupted.';
+      ? 'No movies match these filters.'
+      : 'Connection momentarily disrupted.';
 
   const defaultDescription =
     type === 'watchlist'
-      ? 'Add films from Explore or your personalized slate to start your queue.'
+      ? 'Add movies from Explore or your recommendations to build your watchlist.'
       : type === 'discovery'
-      ? 'Broaden your curatorial filters to reveal nearby cinema gems.'
-      : 'Your taste vector is safely preserved in local telemetry.';
+      ? 'Try selecting different genres or decades to find movies.'
+      : 'Your picks are safely preserved in browser storage.';
 
   const defaultActionText =
     type === 'watchlist'
-      ? 'Explore Atmospheric Masterpieces'
+      ? 'Browse Explore'
       : type === 'discovery'
-      ? 'Reset Discovery Filters'
-      : 'Reconnect Screening Engine';
+      ? 'Reset Filters'
+      : 'Try Again';
 
   return (
     <div className="p-8 sm:p-12 rounded-2xl bg-[#1a1b20] border border-white/10 text-center space-y-4 max-w-xl mx-auto my-8">

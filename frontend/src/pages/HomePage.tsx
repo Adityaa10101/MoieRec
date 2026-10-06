@@ -222,10 +222,18 @@ export const HomePage: React.FC = () => {
         )}
 
         {personalizedRows.map((row) => {
-          const badge =
-            row.id === 'row-personalized-picked' || row.id.startsWith('row-personalized')
-              ? 'PERSONALIZED · HYBRID v2'
-              : 'SIMILAR BY GENRES & TAGS';
+          const isPickedForYou = row.id === 'row-personalized-picked';
+          let badge: string;
+          if (isPickedForYou) {
+            const hasContentWeight =
+              row.movies.some((m) => (m.explanation?.weights?.w_c ?? 0) > 0) ||
+              validLikedIds.length >= 15;
+            badge = hasContentWeight
+              ? 'PERSONALIZED · COLLABORATIVE FILTERING + CONTENT'
+              : 'PERSONALIZED · COLLABORATIVE FILTERING';
+          } else {
+            badge = 'SIMILAR BY GENRES & TAGS';
+          }
           return (
             <RecommendationRow
               key={row.id}

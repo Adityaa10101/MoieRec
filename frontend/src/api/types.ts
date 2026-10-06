@@ -36,7 +36,7 @@ export interface CfPickExplanation {
 }
 
 export interface MovieExplanation {
-  nearest_pick: NearestPickExplanation;
+  nearest_pick?: NearestPickExplanation | null;
   top_shared_features: SharedFeatureExplanation[];
   components: ComponentsExplanation;
   match_percent: number;
@@ -45,6 +45,31 @@ export interface MovieExplanation {
   weights?: { w_c: number; w_f: number; w_p: number };
   cf_pick?: CfPickExplanation;
   reason_labels?: Record<string, string>;
+}
+
+export interface GenreFilter {
+  name: string;
+  count: number;
+}
+
+export interface DecadeFilter {
+  decade: number;
+  label: string;
+  count: number;
+}
+
+export interface MetaFiltersResponse {
+  genres: GenreFilter[];
+  decades: DecadeFilter[];
+}
+
+export interface PopularParams {
+  genre?: string;
+  decade?: number;
+  year?: number;
+  sort?: 'popular' | 'newest' | 'oldest';
+  limit?: number;
+  offset?: number;
 }
 
 export interface ApiMovie {

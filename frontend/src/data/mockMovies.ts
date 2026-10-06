@@ -20,9 +20,9 @@ export const HERO_MOVIE: Movie = {
   matchScore: 96,
   matchBadgeText: 'POPULAR',
   matchReason: 'BECAUSE OF WORLD-BUILDING, PHILOSOPHICAL SCALE & ZIMMER SCORE',
-  genres: ['Sci-Fi', 'Neo-Noir', 'Cyberpunk', 'Mystery'],
+  genres: ['Sci-Fi', 'Mystery', 'Drama'],
   tags: ['Auteur Vision', 'Atmospheric Dread', 'Roger Deakins Lighting', 'Dystopian Solitude'],
-  formats: ['IMAX Enhanced', 'Dolby Atmos'],
+  formats: ['Standard'],
   overview:
     'Thirty years after the events of the first film, a new blade runner, LAPD Officer K, unearths a long-buried secret that has the potential to plunge what’s left of society into chaos.',
   poster:
@@ -159,8 +159,8 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
   {
     id: 'row-personalized',
     title: 'Personalized For You',
-    subtitle: 'Deep learning recommendations based on your 142 logged ratings and aesthetic affinity vectors.',
-    anchorBadge: 'Neural Taste Weighting',
+    subtitle: 'Sample recommendation items for offline preview.',
+    anchorBadge: 'Offline Preview',
     iconType: 'psychology',
     movies: [
       {
@@ -276,8 +276,8 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
   {
     id: 'row-gems',
     title: 'Hidden Gems & Arthouse Discoveries',
-    subtitle: 'High critic score • Low mainstream exposure matching your exact curatorial profile.',
-    anchorBadge: 'Curatorial Filter',
+    subtitle: 'Notable dramas and independent discoveries.',
+    anchorBadge: 'Discovery',
     iconType: 'diamond',
     movies: [
       {
@@ -393,8 +393,8 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
   {
     id: 'row-trending',
     title: 'Trending in Your Taste Cluster',
-    subtitle: 'Disproportionately favored right now by peers with >88% taste affinity overlap.',
-    anchorBadge: 'Cluster Convergence',
+    subtitle: 'Popular selections among viewers.',
+    anchorBadge: 'Popular',
     iconType: 'trending',
     movies: [
       {
@@ -491,9 +491,9 @@ export const MOCK_RECOMMENDATION_ROWS: RecommendationRowData[] = [
   },
   {
     id: 'row-recent',
-    title: 'Recently Added to MoieRec',
-    subtitle: 'Newly cataloged 4K Criterion transfers, restored film negatives, and remastered soundscapes.',
-    anchorBadge: 'Archival Vault Ingest',
+    title: 'Classic Cinema & Restorations',
+    subtitle: 'Classic releases and celebrated international films.',
+    anchorBadge: 'Classic Cinema',
     iconType: 'archive',
     movies: [
       {

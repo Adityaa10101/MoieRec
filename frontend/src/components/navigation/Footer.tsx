@@ -89,8 +89,11 @@ export const Footer: React.FC = () => {
         {/* Footer Navigation + Attribution */}
         <div className="flex flex-col items-center md:items-end gap-3">
           <nav className="flex flex-wrap justify-center items-center gap-5 text-xs text-slate-400">
-            <Link to="/my-taste" className="hover:text-amber-400 transition-colors">
+            <Link to="/library" className="hover:text-amber-400 transition-colors">
               My Library
+            </Link>
+            <Link to="/about" className="hover:text-amber-400 transition-colors">
+              How it works
             </Link>
             <a
               href="https://movielens.org"
@@ -109,6 +112,10 @@ export const Footer: React.FC = () => {
               TMDB
             </a>
           </nav>
+
+          <p className="text-[11px] text-slate-500 font-mono text-center md:text-right">
+            Guest mode: your picks are saved only in this browser.
+          </p>
 
           {/* Required TMDB attribution + GroupLens/MovieLens credit */}
           <p className="text-[10px] text-slate-600 text-center md:text-right max-w-xs leading-relaxed">

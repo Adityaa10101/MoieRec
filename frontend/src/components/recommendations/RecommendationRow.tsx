@@ -48,7 +48,7 @@ export const RecommendationRow: React.FC<RecommendationRowProps> = ({
   const isBecauseLiked = rowData.id.startsWith('row-because');
 
   const defaultBadge = isPickedForYou
-    ? 'PERSONALIZED · HYBRID v2'
+    ? 'PERSONALIZED · COLLABORATIVE FILTERING'
     : isBecauseLiked
     ? 'SIMILAR BY GENRES & TAGS'
     : 'MovieLens · Model 0 (Popularity)';

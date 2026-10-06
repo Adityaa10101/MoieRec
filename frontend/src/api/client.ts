@@ -4,7 +4,13 @@
  * Each fetcher uses AbortController so stale requests can be cancelled.
  */
 
-import type { ApiMovie, HomeResponse, PersonalizedHomeResponse } from './types';
+import type {
+  ApiMovie,
+  HomeResponse,
+  PersonalizedHomeResponse,
+  MetaFiltersResponse,
+  PopularParams,
+} from './types';
 
 const API_BASE =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
@@ -57,14 +63,32 @@ export async function fetchMovieDetail(
   return apiFetch<ApiMovie>(`/movies/${movieId}`, { signal });
 }
 
+/** GET /movies/batch?ids=1,2,3 (max 100 ids) */
+export async function fetchMoviesBatch(
+  movieIds: number[],
+  signal?: AbortSignal,
+): Promise<ApiMovie[]> {
+  if (!movieIds || movieIds.length === 0) return [];
+  // Slice to max 100 as specified
+  const idsStr = movieIds.slice(0, 100).join(',');
+  return apiFetch<ApiMovie[]>(`/movies/batch?ids=${encodeURIComponent(idsStr)}`, { signal });
+}
+
+/** GET /meta/filters */
+export async function fetchMetaFilters(signal?: AbortSignal): Promise<MetaFiltersResponse> {
+  return apiFetch<MetaFiltersResponse>('/meta/filters', { signal });
+}
+
 /** GET /movies/popular */
 export async function fetchPopular(
-  params: { genre?: string; decade?: number; limit?: number; offset?: number } = {},
+  params: PopularParams = {},
   signal?: AbortSignal,
 ): Promise<ApiMovie[]> {
   const qs = new URLSearchParams();
   if (params.genre) qs.set('genre', params.genre);
   if (params.decade != null) qs.set('decade', String(params.decade));
+  if (params.year != null) qs.set('year', String(params.year));
+  if (params.sort) qs.set('sort', params.sort);
   if (params.limit != null) qs.set('limit', String(params.limit));
   if (params.offset != null) qs.set('offset', String(params.offset));
   const query = qs.toString() ? `?${qs.toString()}` : '';

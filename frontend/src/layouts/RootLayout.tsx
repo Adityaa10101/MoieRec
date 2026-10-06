@@ -25,7 +25,7 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       {/* Main page content - Native Document-Level Vertical Scrolling */}
       <div className="relative z-10 w-full min-h-screen">{children}</div>
 
-      {/* Global Curatorial Footer */}
+      {/* Global Footer */}
       <Footer />
 
       {/* Search Palette Command Flyout (Cmd+K) */}
