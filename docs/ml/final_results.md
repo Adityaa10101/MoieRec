@@ -5,10 +5,10 @@
 > **Git Commit**: `97f4433460d8eb9a0c179f463b3ace81cf7a676a` (Clean tree at freeze)  
 > **Frozen Config ID**: `0ab4db5f288b8a8a3cb720369a082fa9d45dc2d28031050e0be95578cba3feaa`  
 > **Primary Artifacts**:
-> - Freeze Record: [`freeze_record.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/freeze_record.json)
-> - Cold-Start Final: [`final_cold_final.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_cold_final.json) | [`final_cold_final.csv`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_cold_final.csv)
-> - Warm Test Final: [`final_test_warm.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_test_warm.json) | [`final_test_warm.csv`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_test_warm.csv)
-> - Evaluation Run Log: [`evaluation_run_log.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/evaluation_run_log.json)
+> - Freeze Record: [`freeze_record.json`](../../recommender/results/final/freeze_record.json)
+> - Cold-Start Final: [`final_cold_final.json`](../../recommender/results/final/final_cold_final.json) | [`final_cold_final.csv`](../../recommender/results/final/final_cold_final.csv)
+> - Warm Test Final: [`final_test_warm.json`](../../recommender/results/final/final_test_warm.json) | [`final_test_warm.csv`](../../recommender/results/final/final_test_warm.csv)
+> - Evaluation Run Log: [`evaluation_run_log.json`](../../recommender/results/final/evaluation_run_log.json)
 
 ---
 
@@ -18,7 +18,7 @@ Phase 2H establishes the definitive, immutable benchmark numbers for the MoieRec
 
 ### 1.1 Integrity & Guardrail Guarantees
 1. **One-Shot Execution**: The final evaluation runner was executed exactly once. The execution completed with exit code 0 in 974.45 seconds without crashes, restarts, or reruns.
-2. **Guarded Split Access**: The held-out splits (`cold_final` and warm `test.parquet`) were accessed exclusively via the guarded loader [`recommender.evaluation.split_loader`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/evaluation/split_loader.py) with `final=True` and verified against the canonical `frozen_config_id`.
+2. **Guarded Split Access**: The held-out splits (`cold_final` and warm `test.parquet`) were accessed exclusively via the guarded loader [`recommender.evaluation.split_loader`](../../recommender/evaluation/split_loader.py) with `final=True` and verified against the canonical `frozen_config_id`.
 3. **CF Audit Gate**: Prior to touching any held-out data, a 6-part audit gate was verified on the collaborative filtering pipeline:
    - **Static Audit**: Confirmed zero references to validation or test data during CF model building; inputs strictly limited to `splits/train.parquet`. Diagonal strictly zeroed and user picks excluded from score lists.
    - **Independent Recomputation**: Recomputed $n_i, n_j, n_{ij}$ and cosine similarities for 20 random pairs and 5 top-100 popular pairs using raw pandas code; 100% exact numerical match with cached artifacts.
@@ -31,14 +31,14 @@ Phase 2H establishes the definitive, immutable benchmark numbers for the MoieRec
 
 ## 2. Frozen Configuration Record
 
-The system state was cryptographically captured into [`recommender/results/final/freeze_record.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/freeze_record.json) with hash `0ab4db5f288b8a8a3cb720369a082fa9d45dc2d28031050e0be95578cba3feaa`.
+The system state was cryptographically captured into [`recommender/results/final/freeze_record.json`](../../recommender/results/final/freeze_record.json) with hash `0ab4db5f288b8a8a3cb720369a082fa9d45dc2d28031050e0be95578cba3feaa`.
 
 ### 2.1 Model Artifact & Configuration Hashes
 | Configuration File | SHA-256 Digest | Key Frozen Settings |
 |:---|:---|:---|
-| [`hybrid_v1.yaml`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/config/hybrid_v1.yaml) | `6bad961bcb1e8a795fe32e612e31fe35e09b8c27e749973ad57c4c53db046987` | Static $\alpha = 0.1$, block weights: $w_{\text{T1}}=1.0, w_{\text{tags}}=4.0, w_{\text{genome}}=1.0$ |
-| [`hybrid_v1_1.yaml`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/config/hybrid_v1_1.yaml) | `2bcfa6cd27d942cb856d9d056226981c7310ebe60c3c916b6563da28ee5b1b0e` | $\alpha \in \{3: 0.3, 5: 0.6, 10: 0.7, 20: 0.8\}$, same block weights |
-| [`hybrid_v2.yaml`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/config/hybrid_v2.yaml) | `4d137450139e60bcd5a71c61248080f4ed1e47b23b7f3c8a8466d481378cc9b4` | Simplex schedule: $K \in \{3,5,10\} \to (0.0, 1.0, 0.0)$, $K=20 \to (0.1, 0.9, 0.0)$ |
+| [`hybrid_v1.yaml`](../../recommender/config/hybrid_v1.yaml) | `6bad961bcb1e8a795fe32e612e31fe35e09b8c27e749973ad57c4c53db046987` | Static $\alpha = 0.1$, block weights: $w_{\text{T1}}=1.0, w_{\text{tags}}=4.0, w_{\text{genome}}=1.0$ |
+| [`hybrid_v1_1.yaml`](../../recommender/config/hybrid_v1_1.yaml) | `2bcfa6cd27d942cb856d9d056226981c7310ebe60c3c916b6563da28ee5b1b0e` | $\alpha \in \{3: 0.3, 5: 0.6, 10: 0.7, 20: 0.8\}$, same block weights |
+| [`hybrid_v2.yaml`](../../recommender/config/hybrid_v2.yaml) | `4d137450139e60bcd5a71c61248080f4ed1e47b23b7f3c8a8466d481378cc9b4` | Simplex schedule: $K \in \{3,5,10\} \to (0.0, 1.0, 0.0)$, $K=20 \to (0.1, 0.9, 0.0)$ |
 
 ### 2.2 Recommender Component Parameters
 - **Collaborative Filtering**: Asymmetric cosine similarity ($a=0.5$), shrinkage $\lambda=0.0$, top-$k=200$ neighbors, positive rating threshold $\ge 4.0$. Diagonal elements set to 0.0, picks excluded at inference.
@@ -274,17 +274,17 @@ The performance shift across all models and splits is $|\Delta| \le 0.018$ NDCG 
 
 ## 6. Visualizations & Graphical Artifacts
 
-The final benchmark curves and bar charts generated directly from the evaluation data are archived in [`docs/figures/`](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/):
+The final benchmark curves and bar charts generated directly from the evaluation data are archived in [`docs/figures/`](../figures/):
 
 ### 6.1 Cold-Start Evaluation Curves
-![Cold-Start All Candidates](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/ndcg_cold_start_all_candidates.png)
+![Cold-Start All Candidates](../figures/ndcg_cold_start_all_candidates.png)
 *Figure 1: NDCG@10 vs Onboarding $K$ across all 18,277 candidate movies on held-out `cold_final` users.*
 
-![Cold-Start Long-Tail](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/ndcg_cold_start_long_tail.png)
+![Cold-Start Long-Tail](../figures/ndcg_cold_start_long_tail.png)
 *Figure 2: NDCG@10 vs Onboarding $K$ on the long-tail variant (excluding the top-200 popular training movies).*
 
 ### 6.2 Warm TEST Benchmark
-![Warm TEST Metrics](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/warm_test_metrics_bar.png)
+![Warm TEST Metrics](../figures/warm_test_metrics_bar.png)
 *Figure 3: Warm evaluation metrics @10 on the held-out TEST split with 95% bootstrap error bars.*
 
 ---
@@ -334,12 +334,12 @@ The following result files are preserved in the repository:
 
 | File Path | Description | Format |
 |:---|:---|:---:|
-| [`recommender/results/final/freeze_record.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/freeze_record.json) | Hash record, frozen model configs, served weights | JSON |
-| [`recommender/results/final/final_cold_final.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_cold_final.json) | Full cold-start results with bootstrap distributions | JSON |
-| [`recommender/results/final/final_cold_final.csv`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_cold_final.csv) | Tabular cold-start evaluation metrics | CSV |
-| [`recommender/results/final/final_test_warm.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_test_warm.json) | Full warm test results, paired comparisons, strata | JSON |
-| [`recommender/results/final/final_test_warm.csv`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/final_test_warm.csv) | Tabular warm test metrics | CSV |
-| [`recommender/results/final/evaluation_run_log.json`](file:///c:/Users/Lenovo/Projects/MoieRec/recommender/results/final/evaluation_run_log.json) | Run timestamp, total runtime, command execution details | JSON |
-| [`docs/figures/ndcg_cold_start_all_candidates.png`](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/ndcg_cold_start_all_candidates.png) | High-resolution figure: cold start all candidates | PNG |
-| [`docs/figures/ndcg_cold_start_long_tail.png`](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/ndcg_cold_start_long_tail.png) | High-resolution figure: cold start long-tail | PNG |
-| [`docs/figures/warm_test_metrics_bar.png`](file:///c:/Users/Lenovo/Projects/MoieRec/docs/figures/warm_test_metrics_bar.png) | High-resolution figure: warm test metrics bar chart | PNG |
+| [`recommender/results/final/freeze_record.json`](../../recommender/results/final/freeze_record.json) | Hash record, frozen model configs, served weights | JSON |
+| [`recommender/results/final/final_cold_final.json`](../../recommender/results/final/final_cold_final.json) | Full cold-start results with bootstrap distributions | JSON |
+| [`recommender/results/final/final_cold_final.csv`](../../recommender/results/final/final_cold_final.csv) | Tabular cold-start evaluation metrics | CSV |
+| [`recommender/results/final/final_test_warm.json`](../../recommender/results/final/final_test_warm.json) | Full warm test results, paired comparisons, strata | JSON |
+| [`recommender/results/final/final_test_warm.csv`](../../recommender/results/final/final_test_warm.csv) | Tabular warm test metrics | CSV |
+| [`recommender/results/final/evaluation_run_log.json`](../../recommender/results/final/evaluation_run_log.json) | Run timestamp, total runtime, command execution details | JSON |
+| [`docs/figures/ndcg_cold_start_all_candidates.png`](../figures/ndcg_cold_start_all_candidates.png) | High-resolution figure: cold start all candidates | PNG |
+| [`docs/figures/ndcg_cold_start_long_tail.png`](../figures/ndcg_cold_start_long_tail.png) | High-resolution figure: cold start long-tail | PNG |
+| [`docs/figures/warm_test_metrics_bar.png`](../figures/warm_test_metrics_bar.png) | High-resolution figure: warm test metrics bar chart | PNG |
