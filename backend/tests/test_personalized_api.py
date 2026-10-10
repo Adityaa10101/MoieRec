@@ -380,3 +380,56 @@ def test_personalized_limit_param(client, scorer):
     resp_high = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 51})
     assert resp_high.status_code == 422
 
+
+# ---------------------------------------------------------------------------
+# Order Invariance Test: Main personalized row identical, anchors follow tail
+# ---------------------------------------------------------------------------
+
+def test_personalized_order_invariance(client, scorer):
+    """
+    Test order invariance of the main personalized row ('Picked for You'):
+    For the exact same set of liked IDs provided in forward vs reversed order:
+    - Main personalized row ('row-personalized-picked') must be 100% identical
+      in movie IDs, ranking order, and scores.
+    - Only the 'Because you liked <title>' rows may differ (anchors depend on tail recency).
+    """
+    liked_ids_fwd = [int(scorer.item_movie_ids[i]) for i in range(10, 20)]  # 10 likes
+    liked_ids_rev = list(reversed(liked_ids_fwd))
+
+    resp_fwd = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids_fwd, "limit": 20})
+    resp_rev = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids_rev, "limit": 20})
+
+    assert resp_fwd.status_code == 200
+    assert resp_rev.status_code == 200
+
+    data_fwd = resp_fwd.json()
+    data_rev = resp_rev.json()
+
+    # Main personalized row ('row-personalized-picked')
+    row_fwd = next(r for r in data_fwd["rows"] if r["id"] == "row-personalized-picked")
+    row_rev = next(r for r in data_rev["rows"] if r["id"] == "row-personalized-picked")
+
+    fwd_mids = [m["movie_id"] for m in row_fwd["movies"]]
+    rev_mids = [m["movie_id"] for m in row_rev["movies"]]
+    assert fwd_mids == rev_mids, "Picked for You movie IDs and order must be identical"
+
+    fwd_scores = [m["score"] for m in row_fwd["movies"]]
+    rev_scores = [m["score"] for m in row_rev["movies"]]
+    assert fwd_scores == rev_scores, "Picked for You scores must be identical"
+
+    fwd_matches = [m["match_percent"] for m in row_fwd["movies"]]
+    rev_matches = [m["match_percent"] for m in row_rev["movies"]]
+    assert fwd_matches == rev_matches, "Picked for You match percents must be identical"
+
+    # Anchors for 'Because you liked' rows differ as expected
+    fwd_because_rows = [r["id"] for r in data_fwd["rows"] if r["id"].startswith("row-because-liked-")]
+    rev_because_rows = [r["id"] for r in data_rev["rows"] if r["id"].startswith("row-because-liked-")]
+    assert fwd_because_rows != rev_because_rows, "Anchor rows should differ because tail of list differs"
+
+    # Also verify direct scorer output invariance (CF/hybrid candidates, IDs, order, scores)
+    cands_fwd, _ = scorer.score(liked_movie_ids=liked_ids_fwd, top_k=20)
+    cands_rev, _ = scorer.score(liked_movie_ids=liked_ids_rev, top_k=20)
+    assert [c["movie_id"] for c in cands_fwd] == [c["movie_id"] for c in cands_rev]
+    assert [c["score"] for c in cands_fwd] == [c["score"] for c in cands_rev]
+
+

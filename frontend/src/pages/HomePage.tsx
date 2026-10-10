@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { HERO_MOVIE, MOCK_RECOMMENDATION_ROWS } from '../data/mockMovies';
 import { HeroSpotlight } from '../components/movie/HeroSpotlight';
 import { RecommendationRow } from '../components/recommendations/RecommendationRow';
@@ -110,7 +110,9 @@ export const HomePage: React.FC = () => {
     loadHomeFeed();
   }, [loadHomeFeed]);
 
-  // Fetch personalized feed (debounced ~400ms, cancellable, reacts to likes/dislikes/watch status)
+  // Fetch personalized feed (debounced ~1.5s on likes change, immediate on mount)
+  const isInitialMountRef = useRef(true);
+
   useEffect(() => {
     if (validLikedIds.length < 3) {
       setPersonalizedRows([]);
@@ -119,17 +121,27 @@ export const HomePage: React.FC = () => {
       return;
     }
 
-    setPersonalizedLoading(true);
+    const isInitial = isInitialMountRef.current;
+    isInitialMountRef.current = false;
+    const delay = isInitial ? 0 : 1500;
+
+    if (isInitial) {
+      setPersonalizedLoading(true);
+    }
     setPersonalizedError(false);
     const controller = new AbortController();
 
     const timer = setTimeout(async () => {
       try {
         const excludeIds = Array.from(new Set([...validDislikedIds, ...watchedAndDroppedIds]));
+        // Ordering contract: The backend treats the end of liked_movie_ids as the most recent picks.
+        // Frontend maintains validLikedIds newest-first in state, so we send a reversed shallow copy
+        // (oldest first, newest last) without mutating the state array.
+        const orderedLikedIds = [...validLikedIds].reverse();
         const resp = await fetchPersonalizedHome(
-          validLikedIds,
+          orderedLikedIds,
           excludeIds,
-          30,
+          40,
           controller.signal,
         );
         if (resp.personalized && resp.rows && resp.rows.length > 0) {
@@ -145,7 +157,7 @@ export const HomePage: React.FC = () => {
       } finally {
         setPersonalizedLoading(false);
       }
-    }, 400);
+    }, delay);
 
     return () => {
       clearTimeout(timer);
