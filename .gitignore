@@ -93,3 +93,7 @@ scratch/
 
 # Build & Vite caches
 .vite/
+
+# Local guides & run notes
+How to Start the Servers Step-by-Step.txt
+

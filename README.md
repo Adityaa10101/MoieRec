@@ -12,14 +12,16 @@ A personalized, explainable movie recommendation engine and web application eval
 
 ## Table of Contents
 - [Overview](#overview)
+- [Features](#features)
 - [Highlights](#highlights)
 - [Evaluation Results](#evaluation-results)
 - [How It Works](#how-it-works)
 - [Screenshots](#screenshots)
 - [Run It Locally](#run-it-locally)
+- [Backend API](#backend-api)
 - [Repository Structure](#repository-structure)
 - [Design Decisions & Lessons](#design-decisions--lessons)
-- [Limitations & Future Work](#limitations--future-work)
+- [Known Limitations](#known-limitations)
 - [Data & Credits](#data--credits)
 - [License](#license)
 
@@ -29,17 +31,52 @@ A personalized, explainable movie recommendation engine and web application eval
 
 **MoieRec** is a full-stack movie recommendation platform combining an audited offline machine learning pipeline (trained on MovieLens 25M) with a production-grade FastAPI backend and an interactive React 19 web application. It bridges the gap between offline recommender benchmarking and end-user interactive serving.
 
-### What You Can Do
-- **Pick Movies You Love**: Seed an onboarding taste profile with 3 or more favorite films, or search and pick from the catalog at any time.
-- **Personalized Recommendations**: Receive real-time ranking rails (*Picked for You*, *Because you liked &lt;Title&gt;*) scored dynamically from your active picks.
-- **Evidence-Based Explanations**: Inspect any recommendation in the "Why This?" modal to see verified collaborative evidence (*"N MovieLens viewers who liked X also liked this"*), shared tags, and honest percentile chips (*"Top N% pick"*).
-- **Explore & Filter**: Browse the catalog across 19 genres, release decades, and non-personalized popularity baselines.
-- **Manage Your Library**: Save movies to your Watchlist, track Liked titles, and record ratings entirely within your browser.
+---
 
-### Deliberately Out of Scope
-- **No Remote Accounts**: All user profiles, watchlists, and seed picks live client-side in browser `localStorage`. No database accounts, passwords, or JWT sessions exist.
-- **Not Deployed to the Cloud**: Designed and structured strictly as a reproducible local engineering benchmark and developer demonstration.
-- **Catalog Horizon Ends in 2019**: Built on the official MovieLens 25M dataset; releases, ratings, and catalog entries terminate in late 2019.
+## Features
+
+### 1. Home Feed & Hero Spotlight
+- **Auto-Rotating Hero Carousel**: Cycles through top recommendations on a 10-second interval, featuring smooth crossfades, previous/next controls, and individual slide progress bars.
+- **Smart Pause & Accessibility**: Automatically pauses rotation when the browser tab is hidden (`document.hidden`), when hovering over slide titles, overviews, or action buttons, and respects the user's `prefers-reduced-motion` system preference.
+- **Source-Derived Honest Labeling**: Labeled `"Picked for you"` strictly when active candidates originate from the personalized recommendation feed; falls back to `"Popular right now"` if recommendations are empty, unseeded (< 3 picks), or in offline fallback.
+
+### 2. Personalized Recommendation Rails
+- **Picked for You**: The primary hybrid collaborative-filtering rail ($k=200$ Item-kNN CF with content smoothing for $K \ge 15$ picks), scored dynamically from the user's active picks.
+- **Because You Liked \<Title\>**: Up to two dedicated content-similarity rails anchored to the user's most recent likes.
+- **Ordering Contract**: The frontend sends `liked_movie_ids` ordered oldest-first (newest like at the tail of the list) so anchor rails reliably reflect the user's latest additions.
+- **Order-Invariant Scoring**: The main "Picked for you" candidate selection, ranking order, and float scores are mathematically order-invariant (verified by automated tests in `test_personalized_api.py`).
+- **De-Jumped Refresh**: Runtime updates to likes/dislikes on Home debounce for 1.5 seconds before updating rails to avoid jumpy UI layout shifts, while Home mount triggers an immediate refresh.
+
+### 3. Unified Taste Signals (Like & Dislike)
+- **Omnipresent Feedback**: Thumbs up (Like) and Thumbs down (Dislike) controls on the Hero Spotlight, Movie Cards, Movie Detail page, and My Library.
+- **Shared State**: All controls synchronize through a single `UserTasteContext` in client memory and browser `localStorage`.
+- **Decoupled from Lists**: Taste preferences operate completely independently from watch list statuses.
+
+### 4. Per-Movie Watch Status Tracking
+- **Four Distinct Statuses**: *Plan to watch*, *Watching*, *Watched*, and *Dropped*.
+- **Portaled Dropdown Control**: Built with `createPortal` and dynamic viewport boundary clamping (`WatchStatusControl`) so menus never get clipped by overflow containers on movie cards or detail headers.
+- **Catalog Exclusions**: *Watched* and *Dropped* titles are automatically hidden from Home rails and Explore catalog views, and passed via `exclude_movie_ids` to the recommendation engine.
+- **Strict Separation of Concerns**: Watch status is **NEVER** used as a recommendation signal; only explicit positive likes drive collaborative filtering.
+- **Legacy Migration**: Automatically migrates existing local watchlist entries to the *Plan to watch* status on first load.
+
+### 5. Explore Catalog & Discovery
+- **Multi-Select Genre Filter Chips**: Toggle multiple genres simultaneously with active chip badges, perfectly synchronized to the URL query string (`/explore?genres=Action,Sci-Fi`).
+- **Flexible Filtering**: Backed by comma-separated genre support on `GET /api/movies/popular` alongside release decade filters and popularity sort orders.
+
+### 6. Avoided Genres Preference
+- **Onboarding & Taste Setting**: Pick avoided genres during initial onboarding or manage them anytime in My Taste.
+- **Display-Only Filtering**: Acts as a client-side filter to prevent unwanted genres from appearing in rails; it **never** alters offline model weights, features, or backend scores.
+
+### 7. Cold-Start Handling & Network Resilience
+- **Skeleton Placeholders**: Shimmer skeleton cards render during feed loading.
+- **Server Wake-Up Notice**: Informative notice explains brief backend delays when spinning up cold instances.
+- **75s Budget & Auto-Retry**: Client fetchers incorporate a 75-second timeout window with an automatic retry to gracefully accommodate cloud spin-down cold starts.
+
+### 8. Explainability & Library
+- **"Why This?" Modal**: Honest attribution showing verified MovieLens co-viewer counts (*"N MovieLens viewers who liked X also liked this"*), shared tags, and percentile ranks. Prohibits fabricated marketing claims.
+- **Detailed Movie Views**: High-resolution TMDB backdrops with soft gradient scrims, runtime, directors, release years, TMDB ratings, and content-similarity rails.
+- **Command Palette Search**: Global `Ctrl + K` / `Cmd + K` search dialog with debounced catalog query matching.
+- **My Library**: Dedicated tabs for Plan, Watching, Watched, Dropped, Liked, and Disliked, with real-time count badges, clear-tab modals, and liked-title genre frequency charts.
 
 ---
 
@@ -234,36 +271,38 @@ Pre-warm the SQLite artwork cache (`data/serving/tmdb_cache.sqlite`) for top cat
 </details>
 
 <details>
-<summary><b>4. Starting the Application Servers</b></summary>
+<summary><b>4. Starting the Application Servers (Step-by-Step)</b></summary>
 
-Open two separate terminal windows at the repository root:
+Open two separate terminal windows in your project root directory:
 
 **Terminal 1 — FastAPI Backend**
 ```powershell
+# Activate backend environment and run Uvicorn server
 .\.venv\Scripts\uvicorn.exe app.main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
-- Interactive API Docs: `http://127.0.0.1:8000/docs`
-- Health Endpoint: `http://127.0.0.1:8000/api/health`
+- **Interactive API Docs (Swagger UI)**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Service Health Check**: [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
 
 **Terminal 2 — React Frontend**
 ```powershell
+# Navigate to frontend and start Vite development server
 cd frontend
 npm install
 npm run dev
 ```
-- Web Application: `http://localhost:5173`
+- **Web Application URL**: [http://localhost:5173](http://localhost:5173)
 
-*To stop the servers at any time, press `Ctrl + C` in both terminal windows.*
+*To stop the servers at any time, press `Ctrl + C` in each terminal window.*
 </details>
 
 <details>
 <summary><b>5. Running Automated Tests</b></summary>
 
 ```powershell
-# Run backend API tests
+# Run backend API test suite (61 tests, all passing)
 .\.venv\Scripts\pytest.exe backend/tests
 
-# Run recommender parity and evaluation tests
+# Run recommender parity and evaluation test suite
 .\.venv_recommender\Scripts\pytest.exe recommender/tests
 ```
 </details>
@@ -345,14 +384,39 @@ MoieRec/
 
 ---
 
-## Limitations & Future Work
+## Backend API
 
-- **2019 Dataset Horizon**: The MovieLens 25M dataset concludes in November 2019. The catalog does not contain modern theatrical releases, streaming-era titles, or contemporary cinema.
-- **Tier 2 Snapshot Leakage**: Tag applications and genome matrices aggregate post-release impressions, creating optimistic feature availability in historical evaluations.
+The FastAPI service exposes clean REST endpoints documented interactively via OpenAPI / Swagger at `/docs`.
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Health check returning `{"status": "ok", "service": "MoieRec API"}`. |
+| `POST` | `/api/personalized/home` | Personalized home feed rails for active user picks. Requires $\ge 3$ valid liked IDs. |
+| `GET` | `/api/movies/popular` | Filtered catalog movies. Supports single or comma-separated `genre` (e.g. `Action,Sci-Fi`), `decade`, `year`, `sort`, `limit`, and `offset`. |
+| `GET` | `/api/movies/{id}` | Detailed movie metadata enriched with TMDB credits and overview. |
+| `GET` | `/api/movies/{id}/similar` | Content-only nearest neighbors based on Tier 2 genres and tags. |
+| `GET` | `/api/movies/batch` | Batch metadata lookup for up to 100 movie IDs (`?ids=1,2,3`). |
+| `GET` | `/api/search` | Fast substring catalog search with prefix prioritization (`?q=matrix&limit=10`). |
+| `GET` | `/api/meta/filters` | Dynamic metadata listing all available genres and release decades. |
+| `GET` | `/api/home` | Curated non-personalized fallback feed. |
+
+### `POST /api/personalized/home` Parameters
+- `liked_movie_ids: List[int]` *(required, max 50)*: MovieLens movie IDs picked by the user, ordered oldest-to-newest.
+- `exclude_movie_ids: Optional[List[int]]` *(optional)*: MovieLens IDs to strictly exclude from recommendations (watched, dropped, or disliked).
+- `limit: Optional[int]` *(optional, default 20, range 1–50)*: Maximum items to return in the main personalized row (frontend requests 40).
+
+The backend test suite verifies complete parity, edge cases, honesty contracts, parameter validation, and order-invariance across **61 automated tests** (`pytest backend/tests`).
+
+---
+
+## Known Limitations
+
+- **Dataset Horizon (MovieLens 25M)**: The underlying dataset concludes in November 2019. The catalog contains no modern releases, streaming-era titles, or post-2019 films.
+- **Client-Side Guest Profiles**: Guest picks, watch statuses, and avoided genres persist strictly in the browser's `localStorage`. There are no user accounts, passwords, cloud databases, or cross-device syncing.
+- **Evaluation Scope vs. Live UI Features**: The reported offline recommender evaluation (NDCG@10, Hit Rate@10, paired bootstrap intervals) benchmarks the offline machine learning algorithms against held-out MovieLens 25M test splits, not the interactive client-side UI features.
+- **Metadata & Artwork Coverage**: Movie metadata and poster artwork are retrieved from TMDB; some niche or archival titles may lack artwork.
 - **Simulated Onboarding Approximation**: The offline cold-start protocol approximates user onboarding using a user's first $K$ organic ratings, whereas live web onboarding involves active user browsing.
-- **Binary Positivity in Neighborhood CF**: The collaborative model treats ratings $\ge 4.0$ as positive approvals and ignores sub-4.0 distinctions. Latent factor modeling (ALS, SVD) and explicit dislike handling represent clear avenues for extension.
-- **Client-Side Guest Profiles**: Session profiles reside solely in browser `localStorage`. Profiles do not synchronize across devices or persist across browser cache purges.
-- **Local Architecture**: MoieRec is engineered as a reproducible local demonstration rather than a horizontally scaled cloud deployment.
+- **Binary Positivity in Neighborhood CF**: The collaborative model treats ratings $\ge 4.0$ as positive approvals and ignores sub-4.0 distinctions. Latent factor modeling (ALS, SVD) and explicit dislike handling represent avenues for extension.
 
 ---
 
