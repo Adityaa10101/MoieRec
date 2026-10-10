@@ -3,15 +3,16 @@ import { useRouter, Link } from '../router/Router';
 import { fetchMovieDetail, fetchSimilarMovies } from '../api/client';
 import { ALL_MOCK_MOVIES } from '../data/mockMovies';
 import type { ApiMovie } from '../api/types';
-import { ArrowLeft, Clock, Calendar, Star, Bookmark, User } from 'lucide-react';
+import { ArrowLeft, Clock, Calendar, Star, User, ThumbsUp, ThumbsDown, Sparkles, Bookmark } from 'lucide-react';
 import { useUserTaste } from '../context/UserTasteContext';
 import { RecommendationRow } from '../components/recommendations/RecommendationRow';
+import { WhyThisModal } from '../components/feedback/WhyThisModal';
 
 function SkeletonDetail() {
   return (
     <div className="space-y-8 animate-pulse">
       <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#1a1b20]">
-        <div className="h-80 sm:h-96 w-full bg-[#23252b]" />
+        <div className="h-80 sm:h-[420px] lg:h-[480px] w-full bg-[#23252b]" />
         <div className="p-6 sm:p-10 space-y-4">
           <div className="flex gap-2">
             {[1,2,3].map(i => <div key={i} className="h-6 w-20 bg-white/10 rounded-full" />)}
@@ -25,7 +26,15 @@ function SkeletonDetail() {
 
 export const MovieDetailPage: React.FC = () => {
   const { params } = useRouter();
-  const { isInWatchlist, toggleWatchlist } = useUserTaste();
+  const {
+    isInWatchlist,
+    toggleWatchlist,
+    isLiked,
+    isDisliked,
+    toggleLike,
+    toggleDislike,
+    validLikedIds,
+  } = useUserTaste();
 
   const rawId = params.id;
   const numericId = rawId ? parseInt(rawId, 10) : null;
@@ -34,6 +43,11 @@ export const MovieDetailPage: React.FC = () => {
   const [similarMovies, setSimilarMovies] = useState<ApiMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showWhyThis, setShowWhyThis] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [numericId]);
 
   useEffect(() => {
     if (!numericId || isNaN(numericId)) return;
@@ -103,6 +117,8 @@ export const MovieDetailPage: React.FC = () => {
   }, [numericId, rawId]);
 
   const movieIdStr = movie ? String(movie.movie_id) : '';
+  const liked = movie ? isLiked(movieIdStr) : false;
+  const disliked = movie ? isDisliked(movieIdStr) : false;
   const inWatchlist = movie ? isInWatchlist(movieIdStr) : false;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -117,11 +133,16 @@ export const MovieDetailPage: React.FC = () => {
     matchScore: 0,
     tags: [],
     director: movie.directors?.[0] || '',
+    explanation: movie.explanation,
   }) : null;
 
   const runtimeStr = movie?.runtime
     ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
     : null;
+
+  const rawBackdrop = movie?.backdrop_url || movie?.poster_url;
+  // Ensure w1280 TMDB backdrop size if a smaller size is returned
+  const backdropUrl = rawBackdrop ? rawBackdrop.replace(/\/w\d+\//, '/w1280/') : null;
 
   return (
     <div className="min-h-screen pt-24 pb-20 max-w-6xl mx-auto px-6 lg:px-12 space-y-12">
@@ -147,52 +168,75 @@ export const MovieDetailPage: React.FC = () => {
       {!loading && !error && movie && (
         <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#1a1b20]">
           {/* Backdrop */}
-          <div className="relative h-80 sm:h-96 w-full">
-            {movie.backdrop_url ? (
+          <div className="relative h-80 sm:h-[420px] lg:h-[480px] w-full overflow-hidden bg-[#16171c]">
+            {backdropUrl ? (
               <img
-                src={movie.backdrop_url}
+                src={backdropUrl}
                 alt={movie.title}
-                loading="lazy"
-                className="w-full h-full object-cover filter brightness-[0.4] contrast-125"
-              />
-            ) : movie.poster_url ? (
-              <img
-                src={movie.poster_url}
-                alt={movie.title}
-                loading="lazy"
-                className="w-full h-full object-cover object-top filter brightness-[0.4] contrast-125"
+                loading="eager"
+                className="w-full h-full object-cover opacity-100 transition-all duration-300"
+                style={{
+                  objectPosition: 'center 22%',
+                  filter: 'brightness(1.1) saturate(1.05)',
+                }}
               />
             ) : (
               <div className="w-full h-full bg-[#23252b]" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1b20] via-transparent to-transparent" />
 
-            <div className="absolute bottom-6 left-6 sm:left-10 right-6 space-y-3">
+            {/* a) Bottom fade: roughly bottom 35-40% blending into card background (#1a1b20) */}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-[38%] pointer-events-none z-[1]"
+              style={{
+                background:
+                  'linear-gradient(to top, #1a1b20 0%, rgba(26, 27, 32, 0.85) 45%, rgba(26, 27, 32, 0) 100%)',
+              }}
+            />
+
+            {/* b) Light left scrim for title/meta text contrast without darkening top of image */}
+            <div
+              className="absolute inset-0 pointer-events-none z-[1]"
+              style={{
+                background:
+                  'linear-gradient(to right, rgba(15, 16, 20, 0.6) 0%, rgba(15, 16, 20, 0.2) 35%, rgba(15, 16, 20, 0) 65%)',
+              }}
+            />
+
+            <div className="absolute bottom-6 left-6 sm:left-10 right-6 space-y-3 z-10">
               {/* No fake match score */}
-              <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              <h1
+                className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]"
+                style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.9)' }}
+              >
                 {movie.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 font-mono">
+              <div
+                className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-200 font-mono drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]"
+                style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.95)' }}
+              >
                 {movie.directors?.[0] && (
-                  <span className="flex items-center gap-1">
-                    <User className="w-3 h-3" /> {movie.directors[0]}
+                  <span className="flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-slate-300" />
+                    <span>Dir. {movie.directors[0]}</span>
                   </span>
                 )}
                 {movie.year && (
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" /> {movie.year}
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-slate-300" />
+                    <span>{movie.year}</span>
                   </span>
                 )}
                 {runtimeStr && (
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {runtimeStr}
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-300" />
+                    <span>{runtimeStr}</span>
                   </span>
                 )}
                 {/* TMDB vote_average — labelled as TMDB rating */}
                 {movie.vote_average != null && movie.vote_average > 0 && (
-                  <span className="flex items-center gap-1 text-amber-400 font-bold">
-                    <Star className="w-3 h-3 fill-amber-400" />
-                    {movie.vote_average.toFixed(1)} TMDB rating
+                  <span className="flex items-center gap-1.5 text-amber-400 font-bold">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span>{movie.vote_average.toFixed(1)} TMDB rating</span>
                   </span>
                 )}
               </div>
@@ -237,8 +281,9 @@ export const MovieDetailPage: React.FC = () => {
             {/* Actions */}
             <div className="pt-4 flex flex-wrap items-center gap-4 border-t border-white/10">
               <button
+                type="button"
                 onClick={() => toggleWatchlist(asContextMovie())}
-                className={`px-6 py-3 rounded-lg font-medium text-sm flex items-center gap-2 transition-all ${
+                className={`px-6 py-3 rounded-lg font-medium text-sm flex items-center gap-2 transition-all cursor-pointer ${
                   inWatchlist
                     ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                     : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
@@ -248,9 +293,61 @@ export const MovieDetailPage: React.FC = () => {
                 <span>{inWatchlist ? '✓ On Watchlist' : '+ Add to Watchlist'}</span>
               </button>
 
-              {/* TMDB attribution inline */}
-              <div className="text-xs text-slate-500 italic">
-                Rating data from TMDB. Recommendation: popularity-based (Model 0).
+              {/* Thumbs up/down — local taste signals only */}
+              <div className="flex items-center gap-2 ml-1 sm:ml-2 pl-3 sm:pl-4 border-l border-white/15">
+                <button
+                  type="button"
+                  onClick={() => toggleLike(asContextMovie())}
+                  aria-label={`Like ${movie.title}`}
+                  className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                    liked
+                      ? 'bg-amber-500/20 border-amber-500 text-amber-400 scale-105'
+                      : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-amber-400 hover:border-amber-500/50'
+                  }`}
+                  title={liked ? `Unlike ${movie.title}` : `Like ${movie.title}`}
+                >
+                  <ThumbsUp className={`w-4 h-4 ${liked ? 'fill-amber-400' : ''}`} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => toggleDislike(asContextMovie())}
+                  aria-label={`Dislike ${movie.title}`}
+                  className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                    disliked
+                      ? 'bg-amber-500/20 border-amber-500 text-amber-400 scale-105'
+                      : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-amber-400 hover:border-amber-500/50'
+                  }`}
+                  title={disliked ? `Undo dislike for ${movie.title}` : `Dislike ${movie.title}`}
+                >
+                  <ThumbsDown className={`w-4 h-4 ${disliked ? 'fill-amber-400' : ''}`} />
+                </button>
+              </div>
+
+              {/* TMDB attribution inline / Explanation */}
+              <div className="flex items-center gap-2 text-xs text-slate-500 italic ml-auto">
+                {movie.explanation ? (
+                  <div className="flex items-center gap-2 not-italic">
+                    <span className="text-amber-400/90 font-medium font-sans">
+                      Personalized recommendation
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowWhyThis(true)}
+                      className="px-2 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-mono flex items-center gap-1 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      <span>Why recommended?</span>
+                    </button>
+                  </div>
+                ) : (
+                  <span>
+                    Rating data from TMDB.{' '}
+                    {validLikedIds.length >= 3
+                      ? 'No personalized explanation for this title yet; showing popularity-based info.'
+                      : 'Recommendation: popularity-based (Model 0).'}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -270,6 +367,15 @@ export const MovieDetailPage: React.FC = () => {
             badge="SIMILAR · CONTENT SIMILARITY"
           />
         </div>
+      )}
+
+      {/* WhyThis Explainability Modal */}
+      {showWhyThis && movie && (
+        <WhyThisModal
+          isOpen={showWhyThis}
+          onClose={() => setShowWhyThis(false)}
+          movie={asContextMovie()}
+        />
       )}
     </div>
   );
