@@ -192,7 +192,8 @@ async def get_home():
 
 @router.get("/movies/popular", response_model=list[MovieOut], summary="Popular movies")
 async def get_popular(
-    genre: Optional[str] = Query(None, description="Filter by genre name"),
+    genre: Optional[str] = Query(None, description="Filter by genre name or comma-separated names"),
+    genres: Optional[str] = Query(None, description="Filter by comma-separated genre names"),
     decade: Optional[int] = Query(None, description="Filter by decade start year (e.g. 2010)"),
     year: Optional[int] = Query(None, description="Filter by release year (e.g. 1999)"),
     sort: Optional[str] = Query("popular", description="Sort order: 'popular' (default), 'newest', 'oldest'"),
@@ -218,13 +219,14 @@ async def get_popular(
                 status_code=400,
                 detail="Invalid year parameter. Must be between 1870 and 2030.",
             )
-    if genre is not None and len(genre.strip()) > 50:
+    genre_input = (genres or genre or "").strip()
+    if len(genre_input) > 200:
         raise HTTPException(status_code=400, detail="Genre parameter too long")
 
     catalog_rows = fetch_popular(
         limit=limit,
         offset=offset,
-        genre=genre.strip() if genre else None,
+        genre=genre_input if genre_input else None,
         decade=decade,
         year=year,
         sort=sort,

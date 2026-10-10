@@ -90,10 +90,13 @@ def fetch_popular(
     params: list = []
 
     if genre:
-        where_clauses.append(
-            "EXISTS (SELECT 1 FROM json_each(genres) WHERE json_each.value = ?)"
-        )
-        params.append(genre)
+        genre_list = [g.strip() for g in genre.split(",") if g.strip()]
+        if genre_list:
+            placeholders = ", ".join(["?"] * len(genre_list))
+            where_clauses.append(
+                f"EXISTS (SELECT 1 FROM json_each(genres) WHERE json_each.value IN ({placeholders}))"
+            )
+            params.extend(genre_list)
 
     if year is not None:
         where_clauses.append("year = ?")
