@@ -18,6 +18,7 @@ interface HeroSpotlightProps {
   candidateMovies?: ApiMovie[];
   fallbackMovie?: ApiMovie | null;
   movie?: ApiMovie; // backward compatibility
+  isPersonalized?: boolean;
   onOpenWhyThis?: (movie: ApiMovie) => void;
 }
 
@@ -25,13 +26,14 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
   candidateMovies,
   fallbackMovie,
   movie,
+  isPersonalized = false,
 }) => {
   const { isInWatchlist, isLiked, isDisliked, toggleWatchlist, toggleLike, toggleDislike } =
     useUserTaste();
   const { navigate } = useRouter();
 
   const heroRef = useRef<HTMLElement>(null);
-  const touchStartXRef = useRef<number | null>(null);
+  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
 
   // Pause ONLY when mouse/pointer is hovering directly over the text/buttons block
   const [isTextHovered, setIsTextHovered] = useState(false);
@@ -50,20 +52,30 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
   const isLikedRef = useRef(isLiked);
   const isDislikedRef = useRef(isDisliked);
   const isInWatchlistRef = useRef(isInWatchlist);
-  const isMovieExcluded = useCallback((m: ApiMovie): boolean => {
-    if (!m.backdrop_url || !m.backdrop_url.trim()) return true;
-    if (!m.overview || !m.overview.trim()) return true;
-    const midStr = String(m.movie_id);
-    return (
-      isLikedRef.current(midStr) ||
-      isDislikedRef.current(midStr) ||
-      isInWatchlistRef.current(midStr)
-    );
-  }, []);
+  const isMovieExcluded = useCallback(
+    (
+      m: ApiMovie,
+      checkLiked: (id: string) => boolean = isLikedRef.current,
+      checkDisliked: (id: string) => boolean = isDislikedRef.current,
+      checkWatchlist: (id: string) => boolean = isInWatchlistRef.current,
+    ): boolean => {
+      if (!m.backdrop_url || !m.backdrop_url.trim()) return true;
+      if (!m.overview || !m.overview.trim()) return true;
+      const midStr = String(m.movie_id);
+      return (
+        checkLiked(midStr) ||
+        checkDisliked(midStr) ||
+        checkWatchlist(midStr)
+      );
+    },
+    [],
+  );
 
   // Active hero slides state
   const [activeMovies, setActiveMovies] = useState<ApiMovie[]>(() => {
-    const valid = candidates.filter((m) => !isMovieExcluded(m)).slice(0, 7);
+    const valid = candidates
+      .filter((m) => !isMovieExcluded(m, isLiked, isDisliked, isInWatchlist))
+      .slice(0, 7);
     if (valid.length > 0) return valid;
     if (fallbackMovie) return [fallbackMovie];
     if (movie) return [movie];
@@ -170,15 +182,24 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
   }, [isHeroFocused, prevSlide, nextSlide]);
 
   // Touch swipe support on mobile (swiping left = next, right = prev)
+  // Only changes slides when horizontal movement is > 50px AND greater than vertical movement
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartXRef.current = e.touches[0].clientX;
+    touchStartPosRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartXRef.current === null) return;
-    const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
-    touchStartXRef.current = null;
-    if (Math.abs(deltaX) > 45) {
+    if (!touchStartPosRef.current) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartPosRef.current.x;
+    const deltaY = e.changedTouches[0].clientY - touchStartPosRef.current.y;
+    touchStartPosRef.current = null;
+
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    if (absX > 50 && absX > absY) {
       if (deltaX < 0) {
         nextSlide();
       } else {
@@ -307,32 +328,32 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
           onPointerLeave={() => setIsTextHovered(false)}
           onPointerCancel={() => setIsTextHovered(false)}
         >
-          {/* Honest "Picked for you" badge */}
+          {/* Honest badge — "Picked for you" when personalized, "Popular right now" when fallback */}
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-semibold tracking-wider uppercase bg-amber-500/15 border border-amber-500/30 text-amber-400">
-              Picked for you
+              {isPersonalized ? 'Picked for you' : 'Popular right now'}
             </span>
           </div>
 
-          {/* Metadata row — NO fake match score */}
-          <div className="flex flex-wrap items-center gap-2.5 text-slate-300 font-mono text-xs tracking-wider uppercase drop-shadow-sm">
+          {/* Metadata row — NO fake match score, shadow for legibility over bright backdrops */}
+          <div className="flex flex-wrap items-center gap-2.5 text-slate-200 font-mono text-xs tracking-wider uppercase drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.85)]">
             {activeMovie.directors?.[0] && (
               <>
                 <span>{activeMovie.directors[0]}</span>
-                <span className="text-slate-500">•</span>
+                <span className="text-slate-400">•</span>
               </>
             )}
             {activeMovie.year && <span>{activeMovie.year}</span>}
             {runtimeStr && (
               <>
-                <span className="text-slate-500">•</span>
+                <span className="text-slate-400">•</span>
                 <span>{runtimeStr}</span>
               </>
             )}
             {/* TMDB rating — labelled honestly */}
             {activeMovie.vote_average != null && activeMovie.vote_average > 0 && (
               <>
-                <span className="text-slate-500">•</span>
+                <span className="text-slate-400">•</span>
                 <span className="text-amber-400 font-bold">
                   ★ {activeMovie.vote_average.toFixed(1)} TMDB
                 </span>
@@ -341,7 +362,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
           </div>
 
           {/* Title */}
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-white leading-none tracking-tight drop-shadow-md font-bold">
+          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-white leading-none tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] [text-shadow:_0_2px_12px_rgba(0,0,0,0.75)] font-bold">
             {activeMovie.title}
           </h1>
 
@@ -357,9 +378,9 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
             ))}
           </div>
 
-          {/* Overview */}
+          {/* Overview — shadow for legibility across bright backgrounds without adding dark fog */}
           {activeMovie.overview && (
-            <p className="text-slate-200 text-base sm:text-lg leading-relaxed max-w-2xl text-balance drop-shadow-sm font-normal">
+            <p className="text-slate-100 text-base sm:text-lg leading-relaxed max-w-2xl text-balance drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)] [text-shadow:_0_1px_5px_rgba(0,0,0,0.85)] font-normal">
               {activeMovie.overview}
             </p>
           )}
@@ -389,27 +410,31 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
             {/* Thumbs up/down — local taste signals only */}
             <div className="flex items-center gap-2 ml-1 sm:ml-2 pl-3 sm:pl-4 border-l border-white/15">
               <button
+                type="button"
                 onClick={() => toggleLike(asContextMovie())}
-                className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
+                aria-label={`Like ${activeMovie.title}`}
+                className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                   liked
                     ? 'bg-amber-500/20 border-amber-500 text-amber-400 scale-105'
                     : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-amber-400 hover:border-amber-500/50'
                 }`}
-                title="Like"
+                title={liked ? `Unlike ${activeMovie.title}` : `Like ${activeMovie.title}`}
               >
                 <ThumbsUp className={`w-4 h-4 ${liked ? 'fill-amber-400' : ''}`} />
               </button>
 
               <button
+                type="button"
                 onClick={() => toggleDislike(asContextMovie())}
-                className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
+                aria-label={`Dislike ${activeMovie.title}`}
+                className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                   disliked
-                    ? 'bg-red-500/20 border-red-500 text-red-400'
-                    : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-red-400 hover:border-red-500/50'
+                    ? 'bg-amber-500/20 border-amber-500 text-amber-400 scale-105'
+                    : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-amber-400 hover:border-amber-500/50'
                 }`}
-                title="Dislike"
+                title={disliked ? `Undo dislike for ${activeMovie.title}` : `Dislike ${activeMovie.title}`}
               >
-                <ThumbsDown className="w-4 h-4" />
+                <ThumbsDown className={`w-4 h-4 ${disliked ? 'fill-amber-400' : ''}`} />
               </button>
             </div>
           </div>

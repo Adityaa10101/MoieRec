@@ -36,41 +36,32 @@ export function useHeroRotation({
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // Derive pageActive directly from document.hidden and document.hasFocus()
-  // Active only when tab is visible AND window has focus
-  const [isPageActive, setIsPageActive] = useState<boolean>(() => {
-    if (typeof document === 'undefined') return true;
-    return !document.hidden && document.hasFocus();
+  // Pause only when document.hidden is true (not window blur or focus loss)
+  const [isDocumentHidden, setIsDocumentHidden] = useState<boolean>(() => {
+    if (typeof document === 'undefined') return false;
+    return document.hidden;
   });
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof document === 'undefined') return;
 
-    const updateActive = () => {
-      const active = !document.hidden && document.hasFocus();
-      setIsPageActive((prev) => {
-        // When resuming after inactive (alt-tab back or tab switch back),
-        // restart a full 10s and bump rotationKey so the progress bar animation restarts in sync
-        if (!prev && active) {
+    const handleVisibilityChange = () => {
+      const hidden = document.hidden;
+      setIsDocumentHidden((prev) => {
+        // When resuming from hidden to visible, bump rotationKey so timer & progress bar restart fresh in sync
+        if (prev && !hidden) {
           setRotationKey((k) => k + 1);
         }
-        return active;
+        return hidden;
       });
     };
 
-    window.addEventListener('focus', updateActive);
-    window.addEventListener('blur', updateActive);
-    document.addEventListener('visibilitychange', updateActive);
-
-    return () => {
-      window.removeEventListener('focus', updateActive);
-      window.removeEventListener('blur', updateActive);
-      document.removeEventListener('visibilitychange', updateActive);
-    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  // Pause only when page is inactive, text/buttons block is hovered, reduced-motion is set, or < 2 movies
-  const isPaused = !isPageActive || isTextHovered || prefersReducedMotion || count < 2;
+  // Pause only when document is hidden, text block hovered, reduced motion, or < 2 movies
+  const isPaused = isDocumentHidden || isTextHovered || prefersReducedMotion || count < 2;
 
   // Keep index within bounds if count shrinks
   useEffect(() => {
