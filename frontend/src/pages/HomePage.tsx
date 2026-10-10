@@ -169,8 +169,53 @@ export const HomePage: React.FC = () => {
     })),
   }));
 
-  const displayHero = homeData?.hero ?? (isOffline ? mockHeroAsApi : null);
-  const displayRows = homeData?.rows ?? (isOffline ? mockRowsAsApi : []);
+  const displayHero = React.useMemo(
+    () => homeData?.hero ?? (isOffline ? mockHeroAsApi : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [homeData?.hero, isOffline],
+  );
+
+  const displayRows = React.useMemo(
+    () => homeData?.rows ?? (isOffline ? mockRowsAsApi : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [homeData?.rows, isOffline],
+  );
+
+  // Hero candidates: prioritize personalized feed, fall back to popularity feed for guests
+  const heroCandidates = React.useMemo(() => {
+    if (personalizedRows.length > 0) {
+      const pickedRow = personalizedRows.find((r) => r.id === 'row-personalized-picked');
+      const otherRows = personalizedRows.filter((r) => r.id !== 'row-personalized-picked');
+      const combined = [
+        ...(pickedRow ? pickedRow.movies : []),
+        ...otherRows.flatMap((r) => r.movies),
+      ];
+      const seen = new Set<number>();
+      const unique: ApiMovie[] = [];
+      for (const m of combined) {
+        if (!seen.has(m.movie_id)) {
+          seen.add(m.movie_id);
+          unique.push(m);
+        }
+      }
+      if (unique.length > 0) return unique;
+    }
+
+    // Guest or empty picks fallback: popularity feed
+    const popMovies = [
+      ...(displayHero ? [displayHero] : []),
+      ...displayRows.flatMap((r) => r.movies),
+    ];
+    const seen = new Set<number>();
+    const unique: ApiMovie[] = [];
+    for (const m of popMovies) {
+      if (!seen.has(m.movie_id)) {
+        seen.add(m.movie_id);
+        unique.push(m);
+      }
+    }
+    return unique;
+  }, [personalizedRows, displayHero, displayRows]);
 
   return (
     <div className="relative min-h-screen">
@@ -187,9 +232,10 @@ export const HomePage: React.FC = () => {
             <div className="h-24 w-full max-w-xl bg-white/5 rounded animate-pulse" />
           </div>
         </div>
-      ) : displayHero ? (
+      ) : displayHero || heroCandidates.length > 0 ? (
         <HeroSpotlight
-          movie={displayHero}
+          candidateMovies={heroCandidates}
+          fallbackMovie={displayHero}
           onOpenWhyThis={(m) => {
             if (m.explanation != null) setSelectedMovieForWhyThis(m);
           }}

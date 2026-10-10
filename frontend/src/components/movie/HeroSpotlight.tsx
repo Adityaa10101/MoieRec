@@ -1,112 +1,356 @@
-import React from 'react';
-
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Bookmark, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Play, Bookmark, ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ApiMovie } from '../../api/types';
 import { useUserTaste } from '../../context/UserTasteContext';
 import { useRouter } from '../../router/Router';
+import { useHeroRotation } from '../../hooks/useHeroRotation';
+
+/**
+ * Ensures TMDB backdrop image uses high-res wide backdrop (w1280).
+ */
+function getHeroBackdropUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.replace(/\/t\/p\/w\d+\//, '/t/p/w1280/');
+}
 
 interface HeroSpotlightProps {
-  movie: ApiMovie;
+  candidateMovies?: ApiMovie[];
+  fallbackMovie?: ApiMovie | null;
+  movie?: ApiMovie; // backward compatibility
   onOpenWhyThis?: (movie: ApiMovie) => void;
 }
 
-export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ movie }) => {
-  const { isInWatchlist, isLiked, isDisliked, toggleWatchlist, toggleLike, toggleDislike } = useUserTaste();
+export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
+  candidateMovies,
+  fallbackMovie,
+  movie,
+}) => {
+  const { isInWatchlist, isLiked, isDisliked, toggleWatchlist, toggleLike, toggleDislike } =
+    useUserTaste();
   const { navigate } = useRouter();
 
-  // Derive a compatible id string for context functions
-  const movieIdStr = String(movie.movie_id);
+  const heroRef = useRef<HTMLElement>(null);
+  const touchStartXRef = useRef<number | null>(null);
+
+  // Pause ONLY when mouse/pointer is hovering directly over the text/buttons block
+  const [isTextHovered, setIsTextHovered] = useState(false);
+  const [isHeroFocused, setIsHeroFocused] = useState(false);
+
+  // Pool of candidate movies
+  const candidates = useMemo(() => {
+    if (candidateMovies && candidateMovies.length > 0) return candidateMovies;
+    if (movie) return [movie];
+    if (fallbackMovie) return [fallbackMovie];
+    return [];
+  }, [candidateMovies, movie, fallbackMovie]);
+
+  // Keep latest candidates and taste helpers in refs so handleRotate doesn't change identity on every render
+  const candidatesRef = useRef(candidates);
+  const isLikedRef = useRef(isLiked);
+  const isDislikedRef = useRef(isDisliked);
+  const isInWatchlistRef = useRef(isInWatchlist);
+  const isMovieExcluded = useCallback((m: ApiMovie): boolean => {
+    if (!m.backdrop_url || !m.backdrop_url.trim()) return true;
+    if (!m.overview || !m.overview.trim()) return true;
+    const midStr = String(m.movie_id);
+    return (
+      isLikedRef.current(midStr) ||
+      isDislikedRef.current(midStr) ||
+      isInWatchlistRef.current(midStr)
+    );
+  }, []);
+
+  // Active hero slides state
+  const [activeMovies, setActiveMovies] = useState<ApiMovie[]>(() => {
+    const valid = candidates.filter((m) => !isMovieExcluded(m)).slice(0, 7);
+    if (valid.length > 0) return valid;
+    if (fallbackMovie) return [fallbackMovie];
+    if (movie) return [movie];
+    return candidates.slice(0, 1);
+  });
+
+  const activeMoviesRef = useRef(activeMovies);
+
+  useEffect(() => {
+    candidatesRef.current = candidates;
+    isLikedRef.current = isLiked;
+    isDislikedRef.current = isDisliked;
+    isInWatchlistRef.current = isInWatchlist;
+    activeMoviesRef.current = activeMovies;
+  });
+
+  // Initialize active movies when candidates first become available
+  useEffect(() => {
+    if (candidates.length > 0) {
+      setActiveMovies((prev) => {
+        if (prev.length > 0) return prev;
+        const valid = candidates.filter((m) => !isMovieExcluded(m)).slice(0, 7);
+        if (valid.length > 0) return valid;
+        if (fallbackMovie) return [fallbackMovie];
+        if (movie) return [movie];
+        return candidates.slice(0, 1);
+      });
+    }
+  }, [candidates, isMovieExcluded, fallbackMovie, movie]);
+
+  // Rotation handler: filters out acted-upon movies ONLY at rotation boundary, not mid-slide
+  // Stable identity across re-renders (reads from refs)
+  const handleRotate = useCallback(
+    (targetIndex: number): number => {
+      const currentList = activeMoviesRef.current;
+      const currentTargetMovie = currentList[targetIndex] ?? currentList[0];
+
+      // Re-filter candidates removing any items the user liked/disliked/saved
+      let nextList = candidatesRef.current.filter((m) => !isMovieExcluded(m)).slice(0, 7);
+      if (nextList.length === 0) {
+        nextList = fallbackMovie ? [fallbackMovie] : (movie ? [movie] : candidatesRef.current.slice(0, 1));
+      }
+
+      // Reconcile index of targetMovie in nextList
+      let nextIndex = nextList.findIndex((m) => m.movie_id === currentTargetMovie?.movie_id);
+      if (nextIndex < 0) {
+        nextIndex = Math.min(targetIndex, Math.max(0, nextList.length - 1));
+      }
+
+      setActiveMovies(nextList);
+      return nextIndex;
+    },
+    [isMovieExcluded, fallbackMovie, movie],
+  );
+
+  const {
+    currentIndex,
+    rotationKey,
+    goTo,
+    nextSlide,
+    prevSlide,
+    isPaused,
+    prefersReducedMotion,
+  } = useHeroRotation({
+    count: activeMovies.length,
+    intervalMs: 10000,
+    isTextHovered,
+    onRotate: handleRotate,
+  });
+
+  // Keyboard navigation: ArrowLeft/ArrowRight change slides when hero is focused or hovered
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't hijack arrow keys when typing in input, textarea, or search
+      const target = e.target as HTMLElement | null;
+      const tagName = target?.tagName?.toLowerCase();
+      if (
+        tagName === 'input' ||
+        tagName === 'textarea' ||
+        tagName === 'select' ||
+        target?.isContentEditable
+      ) {
+        return;
+      }
+
+      // Only respond if hero has keyboard focus or mouse is over hero
+      const isFocusedInHero =
+        heroRef.current?.contains(document.activeElement) || isHeroFocused;
+      if (!isFocusedInHero) {
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextSlide();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isHeroFocused, prevSlide, nextSlide]);
+
+  // Touch swipe support on mobile (swiping left = next, right = prev)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
+    touchStartXRef.current = null;
+    if (Math.abs(deltaX) > 45) {
+      if (deltaX < 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
+
+  // Preload next slide's backdrop image so there is never a blank frame
+  useEffect(() => {
+    if (activeMovies.length < 2) return;
+    const nextIdx = (currentIndex + 1) % activeMovies.length;
+    const nextMovie = activeMovies[nextIdx];
+    const url = getHeroBackdropUrl(nextMovie?.backdrop_url);
+    if (url) {
+      const img = new Image();
+      img.src = url;
+    }
+  }, [currentIndex, activeMovies]);
+
+  // Currently active movie
+  const activeMovie = activeMovies[currentIndex] ?? activeMovies[0] ?? fallbackMovie ?? movie;
+
+  if (!activeMovie) return null;
+
+  // Derive signals for active movie
+  const movieIdStr = String(activeMovie.movie_id);
   const inWatchlist = isInWatchlist(movieIdStr);
   const liked = isLiked(movieIdStr);
   const disliked = isDisliked(movieIdStr);
 
-  // Cast movie to the shape expected by context (local state only)
+  // Context movie shape
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const asContextMovie = (): any => ({
     id: movieIdStr,
-    title: movie.title,
-    year: movie.year,
-    genres: movie.genres,
-    overview: movie.overview || '',
-    poster: movie.poster_url || '',
-    backdrop: movie.backdrop_url || '',
+    title: activeMovie.title,
+    year: activeMovie.year,
+    genres: activeMovie.genres,
+    overview: activeMovie.overview || '',
+    poster: activeMovie.poster_url || '',
+    backdrop: activeMovie.backdrop_url || '',
     matchScore: 0,
     tags: [],
-    director: movie.directors?.[0] || '',
+    director: activeMovie.directors?.[0] || '',
   });
 
-  const runtimeStr = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : null;
+  const runtimeStr = activeMovie.runtime
+    ? `${Math.floor(activeMovie.runtime / 60)}h ${activeMovie.runtime % 60}m`
+    : null;
 
   return (
-    <section className="relative pt-24 pb-16 min-h-[820px] lg:min-h-[880px] flex items-center justify-center overflow-hidden z-20">
-      {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0, scale: 1.05 }}
-        animate={{ opacity: 1, scale: 1.0 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute inset-0 z-0"
-      >
-        {movie.backdrop_url ? (
-          <img
-            src={movie.backdrop_url}
-            alt={movie.title}
-            loading="lazy"
-            className="w-full h-full object-cover object-center filter brightness-[0.42] contrast-125 transition-transform duration-1000 ease-out"
-          />
-        ) : (
-          <div className="w-full h-full bg-[#1a1b20]" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e12] via-[#0d0e12]/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0e12] via-[#0d0e12]/60 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_40%,rgba(245,158,11,0.12),transparent_70%)]" />
-      </motion.div>
+    <section
+      ref={heroRef}
+      tabIndex={0}
+      aria-label="Featured movie carousel"
+      className="relative pt-24 pb-16 min-h-[820px] lg:min-h-[880px] flex items-center justify-center overflow-hidden z-20 outline-none focus-visible:ring-1 focus-visible:ring-amber-500/30"
+      onFocus={() => setIsHeroFocused(true)}
+      onBlur={(e) => {
+        if (!heroRef.current?.contains(e.relatedTarget as Node)) {
+          setIsHeroFocused(false);
+        }
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Stacked Backdrops with ~1s Crossfade */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {activeMovies.map((m, idx) => {
+          const isActive = idx === currentIndex;
+          const backdropUrl = getHeroBackdropUrl(m.backdrop_url);
+          return (
+            <div
+              key={m.movie_id}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                isActive ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {backdropUrl ? (
+                <img
+                  src={backdropUrl}
+                  alt=""
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  className="w-full h-full object-cover object-[right_center] transition-transform duration-1000 ease-out"
+                  style={{ filter: 'brightness(1.1) saturate(1.05)' }}
+                />
+              ) : (
+                <div className="w-full h-full bg-[#1a1b20]" />
+              )}
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Hero Content */}
+      {/* Overlays: Consolidate into strictly two layers */}
+      {/* a) Left-side scrim for text legibility: rgba(0,0,0,0.85) at 0%, rgba(0,0,0,0.5) at 35%, transparent by 65% (right 40% unobscured) */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[1]"
+        style={{
+          background:
+            'linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 35%, rgba(0, 0, 0, 0) 65%)',
+        }}
+      />
+
+      {/* b) Short bottom fade (~20% only) blending cleanly into the page background */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[20%] pointer-events-none z-[1]"
+        style={{
+          background:
+            'linear-gradient(to top, #0d0e12 0%, rgba(13, 14, 18, 0) 100%)',
+        }}
+      />
+
+      {/* Hero Content — Re-fades / slides in on slide change keyed by movie id */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 w-full pt-12">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          key={activeMovie.movie_id}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0 }
+              : { duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }
+          }
           className="max-w-3xl space-y-6"
+          onPointerEnter={() => setIsTextHovered(true)}
+          onPointerLeave={() => setIsTextHovered(false)}
+          onPointerCancel={() => setIsTextHovered(false)}
         >
+          {/* Honest "Picked for you" badge */}
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-semibold tracking-wider uppercase bg-amber-500/15 border border-amber-500/30 text-amber-400">
+              Picked for you
+            </span>
+          </div>
+
           {/* Metadata row — NO fake match score */}
-          <div className="flex flex-wrap items-center gap-2.5 text-slate-400 font-mono text-xs tracking-wider uppercase">
-            {movie.directors?.[0] && (
+          <div className="flex flex-wrap items-center gap-2.5 text-slate-300 font-mono text-xs tracking-wider uppercase drop-shadow-sm">
+            {activeMovie.directors?.[0] && (
               <>
-                <span>{movie.directors[0]}</span>
-                <span className="text-slate-600">•</span>
+                <span>{activeMovie.directors[0]}</span>
+                <span className="text-slate-500">•</span>
               </>
             )}
-            {movie.year && <span>{movie.year}</span>}
+            {activeMovie.year && <span>{activeMovie.year}</span>}
             {runtimeStr && (
               <>
-                <span className="text-slate-600">•</span>
+                <span className="text-slate-500">•</span>
                 <span>{runtimeStr}</span>
               </>
             )}
             {/* TMDB rating — labelled honestly */}
-            {movie.vote_average != null && movie.vote_average > 0 && (
+            {activeMovie.vote_average != null && activeMovie.vote_average > 0 && (
               <>
-                <span className="text-slate-600">•</span>
+                <span className="text-slate-500">•</span>
                 <span className="text-amber-400 font-bold">
-                  ★ {movie.vote_average.toFixed(1)} TMDB
+                  ★ {activeMovie.vote_average.toFixed(1)} TMDB
                 </span>
               </>
             )}
           </div>
 
           {/* Title */}
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-white leading-none tracking-tight drop-shadow-lg font-bold">
-            {movie.title}
+          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-white leading-none tracking-tight drop-shadow-md font-bold">
+            {activeMovie.title}
           </h1>
 
           {/* Genre pills */}
           <div className="flex flex-wrap items-center gap-2">
-            {movie.genres.map((genre) => (
+            {activeMovie.genres.map((genre) => (
               <span
                 key={genre}
-                className="px-3 py-1 rounded-full bg-[#23252b]/80 backdrop-blur-sm border border-white/10 text-slate-300 font-mono text-xs"
+                className="px-3 py-1 rounded-full bg-[#1f2026]/90 backdrop-blur-sm border border-white/15 text-slate-200 font-mono text-xs"
               >
                 {genre}
               </span>
@@ -114,16 +358,16 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ movie }) => {
           </div>
 
           {/* Overview */}
-          {movie.overview && (
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl text-balance">
-              {movie.overview}
+          {activeMovie.overview && (
+            <p className="text-slate-200 text-base sm:text-lg leading-relaxed max-w-2xl text-balance drop-shadow-sm font-normal">
+              {activeMovie.overview}
             </p>
           )}
 
           {/* CTAs */}
           <div className="pt-2 flex flex-wrap items-center gap-4">
             <button
-              onClick={() => navigate(`/movie/${movie.movie_id}`)}
+              onClick={() => navigate(`/movie/${activeMovie.movie_id}`)}
               className="px-7 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#0d0e12] font-sans font-semibold text-sm sm:text-base flex items-center gap-2.5 shadow-lg shadow-amber-500/20 transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Play className="w-5 h-5 fill-[#0d0e12]" />
@@ -135,7 +379,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ movie }) => {
               className={`px-6 py-3 rounded-lg border font-medium text-sm sm:text-base backdrop-blur-md flex items-center gap-2 transition-all duration-200 cursor-pointer ${
                 inWatchlist
                   ? 'bg-amber-500/15 border-amber-500/60 text-amber-400 hover:bg-amber-500/25'
-                  : 'bg-[#1f1f24]/70 hover:bg-[#23252b] border-white/15 hover:border-amber-500/50 text-white'
+                  : 'bg-[#1f1f24]/80 hover:bg-[#23252b] border-white/20 hover:border-amber-500/50 text-white'
               }`}
             >
               <Bookmark className={`w-4 h-4 ${inWatchlist ? 'fill-amber-400' : ''}`} />
@@ -149,7 +393,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ movie }) => {
                 className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
                   liked
                     ? 'bg-amber-500/20 border-amber-500 text-amber-400 scale-105'
-                    : 'bg-[#1a1b20]/70 border-white/10 text-slate-400 hover:text-amber-400 hover:border-amber-500/50'
+                    : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-amber-400 hover:border-amber-500/50'
                 }`}
                 title="Like"
               >
@@ -161,7 +405,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ movie }) => {
                 className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
                   disliked
                     ? 'bg-red-500/20 border-red-500 text-red-400'
-                    : 'bg-[#1a1b20]/70 border-white/10 text-slate-400 hover:text-red-400 hover:border-red-500/50'
+                    : 'bg-[#1a1b20]/80 border-white/15 text-slate-300 hover:text-red-400 hover:border-red-500/50'
                 }`}
                 title="Dislike"
               >
@@ -171,6 +415,71 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ movie }) => {
           </div>
         </motion.div>
       </div>
+
+      {/* Controls Container: Progress Indicators + Prev/Next Buttons (Bottom-Right) */}
+      {activeMovies.length > 1 && (
+        <div className="absolute bottom-8 right-6 sm:right-12 z-20 flex items-center gap-3 sm:gap-4">
+          {/* Progress Indicators */}
+          <div
+            className="flex items-center gap-1.5 sm:gap-2"
+            role="tablist"
+            aria-label="Personalized picks carousel navigation"
+          >
+            {activeMovies.map((m, idx) => {
+              const isActive = idx === currentIndex;
+              return (
+                <button
+                  key={m.movie_id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`Go to slide ${idx + 1} of ${activeMovies.length}: ${m.title}`}
+                  onClick={() => goTo(idx)}
+                  className="group relative h-6 w-7 sm:w-11 flex items-center justify-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded transition-all"
+                >
+                  {/* Track */}
+                  <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden transition-colors duration-200 group-hover:bg-white/40">
+                    {isActive ? (
+                      <span
+                        key={`${rotationKey}-${isPaused ? 'paused' : 'playing'}`}
+                        className="block h-full w-full bg-amber-400 rounded-full origin-left"
+                        style={{
+                          animation:
+                            isPaused || prefersReducedMotion
+                              ? 'none'
+                              : 'heroProgressFill 10s linear forwards',
+                          animationPlayState: isPaused ? 'paused' : 'running',
+                          transform: isPaused ? 'scaleX(0)' : undefined,
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Prev / Next circular buttons */}
+          <div className="flex items-center gap-1.5 sm:gap-2 pl-2 sm:pl-3 border-l border-white/20">
+            <button
+              type="button"
+              aria-label="Previous movie"
+              onClick={prevSlide}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/20 bg-[#14151b]/80 hover:bg-[#23252b] text-slate-300 hover:text-amber-400 hover:border-amber-500/50 backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 active:scale-95 shadow-md shadow-black/40"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next movie"
+              onClick={nextSlide}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/20 bg-[#14151b]/80 hover:bg-[#23252b] text-slate-300 hover:text-amber-400 hover:border-amber-500/50 backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 active:scale-95 shadow-md shadow-black/40"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

@@ -11,7 +11,9 @@ interface Particle {
 
 export const PopcornCursor: React.FC = () => {
   const { isCursorEnabled, isCardHovered } = usePopcornCursor();
-  const [pos, setPos] = useState<{ x: number; y: number }>({ x: -100, y: -100 });
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef<{ x: number; y: number }>({ x: -100, y: -100 });
+  const isVisibleRef = useRef<boolean>(false);
   const [isOverClickable, setIsOverClickable] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -76,23 +78,34 @@ export const PopcornCursor: React.FC = () => {
     }
 
     const handleMouseMove = (e: MouseEvent) => {
-      setPos({ x: e.clientX, y: e.clientY });
-      setIsVisible(true);
+      posRef.current.x = e.clientX;
+      posRef.current.y = e.clientY;
+
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        setIsVisible(true);
+      }
 
       const target = e.target as HTMLElement | null;
       if (target) {
         const isClickable = !!target.closest(
           'button, a, input, select, textarea, [role="button"], label, [onclick]'
         );
-        setIsOverClickable(isClickable);
+        setIsOverClickable((prev) => (prev !== isClickable ? isClickable : prev));
       }
     };
 
     const handleMouseLeave = () => {
+      isVisibleRef.current = false;
       setIsVisible(false);
     };
 
     const handleWindowBlur = () => {
+      isVisibleRef.current = false;
       setIsVisible(false);
     };
 
@@ -157,11 +170,11 @@ export const PopcornCursor: React.FC = () => {
     >
       {/* Exactly ONE custom cursor visual element following the pointer */}
       <div
+        ref={cursorRef}
         id="moierec-custom-cursor"
-        className="absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform"
+        className="fixed top-0 left-0 pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform"
         style={{
-          left: `${pos.x}px`,
-          top: `${pos.y}px`,
+          transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`,
         }}
       >
         {isOverClickable ? (

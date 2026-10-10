@@ -82,13 +82,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
     setMobileMenuOpen(false);
   };
 
+  const isHome = path === '/';
+
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ease-out ${
           isScrolled
             ? 'h-[72px] bg-[#0d0e12]/92 backdrop-blur-md border-b border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.70)]'
-            : 'h-20 bg-[#121317]/40 backdrop-blur-sm border-b border-transparent'
+            : isHome
+              ? 'h-20 bg-gradient-to-b from-black/50 via-black/15 to-transparent border-b border-transparent'
+              : 'h-20 bg-[#121317]/40 backdrop-blur-sm border-b border-transparent'
         }`}
       >
         <div className="flex justify-between items-center h-full px-6 md:px-12 max-w-7xl mx-auto w-full">
