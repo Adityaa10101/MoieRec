@@ -1,27 +1,51 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from '../router/Router';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   Compass,
   ArrowUpDown,
   RotateCcw,
-  Film,
   AlertCircle,
   Loader2,
   ChevronDown,
+  X,
 } from 'lucide-react';
 import { fetchMetaFilters, fetchPopular } from '../api/client';
 import type { ApiMovie, GenreFilter, DecadeFilter } from '../api/types';
+import { MovieCard } from '../components/movie/MovieCard';
 import { MovieCardSkeleton } from '../components/common/MovieCardSkeleton';
+import { useUserTaste } from '../context/UserTasteContext';
+
+function readUrlParams(): { genres: string[]; decade: number | null; sort: 'popular' | 'newest' | 'oldest' } {
+  if (typeof window === 'undefined') {
+    return { genres: [], decade: null, sort: 'popular' };
+  }
+  const params = new URLSearchParams(window.location.search);
+  const gRaw = params.get('genres') || params.get('genre') || '';
+  const parsedGenres = gRaw
+    ? gRaw.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+  const dRaw = params.get('decade');
+  const parsedDecade = dRaw ? Number(dRaw) : null;
+  const sRaw = params.get('sort');
+  const parsedSort =
+    sRaw === 'newest' || sRaw === 'oldest' || sRaw === 'popular' ? sRaw : 'popular';
+  return {
+    genres: parsedGenres,
+    decade: Number.isInteger(parsedDecade) ? parsedDecade : null,
+    sort: parsedSort,
+  };
+}
 
 export const ExplorePage: React.FC = () => {
+  const { avoidedGenres } = useUserTaste();
+
   // Metadata filter options
   const [genres, setGenres] = useState<GenreFilter[]>([]);
   const [decades, setDecades] = useState<DecadeFilter[]>([]);
 
-  // Active filters
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [selectedDecade, setSelectedDecade] = useState<number | null>(null);
-  const [sortOrder, setSortOrder] = useState<'popular' | 'newest' | 'oldest'>('popular');
+  // Active filters initialized from URL query params
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(() => readUrlParams().genres);
+  const [selectedDecade, setSelectedDecade] = useState<number | null>(() => readUrlParams().decade);
+  const [sortOrder, setSortOrder] = useState<'popular' | 'newest' | 'oldest'>(() => readUrlParams().sort);
 
   // Movies & pagination state
   const [movies, setMovies] = useState<ApiMovie[]>([]);
@@ -32,6 +56,61 @@ export const ExplorePage: React.FC = () => {
 
   const PAGE_SIZE = 24;
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Avoided genres to hide (unless user explicitly selected that genre in selectedGenres)
+  const effectiveAvoidedSet = useMemo(() => {
+    const explicitlySelected = new Set(selectedGenres.map((g) => g.toLowerCase()));
+    return new Set(
+      avoidedGenres
+        .filter((g) => !explicitlySelected.has(g.toLowerCase()))
+        .map((g) => g.toLowerCase()),
+    );
+  }, [avoidedGenres, selectedGenres]);
+
+  // Sync state to URL query string
+  const syncToUrl = useCallback(
+    (nextGenres: string[], nextDecade: number | null, nextSort: string) => {
+      if (typeof window === 'undefined') return;
+      const url = new URL(window.location.href);
+      if (nextGenres.length > 0) {
+        url.searchParams.set('genre', nextGenres.join(','));
+        url.searchParams.delete('genres');
+      } else {
+        url.searchParams.delete('genre');
+        url.searchParams.delete('genres');
+      }
+      if (nextDecade != null) {
+        url.searchParams.set('decade', String(nextDecade));
+      } else {
+        url.searchParams.delete('decade');
+      }
+      if (nextSort && nextSort !== 'popular') {
+        url.searchParams.set('sort', nextSort);
+      } else {
+        url.searchParams.delete('sort');
+      }
+
+      const nextSearch = url.search;
+      const currentSearch = window.location.search;
+      if (nextSearch !== currentSearch) {
+        window.history.pushState(null, '', url.pathname + (nextSearch ? nextSearch : ''));
+      }
+    },
+    [],
+  );
+
+  // Listen to browser Back / Forward buttons (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const urlState = readUrlParams();
+      setSelectedGenres(urlState.genres);
+      setSelectedDecade(urlState.decade);
+      setSortOrder(urlState.sort);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Load available genre & decade filter chips from /api/meta/filters
   useEffect(() => {
@@ -51,7 +130,7 @@ export const ExplorePage: React.FC = () => {
     };
   }, []);
 
-  // Fetch initial batch of movies whenever filters or sort changes
+  // Fetch initial batch or next page of movies
   const loadMovies = useCallback(
     async (isReset = true) => {
       if (abortControllerRef.current) {
@@ -72,7 +151,7 @@ export const ExplorePage: React.FC = () => {
       try {
         const results = await fetchPopular(
           {
-            genre: selectedGenre || undefined,
+            genre: selectedGenres.length > 0 ? selectedGenres.join(',') : undefined,
             decade: selectedDecade || undefined,
             sort: sortOrder,
             limit: PAGE_SIZE,
@@ -81,12 +160,18 @@ export const ExplorePage: React.FC = () => {
           controller.signal,
         );
 
+        // Filter out avoided genres display-side
+        const displayResults = results.filter((m) => {
+          if (!m.genres || m.genres.length === 0) return true;
+          return !m.genres.some((g) => effectiveAvoidedSet.has(g.toLowerCase()));
+        });
+
         if (isReset) {
-          setMovies(results);
+          setMovies(displayResults);
         } else {
           setMovies((prev) => {
             const seen = new Set(prev.map((m) => m.movie_id));
-            const fresh = results.filter((m) => !seen.has(m.movie_id));
+            const fresh = displayResults.filter((m) => !seen.has(m.movie_id));
             return [...prev, ...fresh];
           });
         }
@@ -100,17 +185,33 @@ export const ExplorePage: React.FC = () => {
         setLoadingMore(false);
       }
     },
-    [selectedGenre, selectedDecade, sortOrder, movies.length],
+    [selectedGenres, selectedDecade, sortOrder, movies.length, effectiveAvoidedSet],
   );
 
-  // Trigger reset load on filter change
+  // Trigger reset load on filter change and sync URL
   useEffect(() => {
+    syncToUrl(selectedGenres, selectedDecade, sortOrder);
     loadMovies(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGenre, selectedDecade, sortOrder]);
+  }, [selectedGenres, selectedDecade, sortOrder]);
+
+  const handleToggleGenre = (genreName: string) => {
+    setSelectedGenres((prev) => {
+      const exists = prev.some((g) => g.toLowerCase() === genreName.toLowerCase());
+      if (exists) {
+        return prev.filter((g) => g.toLowerCase() !== genreName.toLowerCase());
+      } else {
+        return [...prev, genreName];
+      }
+    });
+  };
+
+  const handleClearGenres = () => {
+    setSelectedGenres([]);
+  };
 
   const handleResetFilters = () => {
-    setSelectedGenre(null);
+    setSelectedGenres([]);
     setSelectedDecade(null);
     setSortOrder('popular');
   };
@@ -137,16 +238,29 @@ export const ExplorePage: React.FC = () => {
 
       {/* Filter and Sort Toolbar */}
       <div className="space-y-5 p-5 rounded-2xl bg-[#14151a] border border-white/10">
-        {/* Genre Chips */}
+        {/* Genre Chips - Horizontally scrollable row with Clear action */}
         <div className="space-y-2">
-          <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
-            Genre
+          <div className="flex items-center justify-between">
+            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+              Genre {selectedGenres.length > 0 && `(${selectedGenres.length} selected)`}
+            </div>
+            {selectedGenres.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClearGenres}
+                className="text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Clear</span>
+              </button>
+            )}
           </div>
-          <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1 no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 pr-1">
             <button
-              onClick={() => setSelectedGenre(null)}
-              className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
-                selectedGenre === null
+              type="button"
+              onClick={handleClearGenres}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                selectedGenres.length === 0
                   ? 'bg-amber-500 text-black font-bold shadow-md'
                   : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/5'
               }`}
@@ -154,19 +268,26 @@ export const ExplorePage: React.FC = () => {
               All Genres
             </button>
             {genres.map((g) => {
-              const active = selectedGenre === g.name;
+              const active = selectedGenres.some(
+                (sg) => sg.toLowerCase() === g.name.toLowerCase(),
+              );
               return (
                 <button
+                  type="button"
                   key={g.name}
-                  onClick={() => setSelectedGenre(active ? null : g.name)}
-                  className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  onClick={() => handleToggleGenre(g.name)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
                     active
                       ? 'bg-amber-500 text-black font-bold shadow-md'
                       : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/5'
                   }`}
                 >
                   <span>{g.name}</span>
-                  <span className={`text-[10px] ${active ? 'text-black/70 font-bold' : 'text-slate-500'}`}>
+                  <span
+                    className={`text-[10px] ${
+                      active ? 'text-black/70 font-bold' : 'text-slate-500'
+                    }`}
+                  >
                     ({g.count.toLocaleString()})
                   </span>
                 </button>
@@ -184,6 +305,7 @@ export const ExplorePage: React.FC = () => {
             </div>
             <div className="flex flex-wrap gap-1.5 overflow-x-auto no-scrollbar">
               <button
+                type="button"
                 onClick={() => setSelectedDecade(null)}
                 className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
                   selectedDecade === null
@@ -197,6 +319,7 @@ export const ExplorePage: React.FC = () => {
                 const active = selectedDecade === d.decade;
                 return (
                   <button
+                    type="button"
                     key={d.decade}
                     onClick={() => setSelectedDecade(active ? null : d.decade)}
                     className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
@@ -206,7 +329,11 @@ export const ExplorePage: React.FC = () => {
                     }`}
                   >
                     <span>{d.label}</span>
-                    <span className={`text-[10px] ${active ? 'text-black/70 font-bold' : 'text-slate-500'}`}>
+                    <span
+                      className={`text-[10px] ${
+                        active ? 'text-black/70 font-bold' : 'text-slate-500'
+                      }`}
+                    >
                       ({d.count.toLocaleString()})
                     </span>
                   </button>
@@ -223,6 +350,7 @@ export const ExplorePage: React.FC = () => {
             </div>
             <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#1d1f27] border border-white/10">
               <button
+                type="button"
                 onClick={() => setSortOrder('popular')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
                   sortOrder === 'popular'
@@ -233,6 +361,7 @@ export const ExplorePage: React.FC = () => {
                 Most liked
               </button>
               <button
+                type="button"
                 onClick={() => setSortOrder('newest')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
                   sortOrder === 'newest'
@@ -243,6 +372,7 @@ export const ExplorePage: React.FC = () => {
                 Newest
               </button>
               <button
+                type="button"
                 onClick={() => setSortOrder('oldest')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
                   sortOrder === 'oldest'
@@ -268,6 +398,7 @@ export const ExplorePage: React.FC = () => {
             <p className="text-xs text-slate-400">{error}</p>
           </div>
           <button
+            type="button"
             onClick={() => loadMovies(true)}
             className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition-all cursor-pointer"
           >
@@ -288,10 +419,13 @@ export const ExplorePage: React.FC = () => {
           <div className="space-y-1 max-w-sm mx-auto">
             <h3 className="font-serif text-lg font-bold text-white">No Movies Found</h3>
             <p className="text-xs text-slate-400">
-              No titles match the chosen combination of genre and decade filters.
+              {selectedGenres.length > 0
+                ? `No titles match the selected genre filters (${selectedGenres.join(', ')}).`
+                : 'No titles match the chosen combination of genre and decade filters.'}
             </p>
           </div>
           <button
+            type="button"
             onClick={handleResetFilters}
             className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition-all flex items-center gap-1.5 mx-auto cursor-pointer"
           >
@@ -302,51 +436,13 @@ export const ExplorePage: React.FC = () => {
       ) : (
         <div className="space-y-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            {movies.map((movie) => (
-              <Link
+            {movies.map((movie, idx) => (
+              <MovieCard
                 key={movie.movie_id}
-                to={`/movie/${movie.movie_id}`}
-                className="group relative flex flex-col rounded-xl bg-[#1a1b20] border border-white/10 hover:border-amber-500/60 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-              >
-                {/* 2:3 Poster */}
-                <div className="aspect-[2/3] w-full bg-[#121317] relative overflow-hidden">
-                  {movie.poster_url ? (
-                    <img
-                      src={movie.poster_url}
-                      alt={movie.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 gap-1">
-                      <Film className="w-6 h-6" />
-                      <span className="text-[9px] font-mono uppercase">No Poster</span>
-                    </div>
-                  )}
-
-                  {/* Year badge */}
-                  {movie.year && (
-                    <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-black/75 backdrop-blur-md text-amber-300 border border-white/10">
-                      {movie.year}
-                    </span>
-                  )}
-                </div>
-
-                {/* Metadata */}
-                <div className="p-3 flex-1 flex flex-col justify-between space-y-1.5">
-                  <h3
-                    className="font-serif text-xs font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2"
-                    title={movie.title}
-                  >
-                    {movie.title}
-                  </h3>
-                  {movie.genres && movie.genres.length > 0 && (
-                    <p className="text-[10px] font-mono text-slate-400 truncate">
-                      {movie.genres.slice(0, 2).join(' · ')}
-                    </p>
-                  )}
-                </div>
-              </Link>
+                movie={movie}
+                index={idx}
+                className="w-full h-full"
+              />
             ))}
           </div>
 
@@ -354,6 +450,7 @@ export const ExplorePage: React.FC = () => {
           {hasMore && (
             <div className="flex flex-col items-center justify-center gap-2 pt-4">
               <button
+                type="button"
                 onClick={() => loadMovies(false)}
                 disabled={loadingMore}
                 className="px-6 py-3 rounded-xl bg-[#1a1b20] hover:bg-[#23252b] border border-white/10 hover:border-amber-500/40 text-white text-xs font-mono font-semibold transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
