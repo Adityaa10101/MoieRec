@@ -169,6 +169,30 @@ VITE_API_BASE_URL=http://127.0.0.1:8000/api
 
 ---
 
+## Phase 2E.2 Interactive & Personalization Delivery
+
+### Frontend & API Enhancements Delivered
+
+1. **Popularity & Discovery**:
+   - Comma-separated multi-genre filtering supported on `GET /api/movies/popular`.
+   - Multi-select genre filter chips synced to URL on Explore page (`/explore?genres=Action,Sci-Fi`).
+
+2. **Personalized Feed & Controls**:
+   - `POST /api/personalized/home` supports optional `limit` parameter (1..50, default 30).
+   - Recency ordering contract: `liked_movie_ids` sent oldest-to-newest so tail elements anchor the "Because you liked" rows.
+   - De-jumped refresh: 1.5s debounce on likes/dislikes change while on Home; immediate refresh on Home mount.
+   - Full order-invariance test in backend suite (61 passing tests).
+
+3. **User Taste & Watch Status Tracking**:
+   - Interactive Like / Dislike controls on Movie Cards, Hero Spotlight, and Movie Detail page.
+   - Per-movie watch statuses (`plan`, `watching`, `watched`, `dropped`) with portaled dropdown control (`createPortal`) preventing UI clipping.
+   - Safe localStorage migration from legacy watchlist to new status store.
+   - Exclusions: watched and dropped movies excluded from hero spotlight and recommendations.
+   - Avoided genres preference with dynamic profile filtering.
+   - Full My Library page with dedicated tabs, counters, clear-tab modals, and genre breakdown.
+
+---
+
 ## What Was NOT Changed
 
 - `recommender/` model code, training, evaluation, or results
@@ -177,3 +201,4 @@ VITE_API_BASE_URL=http://127.0.0.1:8000/api
 - Any committed data files (only `data/serving/` which is gitignored)
 - No secrets printed, logged, or written to tracked files
 - `backend/.env` not read or opened — loaded only via pydantic-settings at runtime
+
