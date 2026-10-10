@@ -22,6 +22,8 @@ export const HomePage: React.FC = () => {
   const {
     validLikedIds,
     validDislikedIds,
+    watchedAndDroppedIds,
+    isWatchedOrDropped,
     isOnboardingOpen,
     setIsOnboardingOpen,
     onboardingDismissed,
@@ -108,7 +110,7 @@ export const HomePage: React.FC = () => {
     loadHomeFeed();
   }, [loadHomeFeed]);
 
-  // Fetch personalized feed (debounced ~400ms, cancellable, reacts to likes/dislikes)
+  // Fetch personalized feed (debounced ~400ms, cancellable, reacts to likes/dislikes/watch status)
   useEffect(() => {
     if (validLikedIds.length < 3) {
       setPersonalizedRows([]);
@@ -123,9 +125,10 @@ export const HomePage: React.FC = () => {
 
     const timer = setTimeout(async () => {
       try {
+        const excludeIds = Array.from(new Set([...validDislikedIds, ...watchedAndDroppedIds]));
         const resp = await fetchPersonalizedHome(
           validLikedIds,
-          validDislikedIds,
+          excludeIds,
           30,
           controller.signal,
         );
@@ -148,7 +151,7 @@ export const HomePage: React.FC = () => {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [validLikedIds, validDislikedIds]);
+  }, [validLikedIds, validDislikedIds, watchedAndDroppedIds]);
 
   // Build a mock ApiMovie for the hero from HERO_MOVIE when offline
   const mockHeroAsApi: ApiMovie = useMemo(
@@ -261,16 +264,18 @@ export const HomePage: React.FC = () => {
     return { candidates: unique, isFromPersonalizedFeed: false };
   }, [personalizedError, personalizedRows, displayHero, displayRows]);
 
-  // Top ~7 movie IDs shown in the hero
+  // Top ~7 movie IDs shown in the hero (exclude avoided genres and watched/dropped)
   const filteredHeroCandidates = useMemo(() => {
-    const nonAvoided = heroCandidates.filter((m) => !hasAvoidedGenre(m));
+    const valid = heroCandidates.filter(
+      (m) => !hasAvoidedGenre(m) && !isWatchedOrDropped(m.movie_id),
+    );
     // Edge case: if filtering leaves fewer than 2 hero candidates, use the existing static hero; never produce an empty Home.
-    if (nonAvoided.length < 2) {
-      if (displayHero) return [displayHero];
-      return heroCandidates.slice(0, 1);
+    if (valid.length < 2) {
+      if (displayHero && !isWatchedOrDropped(displayHero.movie_id)) return [displayHero];
+      return valid.length > 0 ? valid : (displayHero ? [displayHero] : heroCandidates.slice(0, 1));
     }
-    return nonAvoided;
-  }, [heroCandidates, hasAvoidedGenre, displayHero]);
+    return valid;
+  }, [heroCandidates, hasAvoidedGenre, isWatchedOrDropped, displayHero]);
 
   // The hero label is derived strictly from the actual source of the candidates (personalized feed vs popularity fallback).
   // If the personalized request fails or returns empty, the label is false ("Popular right now"), regardless of like count.
@@ -294,23 +299,24 @@ export const HomePage: React.FC = () => {
     const unique: ApiMovie[] = [];
     for (const r of displayRows) {
       for (const m of r.movies) {
-        if (!seen.has(m.movie_id) && !hasAvoidedGenre(m)) {
+        if (!seen.has(m.movie_id) && !hasAvoidedGenre(m) && !isWatchedOrDropped(m.movie_id)) {
           seen.add(m.movie_id);
           unique.push(m);
         }
       }
     }
     return unique;
-  }, [displayRows, hasAvoidedGenre]);
+  }, [displayRows, hasAvoidedGenre, isWatchedOrDropped]);
 
-  // Exclude avoided genres and hero movie IDs
+  // Exclude avoided genres, watched/dropped, and hero movie IDs
   // For rows labeled personalized/CF: backfill ONLY from deeper results of that same ranked list. Never mix popularity items into a personalized row. If exhausted, show a shorter row.
   // For popularity rows: backfill from the popularity pool.
   const filterAndBackfillRow = useCallback(
     (row: ApiRecommendationRow, isFirstRow: boolean, isPersonalizedRow: boolean): ApiRecommendationRow => {
       const targetCount = 20;
-      const nonAvoided = row.movies.filter((m) => {
+      const validMovies = row.movies.filter((m) => {
         if (hasAvoidedGenre(m)) return false;
+        if (isWatchedOrDropped(m.movie_id)) return false;
         if (isFirstRow && heroMovieIds.has(m.movie_id)) return false;
         return true;
       });
@@ -320,24 +326,24 @@ export const HomePage: React.FC = () => {
       if (isPersonalizedRow) {
         return {
           ...row,
-          movies: nonAvoided.slice(0, targetCount),
+          movies: validMovies.slice(0, targetCount),
         };
       }
 
       // 2. Popularity rows: if full, slice and return
-      if (nonAvoided.length >= targetCount) {
+      if (validMovies.length >= targetCount) {
         return {
           ...row,
-          movies: nonAvoided.slice(0, targetCount),
+          movies: validMovies.slice(0, targetCount),
         };
       }
 
       // Backfill popularity row from popularityPool
       const seen = new Set<number>([
         ...(isFirstRow ? Array.from(heroMovieIds) : []),
-        ...nonAvoided.map((m) => m.movie_id),
+        ...validMovies.map((m) => m.movie_id),
       ]);
-      const backfilled = [...nonAvoided];
+      const backfilled = [...validMovies];
 
       for (const cand of popularityPool) {
         if (!seen.has(cand.movie_id)) {
@@ -354,7 +360,7 @@ export const HomePage: React.FC = () => {
         movies: backfilled,
       };
     },
-    [hasAvoidedGenre, heroMovieIds, popularityPool],
+    [hasAvoidedGenre, heroMovieIds, popularityPool, isWatchedOrDropped],
   );
 
   return (

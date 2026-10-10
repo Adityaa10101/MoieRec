@@ -3,10 +3,11 @@ import { useRouter, Link } from '../router/Router';
 import { fetchMovieDetail, fetchSimilarMovies } from '../api/client';
 import { ALL_MOCK_MOVIES } from '../data/mockMovies';
 import type { ApiMovie } from '../api/types';
-import { ArrowLeft, Clock, Calendar, Star, User, ThumbsUp, ThumbsDown, Sparkles, Bookmark } from 'lucide-react';
+import { ArrowLeft, Clock, Calendar, Star, User, ThumbsUp, ThumbsDown, Sparkles } from 'lucide-react';
 import { useUserTaste } from '../context/UserTasteContext';
 import { RecommendationRow } from '../components/recommendations/RecommendationRow';
 import { WhyThisModal } from '../components/feedback/WhyThisModal';
+import { WatchStatusControl } from '../components/movie/WatchStatusControl';
 
 function SkeletonDetail() {
   return (
@@ -27,8 +28,6 @@ function SkeletonDetail() {
 export const MovieDetailPage: React.FC = () => {
   const { params } = useRouter();
   const {
-    isInWatchlist,
-    toggleWatchlist,
     isLiked,
     isDisliked,
     toggleLike,
@@ -119,7 +118,6 @@ export const MovieDetailPage: React.FC = () => {
   const movieIdStr = movie ? String(movie.movie_id) : '';
   const liked = movie ? isLiked(movieIdStr) : false;
   const disliked = movie ? isDisliked(movieIdStr) : false;
-  const inWatchlist = movie ? isInWatchlist(movieIdStr) : false;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const asContextMovie = (): any => movie ? ({
@@ -280,18 +278,7 @@ export const MovieDetailPage: React.FC = () => {
 
             {/* Actions */}
             <div className="pt-4 flex flex-wrap items-center gap-4 border-t border-white/10">
-              <button
-                type="button"
-                onClick={() => toggleWatchlist(asContextMovie())}
-                className={`px-6 py-3 rounded-lg font-medium text-sm flex items-center gap-2 transition-all cursor-pointer ${
-                  inWatchlist
-                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
-                }`}
-              >
-                <Bookmark className={`w-4 h-4 ${inWatchlist ? 'fill-amber-400' : ''}`} />
-                <span>{inWatchlist ? '✓ On Watchlist' : '+ Add to Watchlist'}</span>
-              </button>
+              <WatchStatusControl movie={asContextMovie() || movie} variant="detail" />
 
               {/* Thumbs up/down — local taste signals only */}
               <div className="flex items-center gap-2 ml-1 sm:ml-2 pl-3 sm:pl-4 border-l border-white/15">

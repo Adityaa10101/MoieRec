@@ -3,6 +3,14 @@ import type { Movie } from '../types/movie';
 import type { ApiMovie } from '../api/types';
 import { useToast } from './ToastContext';
 
+export type WatchStatus = 'plan' | 'watching' | 'watched' | 'dropped';
+
+export interface MovieStatusItem {
+  movie_id: number;
+  status: WatchStatus;
+  updated_at: string;
+}
+
 export interface StoredMovieItem {
   movie_id: number;
   added_at: string;
@@ -43,6 +51,20 @@ interface UserTasteContextType {
   setAvoidedGenres: (genres: string[]) => void;
   clearAvoidedGenres: () => void;
   isGenreAvoided: (genre: string) => boolean;
+  // Per-movie watch status
+  statusItems: MovieStatusItem[];
+  getWatchStatus: (movieId: string | number) => WatchStatus | null;
+  setWatchStatus: (movie: Movie | ApiMovie | number, status: WatchStatus | null) => void;
+  planMovieIds: number[];
+  watchingMovieIds: number[];
+  watchedMovieIds: number[];
+  droppedMovieIds: number[];
+  watchedAndDroppedIds: number[];
+  savedMovieCount: number;
+  isWatchedOrDropped: (movieId: string | number) => boolean;
+  clearStatusTab: (status: WatchStatus) => void;
+  dismissWatchedNudge: (movieId: number) => void;
+  isNudgeDismissed: (movieId: number) => boolean;
 }
 
 const UserTasteContext = createContext<UserTasteContextType | undefined>(undefined);
@@ -92,11 +114,84 @@ function parseStoredItems(raw: string | null): StoredMovieItem[] {
   }
 }
 
+function parseStoredStatuses(): MovieStatusItem[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const rawStatuses = localStorage.getItem('moierec_movie_statuses');
+    if (rawStatuses) {
+      const parsed = JSON.parse(rawStatuses);
+      if (Array.isArray(parsed)) {
+        const items: MovieStatusItem[] = [];
+        const seen = new Set<number>();
+        for (const it of parsed) {
+          if (
+            it &&
+            typeof it === 'object' &&
+            Number.isInteger(Number(it.movie_id)) &&
+            Number(it.movie_id) > 0 &&
+            ['plan', 'watching', 'watched', 'dropped'].includes(it.status)
+          ) {
+            const mid = Number(it.movie_id);
+            if (!seen.has(mid)) {
+              seen.add(mid);
+              items.push({
+                movie_id: mid,
+                status: it.status,
+                updated_at: it.updated_at || new Date().toISOString(),
+              });
+            }
+          }
+        }
+        return items;
+      }
+    }
+
+    // Safe one-time migration from existing moierec_watchlist to 'plan'
+    const rawWatchlist = localStorage.getItem('moierec_watchlist');
+    if (rawWatchlist) {
+      const oldItems = parseStoredItems(rawWatchlist);
+      if (oldItems.length > 0) {
+        const migrated: MovieStatusItem[] = oldItems.map((item) => ({
+          movie_id: item.movie_id,
+          status: 'plan' as WatchStatus,
+          updated_at: item.added_at || new Date().toISOString(),
+        }));
+        try {
+          localStorage.setItem('moierec_movie_statuses', JSON.stringify(migrated));
+        } catch {
+          // ignore
+        }
+        return migrated;
+      }
+    }
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+function parseDismissedNudges(): Set<number> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem('moierec_dismissed_watched_nudges');
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.map(Number).filter((n) => Number.isInteger(n) && n > 0));
+  } catch {
+    return new Set();
+  }
+}
+
 export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showToast } = useToast();
 
-  const [watchlistItems, setWatchlistItems] = useState<StoredMovieItem[]>(() =>
-    parseStoredItems(localStorage.getItem('moierec_watchlist'))
+  const [statusItems, setStatusItems] = useState<MovieStatusItem[]>(() =>
+    parseStoredStatuses()
+  );
+
+  const [dismissedNudges, setDismissedNudges] = useState<Set<number>>(() =>
+    parseDismissedNudges()
   );
 
   const [likedItems, setLikedItems] = useState<StoredMovieItem[]>(() =>
@@ -121,14 +216,29 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     parseAvoidedGenres(localStorage.getItem('moierec_avoided_genres'))
   );
 
-  // Sync state to localStorage with only movie_id and added_at
+  // Sync statuses to localStorage and keep moierec_watchlist mirror for backward compatibility
   useEffect(() => {
     try {
-      localStorage.setItem('moierec_watchlist', JSON.stringify(watchlistItems));
+      localStorage.setItem('moierec_movie_statuses', JSON.stringify(statusItems));
+      const planItems = statusItems
+        .filter((it) => it.status === 'plan')
+        .map((it) => ({ movie_id: it.movie_id, added_at: it.updated_at }));
+      localStorage.setItem('moierec_watchlist', JSON.stringify(planItems));
     } catch {
       // storage unavailable
     }
-  }, [watchlistItems]);
+  }, [statusItems]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        'moierec_dismissed_watched_nudges',
+        JSON.stringify(Array.from(dismissedNudges)),
+      );
+    } catch {
+      // storage unavailable
+    }
+  }, [dismissedNudges]);
 
   useEffect(() => {
     try {
@@ -167,37 +277,134 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setIsOnboardingOpen(false);
   };
 
-  const validLikedIds = likedItems.map((item) => item.movie_id);
-  const validWatchlistIds = watchlistItems.map((item) => item.movie_id);
-  const validDislikedIds = dislikedItems.map((item) => item.movie_id);
-
-  const watchlist = new Set(validWatchlistIds.map(String));
-  const liked = new Set(validLikedIds.map(String));
-  const disliked = new Set(validDislikedIds.map(String));
-
-  const isInWatchlist = (movieId: string | number) => watchlist.has(String(movieId));
-  const isLiked = (movieId: string | number) => liked.has(String(movieId));
-  const isDisliked = (movieId: string | number) => disliked.has(String(movieId));
-
-  const getMovieId = (movie: Movie | ApiMovie): number | null => {
+  const getMovieId = (movie: Movie | ApiMovie | number): number | null => {
+    if (typeof movie === 'number') {
+      return Number.isInteger(movie) && movie > 0 ? movie : null;
+    }
     const raw = 'movie_id' in movie ? movie.movie_id : ('id' in movie ? (movie as any).id : null);
     const n = Number(raw);
     return Number.isInteger(n) && n > 0 ? n : null;
   };
 
+  const statusMap = new Map<number, WatchStatus>();
+  for (const it of statusItems) {
+    statusMap.set(it.movie_id, it.status);
+  }
+
+  const getWatchStatus = (movieId: string | number): WatchStatus | null => {
+    const n = Number(movieId);
+    return statusMap.get(n) || null;
+  };
+
+  const setWatchStatus = (
+    movie: Movie | ApiMovie | number,
+    status: WatchStatus | null,
+  ) => {
+    const mid = getMovieId(movie);
+    if (!mid) return;
+    const title =
+      typeof movie === 'object' && movie && 'title' in movie
+        ? movie.title
+        : `Movie #${mid}`;
+
+    setStatusItems((prev) => {
+      const existing = prev.find((it) => it.movie_id === mid);
+      if (existing?.status === status) return prev;
+
+      const filtered = prev.filter((it) => it.movie_id !== mid);
+      if (!status) {
+        showToast(`Removed "${title}" from your lists`, { icon: 'info' });
+        return filtered;
+      }
+
+      const updated = [
+        { movie_id: mid, status, updated_at: new Date().toISOString() },
+        ...filtered,
+      ];
+
+      const statusLabels: Record<WatchStatus, string> = {
+        plan: 'Plan to watch',
+        watching: 'Watching',
+        watched: 'Watched',
+        dropped: 'Dropped',
+      };
+      showToast(`Marked "${title}" as ${statusLabels[status]}`, { icon: 'info' });
+      return updated;
+    });
+  };
+
+  const planMovieIds = statusItems
+    .filter((it) => it.status === 'plan')
+    .map((it) => it.movie_id);
+
+  const watchingMovieIds = statusItems
+    .filter((it) => it.status === 'watching')
+    .map((it) => it.movie_id);
+
+  const watchedMovieIds = statusItems
+    .filter((it) => it.status === 'watched')
+    .map((it) => it.movie_id);
+
+  const droppedMovieIds = statusItems
+    .filter((it) => it.status === 'dropped')
+    .map((it) => it.movie_id);
+
+  const watchedAndDroppedIds = statusItems
+    .filter((it) => it.status === 'watched' || it.status === 'dropped')
+    .map((it) => it.movie_id);
+
+  const isWatchedOrDropped = (movieId: string | number): boolean => {
+    const st = getWatchStatus(movieId);
+    return st === 'watched' || st === 'dropped';
+  };
+
+  const savedMovieCount = statusItems.length;
+
+  const dismissWatchedNudge = (movieId: number) => {
+    setDismissedNudges((prev) => {
+      const next = new Set(prev);
+      next.add(movieId);
+      return next;
+    });
+  };
+
+  const isNudgeDismissed = (movieId: number): boolean => dismissedNudges.has(movieId);
+
+  const clearStatusTab = (status: WatchStatus) => {
+    setStatusItems((prev) => prev.filter((it) => it.status !== status));
+    const labels: Record<WatchStatus, string> = {
+      plan: 'Plan to watch',
+      watching: 'Watching',
+      watched: 'Watched',
+      dropped: 'Dropped',
+    };
+    showToast(`Cleared ${labels[status]} list`, { icon: 'info' });
+  };
+
+  const validLikedIds = likedItems.map((item) => item.movie_id);
+  const validWatchlistIds = planMovieIds;
+  const validDislikedIds = dislikedItems.map((item) => item.movie_id);
+
+  const watchlistItems: StoredMovieItem[] = statusItems
+    .filter((it) => it.status === 'plan')
+    .map((it) => ({ movie_id: it.movie_id, added_at: it.updated_at }));
+
+  const watchlist = new Set(validWatchlistIds.map(String));
+  const liked = new Set(validLikedIds.map(String));
+  const disliked = new Set(validDislikedIds.map(String));
+
+  const isInWatchlist = (movieId: string | number) => getWatchStatus(movieId) === 'plan';
+  const isLiked = (movieId: string | number) => liked.has(String(movieId));
+  const isDisliked = (movieId: string | number) => disliked.has(String(movieId));
+
   const toggleWatchlist = (movie: Movie | ApiMovie) => {
     const mid = getMovieId(movie);
     if (!mid) return;
-    const wasIn = watchlist.has(String(mid));
-    if (wasIn) {
-      setWatchlistItems((prev) => prev.filter((it) => it.movie_id !== mid));
-      showToast(`Removed "${movie.title}" from watchlist`, { icon: 'info' });
+    const current = getWatchStatus(mid);
+    if (current === 'plan') {
+      setWatchStatus(movie, null);
     } else {
-      setWatchlistItems((prev) => [
-        { movie_id: mid, added_at: new Date().toISOString() },
-        ...prev.filter((it) => it.movie_id !== mid),
-      ]);
-      showToast(`"${movie.title}" added to your watchlist`, { icon: 'bookmark' });
+      setWatchStatus(movie, 'plan');
     }
   };
 
@@ -238,8 +445,7 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const removeWatchlist = (movieId: string | number) => {
-    const mid = Number(movieId);
-    setWatchlistItems((prev) => prev.filter((it) => it.movie_id !== mid));
+    setWatchStatus(Number(movieId), null);
   };
 
   const removeLike = (movieId: string | number) => {
@@ -253,28 +459,19 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const moveToList = (movieId: number, toList: 'liked' | 'watchlist' | 'disliked') => {
-    const now = new Date().toISOString();
     if (toList === 'liked') {
-      setLikedItems((prev) => [{ movie_id: movieId, added_at: now }, ...prev.filter((it) => it.movie_id !== movieId)]);
-      setWatchlistItems((prev) => prev.filter((it) => it.movie_id !== movieId));
-      setDislikedItems((prev) => prev.filter((it) => it.movie_id !== movieId));
-      showToast('Moved to Liked picks', { icon: 'heart' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toggleLike({ movie_id: movieId, title: `Movie #${movieId}` } as any);
     } else if (toList === 'watchlist') {
-      setWatchlistItems((prev) => [{ movie_id: movieId, added_at: now }, ...prev.filter((it) => it.movie_id !== movieId)]);
-      setLikedItems((prev) => prev.filter((it) => it.movie_id !== movieId));
-      setDislikedItems((prev) => prev.filter((it) => it.movie_id !== movieId));
-      showToast('Moved to Watchlist', { icon: 'bookmark' });
+      setWatchStatus(movieId, 'plan');
     } else if (toList === 'disliked') {
-      setDislikedItems((prev) => [{ movie_id: movieId, added_at: now }, ...prev.filter((it) => it.movie_id !== movieId)]);
-      setLikedItems((prev) => prev.filter((it) => it.movie_id !== movieId));
-      setWatchlistItems((prev) => prev.filter((it) => it.movie_id !== movieId));
-      showToast('Moved to Not interested', { icon: 'info' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toggleDislike({ movie_id: movieId, title: `Movie #${movieId}` } as any);
     }
   };
 
   const clearWatchlist = () => {
-    setWatchlistItems([]);
-    showToast('Cleared watchlist', { icon: 'info' });
+    clearStatusTab('plan');
   };
 
   const clearLiked = () => {
@@ -294,12 +491,15 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const clearAllData = () => {
-    setWatchlistItems([]);
+    setStatusItems([]);
+    setDismissedNudges(new Set());
     setLikedItems([]);
     setDislikedItems([]);
     setOnboardingDismissed(false);
     setAvoidedGenresState([]);
     try {
+      localStorage.removeItem('moierec_movie_statuses');
+      localStorage.removeItem('moierec_dismissed_watched_nudges');
       localStorage.removeItem('moierec_watchlist');
       localStorage.removeItem('moierec_liked');
       localStorage.removeItem('moierec_disliked');
@@ -342,7 +542,7 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const cleanLegacyIds = (validIds: Set<number>) => {
-    setWatchlistItems((prev) => prev.filter((it) => validIds.has(it.movie_id)));
+    setStatusItems((prev) => prev.filter((it) => validIds.has(it.movie_id)));
     setLikedItems((prev) => prev.filter((it) => validIds.has(it.movie_id)));
     setDislikedItems((prev) => prev.filter((it) => validIds.has(it.movie_id)));
   };
@@ -384,6 +584,19 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setAvoidedGenres,
         clearAvoidedGenres,
         isGenreAvoided,
+        statusItems,
+        getWatchStatus,
+        setWatchStatus,
+        planMovieIds,
+        watchingMovieIds,
+        watchedMovieIds,
+        droppedMovieIds,
+        watchedAndDroppedIds,
+        savedMovieCount,
+        isWatchedOrDropped,
+        clearStatusTab,
+        dismissWatchedNudge,
+        isNudgeDismissed,
       }}
     >
       {children}

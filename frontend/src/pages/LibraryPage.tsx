@@ -3,32 +3,97 @@ import { Link, useRouter } from '../router/Router';
 import {
   Heart,
   Bookmark,
+  Play,
+  Check,
+  XCircle,
   EyeOff,
   Trash2,
   Sparkles,
   Compass,
-  RotateCcw,
   Film,
   AlertTriangle,
+  ThumbsUp,
+  ThumbsDown,
 } from 'lucide-react';
-import { useUserTaste } from '../context/UserTasteContext';
+import { useUserTaste, type WatchStatus } from '../context/UserTasteContext';
 import { fetchMoviesBatch } from '../api/client';
 import type { ApiMovie } from '../api/types';
 import { MovieCardSkeleton } from '../components/common/MovieCardSkeleton';
+import { WatchStatusControl } from '../components/movie/WatchStatusControl';
 
-type LibraryTab = 'liked' | 'watchlist' | 'disliked';
+type LibraryTab = 'plan' | 'watching' | 'watched' | 'dropped' | 'liked' | 'disliked';
+
+const TAB_CONFIG: Record<
+  LibraryTab,
+  {
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    description: string;
+    emptyTitle: string;
+    emptyDesc: string;
+  }
+> = {
+  plan: {
+    label: 'Plan to watch',
+    icon: Bookmark,
+    description: 'Movies you saved to watch later. You can update their watch status at any time as you view them.',
+    emptyTitle: 'No movies in Plan to watch',
+    emptyDesc: 'Save interesting films while exploring to find them easily in one place.',
+  },
+  watching: {
+    label: 'Watching',
+    icon: Play,
+    description: 'Movies you are currently in the middle of watching.',
+    emptyTitle: 'No movies currently watching',
+    emptyDesc: 'Mark titles as watching to keep track of your active viewing list.',
+  },
+  watched: {
+    label: 'Watched',
+    icon: Check,
+    description: 'Movies you have completed watching. These are hidden from Home and Explore recommendation rows.',
+    emptyTitle: 'No watched movies yet',
+    emptyDesc: 'Keep a record of movies you have already seen.',
+  },
+  dropped: {
+    label: 'Dropped',
+    icon: XCircle,
+    description: 'Movies you decided not to finish. These are hidden from Home and Explore recommendation rows.',
+    emptyTitle: 'No dropped movies',
+    emptyDesc: 'Titles you stopped watching will be collected here.',
+  },
+  liked: {
+    label: 'Liked',
+    icon: Heart,
+    description: 'These are your picks that power the "Picked for you" personalized feed on the Home page.',
+    emptyTitle: 'No liked movies yet',
+    emptyDesc: 'Pick movies you love to calibrate your collaborative filtering recommendations.',
+  },
+  disliked: {
+    label: 'Not interested',
+    icon: EyeOff,
+    description: 'Titles you marked as Not interested are strictly excluded from recommendation rows. You can undo or remove them at any time.',
+    emptyTitle: 'No titles marked Not interested',
+    emptyDesc: 'Disliked movies will never be recommended to your profile.',
+  },
+};
 
 export const LibraryPage: React.FC = () => {
   const {
     validLikedIds,
-    validWatchlistIds,
     validDislikedIds,
+    planMovieIds,
+    watchingMovieIds,
+    watchedMovieIds,
+    droppedMovieIds,
+    setWatchStatus,
+    clearStatusTab,
+    isLiked,
+    isDisliked,
+    toggleLike,
+    toggleDislike,
     removeLike,
-    removeWatchlist,
     removeDislike,
-    moveToList,
     clearLiked,
-    clearWatchlist,
     clearDisliked,
     setIsOnboardingOpen,
     cleanLegacyIds,
@@ -36,15 +101,17 @@ export const LibraryPage: React.FC = () => {
 
   const { path } = useRouter();
 
-  // Tab state (support ?tab=liked or URL search param if present)
-  const [activeTab, setActiveTab] = useState<LibraryTab>('liked');
+  // Tab state (support ?tab=plan, ?tab=watchlist legacy alias, etc.)
+  const [activeTab, setActiveTab] = useState<LibraryTab>('plan');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      const tabParam = urlParams.get('tab') as LibraryTab | null;
-      if (tabParam && ['liked', 'watchlist', 'disliked'].includes(tabParam)) {
-        setActiveTab(tabParam);
+      const tabParam = urlParams.get('tab') as LibraryTab | 'watchlist' | null;
+      if (tabParam === 'watchlist') {
+        setActiveTab('plan');
+      } else if (tabParam && ['plan', 'watching', 'watched', 'dropped', 'liked', 'disliked'].includes(tabParam)) {
+        setActiveTab(tabParam as LibraryTab);
       }
     }
   }, [path]);
@@ -58,10 +125,23 @@ export const LibraryPage: React.FC = () => {
 
   // Determine current active item IDs
   const activeIds = useMemo(() => {
-    if (activeTab === 'liked') return validLikedIds;
-    if (activeTab === 'watchlist') return validWatchlistIds;
-    return validDislikedIds;
-  }, [activeTab, validLikedIds, validWatchlistIds, validDislikedIds]);
+    switch (activeTab) {
+      case 'plan':
+        return planMovieIds;
+      case 'watching':
+        return watchingMovieIds;
+      case 'watched':
+        return watchedMovieIds;
+      case 'dropped':
+        return droppedMovieIds;
+      case 'liked':
+        return validLikedIds;
+      case 'disliked':
+        return validDislikedIds;
+      default:
+        return planMovieIds;
+    }
+  }, [activeTab, planMovieIds, watchingMovieIds, watchedMovieIds, droppedMovieIds, validLikedIds, validDislikedIds]);
 
   // Fetch metadata in batch (max 100) whenever active IDs change
   useEffect(() => {
@@ -131,11 +211,36 @@ export const LibraryPage: React.FC = () => {
   }, [validLikedIds, movieMeta]);
 
   const handleClearConfirm = () => {
-    if (confirmClearTab === 'liked') clearLiked();
-    else if (confirmClearTab === 'watchlist') clearWatchlist();
-    else if (confirmClearTab === 'disliked') clearDisliked();
+    if (!confirmClearTab) return;
+    if (confirmClearTab === 'liked') {
+      clearLiked();
+    } else if (confirmClearTab === 'disliked') {
+      clearDisliked();
+    } else {
+      clearStatusTab(confirmClearTab as WatchStatus);
+    }
     setConfirmClearTab(null);
   };
+
+  const getTabCount = (tab: LibraryTab) => {
+    switch (tab) {
+      case 'plan':
+        return planMovieIds.length;
+      case 'watching':
+        return watchingMovieIds.length;
+      case 'watched':
+        return watchedMovieIds.length;
+      case 'dropped':
+        return droppedMovieIds.length;
+      case 'liked':
+        return validLikedIds.length;
+      case 'disliked':
+        return validDislikedIds.length;
+    }
+  };
+
+  const currentTabCfg = TAB_CONFIG[activeTab];
+  const CurrentEmptyIcon = currentTabCfg.icon;
 
   return (
     <div className="min-h-screen pt-28 pb-24 max-w-6xl mx-auto px-6 space-y-8">
@@ -147,14 +252,14 @@ export const LibraryPage: React.FC = () => {
               Local Library
             </span>
             <span className="text-xs text-slate-400">
-              Guest mode: your picks are saved only in this browser.
+              Guest mode: your lists and picks are saved only in this browser.
             </span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl text-white font-bold tracking-tight">
             My Library
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-            Browse and organize your liked movies, screening watchlist, and excluded titles.
+            Track your watch progress, organize your screening lists, and curate liked recommendations.
           </p>
         </div>
 
@@ -172,42 +277,29 @@ export const LibraryPage: React.FC = () => {
 
       {/* Tabs Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-[#14151a] border border-white/10">
-          <button
-            onClick={() => setActiveTab('liked')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-              activeTab === 'liked'
-                ? 'bg-amber-500 text-black font-bold shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Heart className="w-3.5 h-3.5" />
-            <span>Liked ({validLikedIds.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('watchlist')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-              activeTab === 'watchlist'
-                ? 'bg-amber-500 text-black font-bold shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Bookmark className="w-3.5 h-3.5" />
-            <span>Watchlist ({validWatchlistIds.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('disliked')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-              activeTab === 'disliked'
-                ? 'bg-amber-500 text-black font-bold shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <EyeOff className="w-3.5 h-3.5" />
-            <span>Not interested ({validDislikedIds.length})</span>
-          </button>
+        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-[#14151a] border border-white/10">
+          {(Object.keys(TAB_CONFIG) as LibraryTab[]).map((tab) => {
+            const cfg = TAB_CONFIG[tab];
+            const Icon = cfg.icon;
+            const count = getTabCount(tab);
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-amber-500 text-black font-bold shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>
+                  {cfg.label} ({count})
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Tab Context Action: Clear Tab */}
@@ -217,97 +309,67 @@ export const LibraryPage: React.FC = () => {
             className="px-3.5 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/15 text-red-400 text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear all</span>
+            <span>Clear tab</span>
           </button>
         )}
       </div>
 
       {/* Tab Explanations */}
-      {activeTab === 'liked' && (
-        <div className="space-y-4">
-          <p className="text-xs text-slate-400">
-            These are your picks that power the <strong className="text-amber-400 font-semibold">"Picked for you"</strong> personalized feed on the Home page.
-          </p>
+      <div className="space-y-4">
+        <p className="text-xs text-slate-400">{currentTabCfg.description}</p>
 
-          {/* Genre Distribution Bar Summary (Optional quick feature) */}
-          {genreSummary.length > 0 && (
-            <div className="p-4 rounded-xl bg-[#14151a] border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-xs font-mono text-slate-300 font-semibold">
-                <span>Your picks by genre</span>
-                <span className="text-[11px] text-slate-500">Real genre frequencies from liked titles</span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden flex gap-0.5">
-                {genreSummary.map((g, idx) => {
-                  const colors = [
-                    'bg-amber-500',
-                    'bg-sky-500',
-                    'bg-indigo-500',
-                    'bg-emerald-500',
-                    'bg-rose-500',
-                    'bg-purple-500',
-                  ];
-                  return (
-                    <div
-                      key={g.name}
-                      style={{ width: `${g.pct}%` }}
-                      className={`${colors[idx % colors.length]} h-full transition-all`}
-                      title={`${g.name}: ${g.count} titles (${g.pct}%)`}
-                    />
-                  );
-                })}
-              </div>
-              <div className="flex flex-wrap gap-3 pt-1">
-                {genreSummary.map((g) => (
-                  <span key={g.name} className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                    <span>{g.name}</span>
-                    <span className="font-mono text-slate-500">({g.count})</span>
-                  </span>
-                ))}
-              </div>
+        {/* Genre Distribution Bar Summary for Liked Tab */}
+        {activeTab === 'liked' && genreSummary.length > 0 && (
+          <div className="p-4 rounded-xl bg-[#14151a] border border-white/10 space-y-3">
+            <div className="flex items-center justify-between text-xs font-mono text-slate-300 font-semibold">
+              <span>Your picks by genre</span>
+              <span className="text-[11px] text-slate-500">Real genre frequencies from liked titles</span>
             </div>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'watchlist' && (
-        <p className="text-xs text-slate-400">
-          Movies you saved to watch later. You can move them to your Liked picks once you've seen them.
-        </p>
-      )}
-
-      {activeTab === 'disliked' && (
-        <p className="text-xs text-slate-400">
-          Titles you marked as Not interested are strictly excluded from recommendation rows. You can undo or remove them at any time.
-        </p>
-      )}
+            <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden flex gap-0.5">
+              {genreSummary.map((g, idx) => {
+                const colors = [
+                  'bg-amber-500',
+                  'bg-sky-500',
+                  'bg-indigo-500',
+                  'bg-emerald-500',
+                  'bg-rose-500',
+                  'bg-purple-500',
+                ];
+                return (
+                  <div
+                    key={g.name}
+                    style={{ width: `${g.pct}%` }}
+                    className={`${colors[idx % colors.length]} h-full transition-all`}
+                    title={`${g.name}: ${g.count} titles (${g.pct}%)`}
+                  />
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap gap-3 pt-1">
+              {genreSummary.map((g) => (
+                <span key={g.name} className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span>{g.name}</span>
+                  <span className="font-mono text-slate-500">({g.count})</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Items List or Empty State */}
       {activeIds.length === 0 ? (
         <div className="p-12 rounded-2xl bg-[#14151a] border border-white/10 text-center space-y-5 my-8">
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto text-amber-500">
-            {activeTab === 'liked' ? (
-              <Heart className="w-6 h-6" />
-            ) : activeTab === 'watchlist' ? (
-              <Bookmark className="w-6 h-6" />
-            ) : (
-              <EyeOff className="w-6 h-6" />
-            )}
+            <CurrentEmptyIcon className="w-6 h-6" />
           </div>
           <div className="space-y-1.5 max-w-md mx-auto">
             <h3 className="font-serif text-xl font-bold text-white">
-              {activeTab === 'liked'
-                ? 'No liked movies yet'
-                : activeTab === 'watchlist'
-                ? 'Your watchlist is empty'
-                : 'No titles marked Not interested'}
+              {currentTabCfg.emptyTitle}
             </h3>
             <p className="text-xs text-slate-400">
-              {activeTab === 'liked'
-                ? 'Pick movies you love to calibrate your collaborative filtering recommendations.'
-                : activeTab === 'watchlist'
-                ? 'Save interesting films while exploring to find them easily in one place.'
-                : 'Disliked movies will never be recommended to your profile.'}
+              {currentTabCfg.emptyDesc}
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -359,16 +421,19 @@ export const LibraryPage: React.FC = () => {
                   <button
                     onClick={() => {
                       if (activeTab === 'liked') removeLike(id);
-                      else if (activeTab === 'watchlist') removeWatchlist(id);
-                      else removeDislike(id);
+                      else if (activeTab === 'disliked') removeDislike(id);
+                      else setWatchStatus(id, null);
                     }}
-                    className="text-xs text-red-400 hover:underline"
+                    className="text-xs text-red-400 hover:underline cursor-pointer"
                   >
                     Remove
                   </button>
                 </div>
               );
             }
+
+            const itemLiked = isLiked(movie.movie_id);
+            const itemDisliked = isDisliked(movie.movie_id);
 
             return (
               <div
@@ -420,53 +485,54 @@ export const LibraryPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Actions Bar */}
+                  {/* Actions Bar: Status control + Thumbs buttons + Remove */}
                   <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-2">
                     <div className="flex items-center gap-1.5">
-                      {/* Move action */}
-                      {activeTab === 'watchlist' && (
-                        <button
-                          onClick={() => moveToList(movie.movie_id, 'liked')}
-                          className="px-2 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
-                          title="Move to Liked"
-                        >
-                          <Heart className="w-3 h-3" />
-                          <span>Like</span>
-                        </button>
-                      )}
+                      {/* Thumbs up */}
+                      <button
+                        type="button"
+                        onClick={() => toggleLike(movie)}
+                        aria-label={`Like ${movie.title}`}
+                        className={`p-1.5 rounded-md border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                          itemLiked
+                            ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                            : 'bg-white/5 border-transparent text-slate-400 hover:text-amber-400 hover:border-amber-500/40'
+                        }`}
+                        title={itemLiked ? `Unlike ${movie.title}` : `Like ${movie.title}`}
+                      >
+                        <ThumbsUp className={`w-3.5 h-3.5 ${itemLiked ? 'fill-amber-400' : ''}`} />
+                      </button>
 
-                      {activeTab === 'liked' && (
-                        <button
-                          onClick={() => moveToList(movie.movie_id, 'watchlist')}
-                          className="px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-slate-300 text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
-                          title="Move to Watchlist"
-                        >
-                          <Bookmark className="w-3 h-3" />
-                          <span>Watchlist</span>
-                        </button>
-                      )}
+                      {/* Thumbs down */}
+                      <button
+                        type="button"
+                        onClick={() => toggleDislike(movie)}
+                        aria-label={`Dislike ${movie.title}`}
+                        className={`p-1.5 rounded-md border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                          itemDisliked
+                            ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                            : 'bg-white/5 border-transparent text-slate-400 hover:text-amber-400 hover:border-amber-500/40'
+                        }`}
+                        title={itemDisliked ? `Undo dislike for ${movie.title}` : `Dislike ${movie.title}`}
+                      >
+                        <ThumbsDown className={`w-3.5 h-3.5 ${itemDisliked ? 'fill-amber-400' : ''}`} />
+                      </button>
 
-                      {activeTab === 'disliked' && (
-                        <button
-                          onClick={() => moveToList(movie.movie_id, 'liked')}
-                          className="px-2 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
-                          title="Undo and add to Liked"
-                        >
-                          <RotateCcw className="w-3 h-3" />
-                          <span>Undo</span>
-                        </button>
-                      )}
+                      {/* Watch status dropdown */}
+                      <WatchStatusControl movie={movie} variant="inline" />
                     </div>
 
                     {/* Remove button */}
                     <button
+                      type="button"
                       onClick={() => {
                         if (activeTab === 'liked') removeLike(movie.movie_id);
-                        else if (activeTab === 'watchlist') removeWatchlist(movie.movie_id);
-                        else removeDislike(movie.movie_id);
+                        else if (activeTab === 'disliked') removeDislike(movie.movie_id);
+                        else setWatchStatus(movie.movie_id, null);
                       }}
-                      className="p-1 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
-                      title="Remove from list"
+                      className="p-1.5 text-slate-500 hover:text-red-400 transition-colors cursor-pointer rounded-md hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                      title={`Remove from ${currentTabCfg.label}`}
+                      aria-label={`Remove ${movie.title} from ${currentTabCfg.label}`}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -494,10 +560,10 @@ export const LibraryPage: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <h3 className="font-serif text-lg font-bold text-white">
-                  Clear all {confirmClearTab === 'liked' ? 'Liked picks' : confirmClearTab === 'watchlist' ? 'Watchlist items' : 'Not interested titles'}?
+                  Clear all {TAB_CONFIG[confirmClearTab].label} entries?
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Are you sure you want to delete all stored items in this list? This operation is saved only in this browser and cannot be undone.
+                  Are you sure you want to delete all stored items in {TAB_CONFIG[confirmClearTab].label}? This operation is saved only in this browser and cannot be undone.
                 </p>
               </div>
             </div>

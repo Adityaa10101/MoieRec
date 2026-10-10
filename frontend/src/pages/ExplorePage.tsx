@@ -36,7 +36,7 @@ function readUrlParams(): { genres: string[]; decade: number | null; sort: 'popu
 }
 
 export const ExplorePage: React.FC = () => {
-  const { avoidedGenres } = useUserTaste();
+  const { avoidedGenres, isWatchedOrDropped } = useUserTaste();
 
   // Metadata filter options
   const [genres, setGenres] = useState<GenreFilter[]>([]);
@@ -160,8 +160,9 @@ export const ExplorePage: React.FC = () => {
           controller.signal,
         );
 
-        // Filter out avoided genres display-side
+        // Filter out avoided genres and watched/dropped status display-side
         const displayResults = results.filter((m) => {
+          if (isWatchedOrDropped(m.movie_id)) return false;
           if (!m.genres || m.genres.length === 0) return true;
           return !m.genres.some((g) => effectiveAvoidedSet.has(g.toLowerCase()));
         });
@@ -185,7 +186,7 @@ export const ExplorePage: React.FC = () => {
         setLoadingMore(false);
       }
     },
-    [selectedGenres, selectedDecade, sortOrder, movies.length, effectiveAvoidedSet],
+    [selectedGenres, selectedDecade, sortOrder, movies.length, effectiveAvoidedSet, isWatchedOrDropped],
   );
 
   // Trigger reset load on filter change and sync URL
@@ -215,6 +216,11 @@ export const ExplorePage: React.FC = () => {
     setSelectedDecade(null);
     setSortOrder('popular');
   };
+
+  // Real-time visible movies accounting for immediate watch status changes
+  const visibleMovies = useMemo(() => {
+    return movies.filter((m) => !isWatchedOrDropped(m.movie_id));
+  }, [movies, isWatchedOrDropped]);
 
   return (
     <div className="min-h-screen pt-28 pb-24 max-w-7xl mx-auto px-6 space-y-8">
@@ -411,7 +417,7 @@ export const ExplorePage: React.FC = () => {
             <MovieCardSkeleton key={i} />
           ))}
         </div>
-      ) : movies.length === 0 ? (
+      ) : visibleMovies.length === 0 ? (
         <div className="p-12 rounded-2xl bg-[#14151a] border border-white/10 text-center space-y-4">
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto text-amber-500">
             <Compass className="w-6 h-6" />
@@ -436,7 +442,7 @@ export const ExplorePage: React.FC = () => {
       ) : (
         <div className="space-y-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            {movies.map((movie, idx) => (
+            {visibleMovies.map((movie, idx) => (
               <MovieCard
                 key={movie.movie_id}
                 movie={movie}

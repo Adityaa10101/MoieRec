@@ -3,7 +3,7 @@ import { Film, Sliders, AlertCircle, Compass } from 'lucide-react';
 import { Link } from '../../router/Router';
 
 interface EmptyStateProps {
-  type: 'watchlist' | 'discovery' | 'error';
+  type: 'plan' | 'watchlist' | 'discovery' | 'error';
   title?: string;
   description?: string;
   actionText?: string;
@@ -21,6 +21,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const getIcon = () => {
     switch (type) {
+      case 'plan':
       case 'watchlist':
         return <Film className="w-8 h-8 text-amber-500" />;
       case 'discovery':
@@ -33,15 +34,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   };
 
   const defaultTitle =
-    type === 'watchlist'
-      ? 'Your watchlist is empty.'
+    type === 'plan' || type === 'watchlist'
+      ? 'No movies in Plan to watch.'
       : type === 'discovery'
       ? 'No movies match these filters.'
       : 'Connection momentarily disrupted.';
 
   const defaultDescription =
-    type === 'watchlist'
-      ? 'Add movies from Explore or your recommendations to build your watchlist.'
+    type === 'plan' || type === 'watchlist'
+      ? 'Add movies from Explore or your recommendations to build your list.'
       : type === 'discovery'
       ? 'Try selecting different genres or decades to find movies.'
       : 'Your picks are safely preserved in browser storage.';

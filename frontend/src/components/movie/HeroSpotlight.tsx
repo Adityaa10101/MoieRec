@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Bookmark, ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ApiMovie } from '../../api/types';
 import { useUserTaste } from '../../context/UserTasteContext';
 import { useRouter } from '../../router/Router';
 import { useHeroRotation } from '../../hooks/useHeroRotation';
+import { WatchStatusControl } from './WatchStatusControl';
 
 /**
  * Ensures TMDB backdrop image uses high-res wide backdrop (w1280).
@@ -28,7 +29,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
   movie,
   isPersonalized = false,
 }) => {
-  const { isInWatchlist, isLiked, isDisliked, toggleWatchlist, toggleLike, toggleDislike } =
+  const { isLiked, isDisliked, toggleLike, toggleDislike, isWatchedOrDropped } =
     useUserTaste();
   const { navigate } = useRouter();
 
@@ -51,13 +52,12 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
   const candidatesRef = useRef(candidates);
   const isLikedRef = useRef(isLiked);
   const isDislikedRef = useRef(isDisliked);
-  const isInWatchlistRef = useRef(isInWatchlist);
+  const isWatchedOrDroppedRef = useRef(isWatchedOrDropped);
   const isMovieExcluded = useCallback(
     (
       m: ApiMovie,
       checkLiked: (id: string) => boolean = isLikedRef.current,
       checkDisliked: (id: string) => boolean = isDislikedRef.current,
-      checkWatchlist: (id: string) => boolean = isInWatchlistRef.current,
     ): boolean => {
       if (!m.backdrop_url || !m.backdrop_url.trim()) return true;
       if (!m.overview || !m.overview.trim()) return true;
@@ -65,7 +65,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
       return (
         checkLiked(midStr) ||
         checkDisliked(midStr) ||
-        checkWatchlist(midStr)
+        isWatchedOrDroppedRef.current(m.movie_id)
       );
     },
     [],
@@ -74,7 +74,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
   // Active hero slides state
   const [activeMovies, setActiveMovies] = useState<ApiMovie[]>(() => {
     const valid = candidates
-      .filter((m) => !isMovieExcluded(m, isLiked, isDisliked, isInWatchlist))
+      .filter((m) => !isMovieExcluded(m, isLiked, isDisliked))
       .slice(0, 7);
     if (valid.length > 0) return valid;
     if (fallbackMovie) return [fallbackMovie];
@@ -88,7 +88,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
     candidatesRef.current = candidates;
     isLikedRef.current = isLiked;
     isDislikedRef.current = isDisliked;
-    isInWatchlistRef.current = isInWatchlist;
+    isWatchedOrDroppedRef.current = isWatchedOrDropped;
     activeMoviesRef.current = activeMovies;
   });
 
@@ -227,7 +227,6 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
 
   // Derive signals for active movie
   const movieIdStr = String(activeMovie.movie_id);
-  const inWatchlist = isInWatchlist(movieIdStr);
   const liked = isLiked(movieIdStr);
   const disliked = isDisliked(movieIdStr);
 
@@ -395,17 +394,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
               <span>View Movie</span>
             </button>
 
-            <button
-              onClick={() => toggleWatchlist(asContextMovie())}
-              className={`px-6 py-3 rounded-lg border font-medium text-sm sm:text-base backdrop-blur-md flex items-center gap-2 transition-all duration-200 cursor-pointer ${
-                inWatchlist
-                  ? 'bg-amber-500/15 border-amber-500/60 text-amber-400 hover:bg-amber-500/25'
-                  : 'bg-[#1f1f24]/80 hover:bg-[#23252b] border-white/20 hover:border-amber-500/50 text-white'
-              }`}
-            >
-              <Bookmark className={`w-4 h-4 ${inWatchlist ? 'fill-amber-400' : ''}`} />
-              <span>{inWatchlist ? '✓ On Watchlist' : '+ Add to Watchlist'}</span>
-            </button>
+            <WatchStatusControl movie={asContextMovie()} variant="hero" />
 
             {/* Thumbs up/down — local taste signals only */}
             <div className="flex items-center gap-2 ml-1 sm:ml-2 pl-3 sm:pl-4 border-l border-white/15">

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Bookmark, ThumbsUp, ThumbsDown, Play, Sparkles } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Play, Sparkles } from 'lucide-react';
 import type { ApiMovie } from '../../api/types';
 import { useAmbientBackdrop } from '../../context/AmbientBackdropContext';
 import { useUserTaste } from '../../context/UserTasteContext';
 import { usePopcornCursor } from '../../context/PopcornCursorContext';
 import { useRouter } from '../../router/Router';
+import { WatchStatusControl } from './WatchStatusControl';
 
 interface MovieCardProps {
   movie: ApiMovie;
@@ -21,12 +22,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 }) => {
   const { setHoveredMovie } = useAmbientBackdrop();
   const { setIsCardHovered } = usePopcornCursor();
-  const { isInWatchlist, isLiked, isDisliked, toggleWatchlist, toggleLike, toggleDislike } =
+  const { isLiked, isDisliked, toggleLike, toggleDislike } =
     useUserTaste();
   const { navigate } = useRouter();
 
   const movieIdStr = String(movie.movie_id);
-  const inWatchlist = isInWatchlist(movieIdStr);
   const liked = isLiked(movieIdStr);
   const disliked = isDisliked(movieIdStr);
 
@@ -114,20 +114,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </button>
         )}
 
-        {/* Watchlist button */}
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); toggleWatchlist(asContextMovie()); }}
-          className={`absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
-            inWatchlist
-              ? 'bg-amber-500 text-[#0d0e12]'
-              : 'bg-black/60 text-slate-300 hover:text-white hover:bg-black/80'
-          }`}
-          title={inWatchlist ? 'On Watchlist' : 'Add to Watchlist'}
-          aria-label={inWatchlist ? `Remove ${movie.title} from Watchlist` : `Add ${movie.title} to Watchlist`}
-        >
-          <Bookmark className={`w-3.5 h-3.5 ${inWatchlist ? 'fill-current' : ''}`} />
-        </button>
+        {/* Watch status button */}
+        <div className="absolute top-2.5 right-2.5 z-10">
+          <WatchStatusControl movie={asContextMovie()} variant="card" />
+        </div>
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1b20] via-transparent to-transparent opacity-90 pointer-events-none" />
       </div>

@@ -24,7 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
   const {
     setIsOnboardingOpen,
     validLikedIds,
-    validWatchlistIds,
+    planMovieIds,
+    savedMovieCount,
     clearAllData,
   } = useUserTaste();
 
@@ -73,7 +74,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
     { label: 'My Library', to: '/library' },
   ];
 
-  const totalLibraryCount = validLikedIds.length + validWatchlistIds.length;
+  const totalLibraryCount = validLikedIds.length + savedMovieCount;
 
   const handleClearDataConfirmed = () => {
     clearAllData();
@@ -237,17 +238,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
                     <button
                       role="menuitem"
                       onClick={() => {
-                        navigate('/library?tab=watchlist');
+                        navigate('/library?tab=plan');
                         setAvatarMenuOpen(false);
                       }}
                       className="w-full px-3 py-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-white/5 flex items-center justify-between transition-colors cursor-pointer text-left"
                     >
                       <span className="flex items-center gap-2">
-                        <Bookmark className="w-3.5 h-3.5 text-sky-400" />
-                        <span>Watchlist</span>
+                        <Bookmark className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Plan to watch</span>
                       </span>
                       <span className="font-mono text-[10px] text-slate-400 font-bold">
-                        {validWatchlistIds.length}
+                        {planMovieIds.length}
                       </span>
                     </button>
 
@@ -350,15 +351,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
               </Link>
 
               <Link
-                to="/library?tab=watchlist"
+                to="/library?tab=plan"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between py-2 text-xs text-slate-300"
               >
                 <span className="flex items-center gap-2">
-                  <Bookmark className="w-3.5 h-3.5 text-sky-400" />
-                  <span>Watchlist</span>
+                  <Bookmark className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Plan to watch</span>
                 </span>
-                <span className="font-mono text-sky-400 font-bold">{validWatchlistIds.length}</span>
+                <span className="font-mono text-amber-400 font-bold">{planMovieIds.length}</span>
               </Link>
 
               <button
