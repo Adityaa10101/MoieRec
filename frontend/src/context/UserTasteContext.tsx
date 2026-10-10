@@ -38,9 +38,25 @@ interface UserTasteContextType {
   clearAllPicks: () => void;
   clearAllData: () => void;
   cleanLegacyIds: (validIds: Set<number>) => void;
+  avoidedGenres: string[];
+  toggleAvoidedGenre: (genre: string) => void;
+  setAvoidedGenres: (genres: string[]) => void;
+  clearAvoidedGenres: () => void;
+  isGenreAvoided: (genre: string) => boolean;
 }
 
 const UserTasteContext = createContext<UserTasteContextType | undefined>(undefined);
+
+function parseAvoidedGenres(raw: string | null): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((g) => typeof g === 'string' && g.trim().length > 0);
+  } catch {
+    return [];
+  }
+}
 
 function parseStoredItems(raw: string | null): StoredMovieItem[] {
   if (!raw) return [];
@@ -101,6 +117,10 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
 
+  const [avoidedGenres, setAvoidedGenresState] = useState<string[]>(() =>
+    parseAvoidedGenres(localStorage.getItem('moierec_avoided_genres'))
+  );
+
   // Sync state to localStorage with only movie_id and added_at
   useEffect(() => {
     try {
@@ -133,6 +153,14 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // storage unavailable
     }
   }, [onboardingDismissed]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('moierec_avoided_genres', JSON.stringify(avoidedGenres));
+    } catch {
+      // storage unavailable
+    }
+  }, [avoidedGenres]);
 
   const dismissOnboarding = () => {
     setOnboardingDismissed(true);
@@ -270,15 +298,47 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setLikedItems([]);
     setDislikedItems([]);
     setOnboardingDismissed(false);
+    setAvoidedGenresState([]);
     try {
       localStorage.removeItem('moierec_watchlist');
       localStorage.removeItem('moierec_liked');
       localStorage.removeItem('moierec_disliked');
       localStorage.removeItem('moierec_onboarding_dismissed');
+      localStorage.removeItem('moierec_avoided_genres');
     } catch {
       // ignore
     }
     showToast('All browser library data cleared', { icon: 'info' });
+  };
+
+  const toggleAvoidedGenre = (genre: string) => {
+    const trimmed = genre.trim();
+    if (!trimmed) return;
+    setAvoidedGenresState((prev) => {
+      const exists = prev.some((g) => g.toLowerCase() === trimmed.toLowerCase());
+      if (exists) {
+        showToast(`Removed "${trimmed}" from avoided genres`, { icon: 'info' });
+        return prev.filter((g) => g.toLowerCase() !== trimmed.toLowerCase());
+      } else {
+        showToast(`Hiding "${trimmed}" titles from feeds`, { icon: 'info' });
+        return [...prev, trimmed];
+      }
+    });
+  };
+
+  const setAvoidedGenres = (genres: string[]) => {
+    const cleaned = Array.from(new Set(genres.map((g) => g.trim()).filter(Boolean)));
+    setAvoidedGenresState(cleaned);
+  };
+
+  const clearAvoidedGenres = () => {
+    setAvoidedGenresState([]);
+    showToast('Cleared avoided genres', { icon: 'info' });
+  };
+
+  const isGenreAvoided = (genre: string) => {
+    const gLower = genre.trim().toLowerCase();
+    return avoidedGenres.some((g) => g.toLowerCase() === gLower);
   };
 
   const cleanLegacyIds = (validIds: Set<number>) => {
@@ -319,6 +379,11 @@ export const UserTasteProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         clearAllPicks,
         clearAllData,
         cleanLegacyIds,
+        avoidedGenres,
+        toggleAvoidedGenre,
+        setAvoidedGenres,
+        clearAvoidedGenres,
+        isGenreAvoided,
       }}
     >
       {children}

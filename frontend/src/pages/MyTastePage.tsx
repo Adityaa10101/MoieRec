@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from '../router/Router';
-import { Sparkles, ArrowLeft, Trash2, Edit3, Heart, Plus } from 'lucide-react';
+import { Sparkles, ArrowLeft, Trash2, Edit3, Heart, Plus, EyeOff } from 'lucide-react';
 import { useUserTaste } from '../context/UserTasteContext';
 import { fetchMovieDetail } from '../api/client';
 import type { ApiMovie } from '../api/types';
+
+const ALL_CATALOG_GENRES = [
+  'Action',
+  'Adventure',
+  'Animation',
+  'Children',
+  'Comedy',
+  'Crime',
+  'Documentary',
+  'Drama',
+  'Fantasy',
+  'Film-Noir',
+  'Horror',
+  'Musical',
+  'Mystery',
+  'Romance',
+  'Sci-Fi',
+  'Thriller',
+  'War',
+  'Western',
+];
 
 export const MyTastePage: React.FC = () => {
   const {
@@ -11,6 +32,10 @@ export const MyTastePage: React.FC = () => {
     removeLike,
     setIsOnboardingOpen,
     clearAllPicks,
+    avoidedGenres,
+    toggleAvoidedGenre,
+    clearAvoidedGenres,
+    isGenreAvoided,
   } = useUserTaste();
 
   const [movieDetails, setMovieDetails] = useState<Record<number, ApiMovie>>({});
@@ -165,6 +190,63 @@ export const MyTastePage: React.FC = () => {
               })}
             </div>
           )}
+        </div>
+
+        {/* Genres to Avoid (Display Settings) */}
+        <div className="space-y-4 pt-6 border-t border-white/10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-xs font-mono text-amber-400 uppercase tracking-widest font-semibold">
+                <EyeOff className="w-4 h-4 text-amber-500" />
+                <span>Display Preferences</span>
+              </div>
+              <h2 className="font-serif text-xl sm:text-2xl text-white font-bold">
+                Hide genres I don't want to see
+              </h2>
+              <p className="text-xs text-slate-400">
+                Titles in these genres are hidden from your Home rows, hero candidates, and Explore catalog. This is a display filter only and does not change recommendation scores or training.
+              </p>
+            </div>
+            {avoidedGenres.length > 0 && (
+              <button
+                type="button"
+                onClick={clearAvoidedGenres}
+                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-white/10 text-xs font-medium transition-colors self-start sm:self-auto cursor-pointer"
+              >
+                Clear all avoided ({avoidedGenres.length})
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {ALL_CATALOG_GENRES.map((g) => {
+              const active = isGenreAvoided(g);
+              return (
+                <button
+                  type="button"
+                  key={g}
+                  onClick={() => toggleAvoidedGenre(g)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-2 ${
+                    active
+                      ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20 border border-amber-400 scale-[1.02]'
+                      : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/5'
+                  }`}
+                >
+                  {active ? (
+                    <EyeOff className="w-3.5 h-3.5 stroke-[2.5]" />
+                  ) : (
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                  )}
+                  <span>{g}</span>
+                  {active && (
+                    <span className="text-[10px] bg-black/20 text-black px-1.5 py-0.2 rounded font-bold">
+                      Hidden
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-3">

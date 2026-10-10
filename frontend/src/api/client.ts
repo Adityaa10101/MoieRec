@@ -16,23 +16,54 @@ const API_BASE =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
   'http://127.0.0.1:8000/api';
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const resp = await fetch(`${API_BASE}${path}`, options);
-  if (!resp.ok) {
-    throw new Error(`API error ${resp.status}: ${resp.statusText}`);
+export interface ApiFetchOptions extends RequestInit {
+  timeoutMs?: number;
+}
+
+async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
+  const { timeoutMs = 75000, signal, ...fetchOptions } = options;
+
+  const controller = new AbortController();
+  let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
+
+  if (timeoutMs > 0) {
+    timeoutTimer = setTimeout(() => {
+      controller.abort(new Error(`Request to ${path} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
   }
-  return resp.json() as Promise<T>;
+
+  if (signal) {
+    if (signal.aborted) {
+      controller.abort(signal.reason);
+    } else {
+      signal.addEventListener('abort', () => controller.abort(signal.reason), { once: true });
+    }
+  }
+
+  try {
+    const resp = await fetch(`${API_BASE}${path}`, {
+      ...fetchOptions,
+      signal: controller.signal,
+    });
+    if (!resp.ok) {
+      throw new Error(`API error ${resp.status}: ${resp.statusText}`);
+    }
+    return (await resp.json()) as T;
+  } finally {
+    if (timeoutTimer) clearTimeout(timeoutTimer);
+  }
 }
 
 /** GET /home */
-export async function fetchHome(signal?: AbortSignal): Promise<HomeResponse> {
-  return apiFetch<HomeResponse>('/home', { signal });
+export async function fetchHome(signal?: AbortSignal, timeoutMs = 75000): Promise<HomeResponse> {
+  return apiFetch<HomeResponse>('/home', { signal, timeoutMs });
 }
 
 /** POST /personalized/home */
 export async function fetchPersonalizedHome(
   likedMovieIds: number[],
   excludeMovieIds: number[] = [],
+  limit = 30,
   signal?: AbortSignal,
 ): Promise<PersonalizedHomeResponse> {
   return apiFetch<PersonalizedHomeResponse>('/personalized/home', {
@@ -41,6 +72,7 @@ export async function fetchPersonalizedHome(
     body: JSON.stringify({
       liked_movie_ids: likedMovieIds,
       exclude_movie_ids: excludeMovieIds,
+      limit,
     }),
     signal,
   });
