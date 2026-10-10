@@ -68,7 +68,7 @@ async def get_personalized_home(request: PersonalizedHomeRequest):
         )
 
     # 1. Row 'Picked for You' (Hybrid Model)
-    TARGET_COUNT = 20
+    TARGET_COUNT = min(50, max(1, request.limit or 20))
     k_liked = len(valid_liked)
     if scorer.is_v2:
         w_c, w_f, w_p = scorer.get_weights(k_liked)

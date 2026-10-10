@@ -104,6 +104,7 @@ class HomeResponse(BaseModel):
 class PersonalizedHomeRequest(BaseModel):
     liked_movie_ids: List[int] = Field(..., max_length=50, description="Max 50 liked MovieLens movie_ids")
     exclude_movie_ids: Optional[List[int]] = Field(default_factory=list, description="MovieLens movie_ids to exclude (disliked, etc.)")
+    limit: Optional[int] = Field(20, ge=1, le=50, description="Target movie count per personalized row")
 
 
 class PersonalizedHomeResponse(BaseModel):

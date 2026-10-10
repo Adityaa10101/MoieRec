@@ -319,3 +319,64 @@ def test_similar_movies_endpoint(client, scorer):
     # 404 for invalid movie
     resp_404 = client.get("/api/movies/9999999/similar")
     assert resp_404.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Personalized limit parameter tests
+# ---------------------------------------------------------------------------
+
+def test_personalized_limit_param(client, scorer):
+    """
+    Test limit param on POST /api/personalized/home:
+    - Default (no limit) is identical to limit=20.
+    - First 20 items of limit=30 equal (same IDs, same order) the limit=20 response.
+    - limit=1 returns 1 item matching the top item.
+    - limit=50 returns 50 items.
+    - Out of range limits (0, 51) are rejected with HTTP 422.
+    """
+    liked_ids = [int(scorer.item_movie_ids[i]) for i in (10, 20, 30, 40, 50)]
+
+    # 1. Default (no limit sent) vs limit=20
+    resp_default = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids})
+    assert resp_default.status_code == 200
+    movies_default = resp_default.json()["rows"][0]["movies"]
+    assert len(movies_default) == 20
+
+    resp_20 = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 20})
+    assert resp_20.status_code == 200
+    movies_20 = resp_20.json()["rows"][0]["movies"]
+    assert len(movies_20) == 20
+
+    # Byte-for-byte / value identical
+    assert [m["movie_id"] for m in movies_default] == [m["movie_id"] for m in movies_20]
+    assert [m["score"] for m in movies_default] == [m["score"] for m in movies_20]
+
+    # 2. limit=30: first 20 items equal limit=20 (same IDs, same order)
+    resp_30 = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 30})
+    assert resp_30.status_code == 200
+    movies_30 = resp_30.json()["rows"][0]["movies"]
+    assert len(movies_30) == 30
+    assert [m["movie_id"] for m in movies_30[:20]] == [m["movie_id"] for m in movies_20]
+    assert [m["score"] for m in movies_30[:20]] == [m["score"] for m in movies_20]
+
+    # 3. limit=1
+    resp_1 = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 1})
+    assert resp_1.status_code == 200
+    movies_1 = resp_1.json()["rows"][0]["movies"]
+    assert len(movies_1) == 1
+    assert movies_1[0]["movie_id"] == movies_20[0]["movie_id"]
+
+    # 4. limit=50
+    resp_50 = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 50})
+    assert resp_50.status_code == 200
+    movies_50 = resp_50.json()["rows"][0]["movies"]
+    assert len(movies_50) == 50
+    assert [m["movie_id"] for m in movies_50[:20]] == [m["movie_id"] for m in movies_20]
+
+    # 5. Out of range values rejected with 422
+    resp_low = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 0})
+    assert resp_low.status_code == 422
+
+    resp_high = client.post("/api/personalized/home", json={"liked_movie_ids": liked_ids, "limit": 51})
+    assert resp_high.status_code == 422
+
