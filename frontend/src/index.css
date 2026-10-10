@@ -153,3 +153,24 @@ html.custom-cursor-active * {
   }
 }
 
+/* Card like/dislike taste actions: hover on desktop, always visible on touch */
+@media (hover: hover) and (pointer: fine) {
+  .card-taste-actions:not(.has-active) {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .group:hover .card-taste-actions,
+  .group:focus-within .card-taste-actions,
+  .card-taste-actions:focus-within {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .card-taste-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+

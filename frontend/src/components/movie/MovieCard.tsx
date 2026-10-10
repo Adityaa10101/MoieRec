@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, ThumbsUp, Play, Sparkles } from 'lucide-react';
+import { Bookmark, ThumbsUp, ThumbsDown, Play, Sparkles } from 'lucide-react';
 import type { ApiMovie } from '../../api/types';
 import { useAmbientBackdrop } from '../../context/AmbientBackdropContext';
 import { useUserTaste } from '../../context/UserTasteContext';
@@ -10,17 +10,25 @@ interface MovieCardProps {
   movie: ApiMovie;
   index?: number;
   onOpenWhyThis?: (movie: ApiMovie) => void;
+  className?: string;
 }
 
-export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0, onOpenWhyThis }) => {
+export const MovieCard: React.FC<MovieCardProps> = ({
+  movie,
+  index = 0,
+  onOpenWhyThis,
+  className,
+}) => {
   const { setHoveredMovie } = useAmbientBackdrop();
   const { setIsCardHovered } = usePopcornCursor();
-  const { isInWatchlist, isLiked, toggleWatchlist, toggleLike } = useUserTaste();
+  const { isInWatchlist, isLiked, isDisliked, toggleWatchlist, toggleLike, toggleDislike } =
+    useUserTaste();
   const { navigate } = useRouter();
 
   const movieIdStr = String(movie.movie_id);
   const inWatchlist = isInWatchlist(movieIdStr);
   const liked = isLiked(movieIdStr);
+  const disliked = isDisliked(movieIdStr);
 
   // Top N% chip: N = max(1, 100 - match_percent)
   const topPercent = movie.match_percent != null ? Math.max(1, 100 - movie.match_percent) : null;
@@ -63,7 +71,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0, onOpenWh
       onClick={handleCardClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="group relative flex-shrink-0 w-60 rounded-xl bg-[#1a1b20] border border-white/10 hover:border-amber-500/60 transition-all duration-300 hover:shadow-[0_20px_40px_-8px_rgba(0,0,0,0.85),0_0_20px_rgba(245,158,11,0.12)] hover:-translate-y-1.5 hover:scale-[1.03] hover:z-30 cursor-pointer flex flex-col overflow-hidden"
+      className={`group relative rounded-xl bg-[#1a1b20] border border-white/10 hover:border-amber-500/60 transition-all duration-300 hover:shadow-[0_20px_40px_-8px_rgba(0,0,0,0.85),0_0_20px_rgba(245,158,11,0.12)] hover:-translate-y-1.5 hover:scale-[1.03] hover:z-30 cursor-pointer flex flex-col overflow-hidden ${
+        disliked ? 'opacity-50 hover:opacity-80 saturate-50' : ''
+      } ${className || 'w-60 flex-shrink-0'}`}
       style={{ animationDelay: `${index * 40}ms` }}
     >
       {/* 2:3 Poster */}
@@ -106,18 +116,20 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0, onOpenWh
 
         {/* Watchlist button */}
         <button
+          type="button"
           onClick={(e) => { e.stopPropagation(); toggleWatchlist(asContextMovie()); }}
-          className={`absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+          className={`absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
             inWatchlist
               ? 'bg-amber-500 text-[#0d0e12]'
               : 'bg-black/60 text-slate-300 hover:text-white hover:bg-black/80'
           }`}
           title={inWatchlist ? 'On Watchlist' : 'Add to Watchlist'}
+          aria-label={inWatchlist ? `Remove ${movie.title} from Watchlist` : `Add ${movie.title} to Watchlist`}
         >
           <Bookmark className={`w-3.5 h-3.5 ${inWatchlist ? 'fill-current' : ''}`} />
         </button>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1b20] via-transparent to-transparent opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1b20] via-transparent to-transparent opacity-90 pointer-events-none" />
       </div>
 
       {/* Metadata */}
@@ -145,40 +157,71 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, index = 0, onOpenWh
           )}
         </div>
 
-        <div className="pt-2 flex items-center justify-between border-t border-white/10 mt-auto">
-          <span className="font-mono text-[10px] text-slate-500 uppercase tracking-wider">
-            {movie.genres[0] || ''}
+        <div className="pt-2 flex items-center justify-between border-t border-white/10 mt-auto gap-2">
+          <span className="font-mono text-[10px] text-slate-500 uppercase tracking-wider truncate min-w-0 flex-1">
+            {movie.genres?.[0] || ''}
           </span>
 
-          <div className="flex items-center gap-1.5 text-slate-400">
+          <div className="flex items-center gap-1.5 text-slate-400 shrink-0">
             {/* Why This Button (only if explanation exists) */}
             {movie.explanation != null && onOpenWhyThis && (
               <button
+                type="button"
                 onClick={(e) => { e.stopPropagation(); onOpenWhyThis(movie); }}
-                className="w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center text-amber-400/80 hover:text-amber-400 transition-colors"
+                className="w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center text-amber-400/80 hover:text-amber-400 transition-colors cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-500"
                 title="Why recommended? (Explainability Breakdown)"
+                aria-label={`Why was ${movie.title} recommended?`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
               </button>
             )}
 
             <button
+              type="button"
               onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.movie_id}`); }}
-              className="w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center hover:text-amber-400 transition-colors"
+              className="w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center hover:text-amber-400 transition-colors cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-500"
               title="View Details"
+              aria-label={`View details for ${movie.title}`}
             >
               <Play className="w-3.5 h-3.5 fill-current" />
             </button>
 
-            <button
-              onClick={(e) => { e.stopPropagation(); toggleLike(asContextMovie()); }}
-              className={`w-7 h-7 rounded-md hover:bg-white/10 flex items-center justify-center transition-colors ${
-                liked ? 'text-amber-400' : 'hover:text-amber-400'
-              }`}
-              title="Like"
-            >
-              <ThumbsUp className={`w-3.5 h-3.5 ${liked ? 'fill-amber-400' : ''}`} />
-            </button>
+            {/* Like & Dislike actions: show on hover for desktop, always visible on touch */}
+            <div className={`flex items-center gap-1 card-taste-actions ${liked || disliked ? 'has-active' : ''}`}>
+              <button
+                type="button"
+                aria-label={`Like ${movie.title}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLike(asContextMovie());
+                }}
+                className={`w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                  liked
+                    ? 'bg-amber-500/20 border border-amber-500/60 text-amber-400'
+                    : 'hover:bg-white/10 hover:text-amber-400 text-slate-400 border border-transparent'
+                }`}
+                title={liked ? `Unlike ${movie.title}` : `Like ${movie.title}`}
+              >
+                <ThumbsUp className={`w-3.5 h-3.5 ${liked ? 'fill-amber-400' : ''}`} />
+              </button>
+
+              <button
+                type="button"
+                aria-label={`Dislike ${movie.title}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleDislike(asContextMovie());
+                }}
+                className={`w-7 h-7 rounded-md flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                  disliked
+                    ? 'bg-amber-500/20 border border-amber-500/60 text-amber-400'
+                    : 'hover:bg-white/10 hover:text-amber-400 text-slate-400 border border-transparent'
+                }`}
+                title={disliked ? `Undo dislike for ${movie.title}` : `Dislike ${movie.title}`}
+              >
+                <ThumbsDown className={`w-3.5 h-3.5 ${disliked ? 'fill-amber-400' : ''}`} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
